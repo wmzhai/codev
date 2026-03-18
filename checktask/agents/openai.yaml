@@ -1,0 +1,4 @@
+interface:
+  display_name: "任务验收"
+  short_description: "验证任务并更新验收清单"
+  default_prompt: "使用 $checktask 验证 tasks/ 中的待办任务，更新已通过的 checklist，并报告剩余缺口。"
