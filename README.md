@@ -57,7 +57,7 @@ $simplify
 
 ### issue2task
 
-读取一个或多个 GitHub issue，结合代码现状先澄清需求，再生成 `tasks/Txx-*.md`。
+读取一个或多个 GitHub issue，结合代码现状先自行收敛需求，再生成 `tasks/Txx-*.md`。
 
 常见用法：
 
@@ -72,7 +72,7 @@ $issue2task --label backend
 - `tasks/Txx-*.md`
 - `tasks/README.md`
 
-这个 skill 关注需求整理和任务拆分，不负责实现方案设计。
+这个 skill 关注需求整理和任务拆分，不负责实现方案设计。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问。
 
 ### plantask
 
@@ -85,7 +85,7 @@ $plantask
 $plantask T05
 ```
 
-这个 skill 只做规划，不会改代码。
+这个 skill 只做规划，不会改代码。默认应一次性给出可执行方案，而不是把“等你确认实现方向”当成常规中间步骤。
 
 ### checktask
 
