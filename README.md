@@ -4,13 +4,27 @@
 
 ## 安装
 
-将这些 skill 放在 `~/.codex/skills/` 目录下即可被当前环境识别：
+仓库可以 clone 到任意目录，安装通过 `./setup` 完成：
 
 ```bash
-git clone <repo> ~/.codex/skills
+git clone git@github.com:wmzhai/codex-dev.git
+cd codex-dev
+./setup
 ```
 
-如果目录里已经有其他 skill，按需合并即可。每个 skill 至少包含一个 `SKILL.md`，可选包含 `agents/openai.yaml`。
+`./setup` 会把当前仓库安装到 `~/.codex/skills/`：
+
+```text
+~/.codex/skills/
+├── codex-dev -> /path/to/your/clone
+├── issue2task -> codex-dev/issue2task
+├── plantask -> codex-dev/plantask
+├── checktask -> codex-dev/checktask
+├── simplify -> codex-dev/simplify
+└── ships -> codex-dev/ships
+```
+
+如果检测到旧布局是“直接把整个仓库放进 `~/.codex/skills`”，`./setup` 会自动迁移并清理这套旧安装留下的 `.git`、`README.md`、`.gitignore` 以及本项目旧 skill 目录；不会删除 `.system`、`gstack`、`gstack-*` 或其他无关条目。
 
 ## 调用方式
 
@@ -27,8 +41,8 @@ Codex skills 支持两种常见使用方式：
 $issue2task 42
 $plantask T05
 $checktask
-$ship
-$ship v1.2.3
+$ships
+$ships v1.2.3
 $simplify
 ```
 
@@ -39,9 +53,9 @@ $simplify
 3. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案。
 4. 按方案实现并迭代。
 5. 用 `$checktask` 逐项核对验收标准，更新 checklist，并在流程末尾自动对本次相关 diff 做一次语义不变的精简；全部通过后归档到 `tasks/done/`。
-6. 需要提交时用 `$ship` 提交并推送。
+6. 需要提交时用 `$ships` 提交并推送。
 7. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
-8. 需要发版时，用 `$ship vX.Y.Z` 或 `$ship vX.Y.Z-rcN`。
+8. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
 
 ## Skills 一览
 
@@ -50,7 +64,7 @@ $simplify
 | `issue2task` | `$issue2task` | 从 GitHub issues 生成带依赖关系的任务文件 |
 | `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案 |
 | `checktask` | `$checktask` | 验收任务、更新 checklist、归档已完成任务 |
-| `ship` | `$ship` | 提交并推送当前分支，可选创建 release tag |
+| `ships` | `$ships` | 提交并推送当前分支，可选创建 release tag |
 | `simplify` | `$simplify` | 供 `checktask` 内部复用，或在无 task 时单独精简给定 diff |
 
 ## Skill 说明
@@ -100,19 +114,19 @@ $checktask T04
 
 它会优先做最小侵入验证，只在标准明确要求时运行测试或命令。遇到模糊标准时，应标记为需要人工确认，而不是猜测通过。验收步骤结束后，会在整个流程末尾最多自动调用一次 `simplify` 风格的本地精简，而不是重复调用或只给出建议。
 
-### ship
+### ships
 
 提交当前工作区并推送当前分支；如果提供版本号，再创建并推送 tag。
 
 常见用法：
 
 ```text
-$ship
-$ship v0.1.3
-$ship v1.0.0-rc1
+$ships
+$ships v0.1.3
+$ships v1.0.0-rc1
 ```
 
-`ship` 是显式调用优先的 skill。当前配置下不会默认隐式触发。
+`ships` 是显式调用优先的 skill。当前配置下不会默认隐式触发。
 
 ### simplify
 
@@ -127,6 +141,14 @@ $simplify
 ```
 
 如果没有直接给 diff，也可以让它基于当前 patch 进行精简。`checktask` 内部调用时，应直接复用已经确定的相关最小 diff，并且整个 `checktask` 流程里只调用一次；单独使用时，`simplify` 仍然是显式调用优先。除非用户明确要求查看 patch，否则结果应保持为摘要而不是代码回显。
+
+## 测试安装脚本
+
+可以运行下面的 smoke test 验证 `./setup` 的全新安装、旧布局迁移、幂等性和冲突处理：
+
+```bash
+./test/setup-smoke.sh
+```
 
 ## 编写新 Skill
 
@@ -156,9 +178,9 @@ description: 说明这个 skill 做什么，以及什么情况下应该使用它
 
 ```yaml
 interface:
-  display_name: "My Skill"
-  short_description: "Short description"
-  default_prompt: "Use $my-skill to ..."
+  display_name: "my-skill"
+  short_description: "一句中文简介"
+  default_prompt: "使用 $my-skill 来完成某件事。"
 
 policy:
   allow_implicit_invocation: false
@@ -169,4 +191,5 @@ policy:
 - `name` 和目录名应保持一致。
 - frontmatter 只需要 `name` 和 `description`。
 - `description` 既要描述能力，也要描述“什么时候使用它”。
+- 推荐 `display_name` 直接使用原始 skill 名；`short_description` 和 `default_prompt` 可继续使用中文。
 - `allow_implicit_invocation: false` 表示这个 skill 只适合显式调用。
