@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SETUP_SCRIPT="${REPO_ROOT}/setup"
-MANAGED_SKILLS=(issue2task plantask checktask simplify ships)
+MANAGED_SKILLS=(memorize issue2task plantask checktask simplify ships)
 
 fail() {
   echo "FAIL: $*" >&2
@@ -45,14 +45,14 @@ run_setup "$fresh_home"
 fresh_skills="${fresh_home}/.codex/skills"
 assert_symlink_target "${fresh_skills}/codev" "${REPO_ROOT}"
 for skill_name in "${MANAGED_SKILLS[@]}"; do
-  assert_symlink_target "${fresh_skills}/${skill_name}" "codev/${skill_name}"
+  assert_symlink_target "${fresh_skills}/${skill_name}" "codev/skills/${skill_name}"
 done
 assert_missing "${fresh_skills}/ship"
 
 run_setup "$fresh_home"
 assert_symlink_target "${fresh_skills}/codev" "${REPO_ROOT}"
 for skill_name in "${MANAGED_SKILLS[@]}"; do
-  assert_symlink_target "${fresh_skills}/${skill_name}" "codev/${skill_name}"
+  assert_symlink_target "${fresh_skills}/${skill_name}" "codev/skills/${skill_name}"
 done
 
 conflict_home="${TMP_ROOT}/conflict-home"

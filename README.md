@@ -1,6 +1,6 @@
 # Codev Skills
 
-一组面向 Codex 的自定义 skills，用来整理需求、规划实现、验收任务、提交发版，以及对 diff 做语义不变的精简重构。
+一组面向 Codex 的自定义 skills，用来整理需求、规划实现、验收任务、构建项目记忆体系、提交发版，以及对 diff 做语义不变的精简重构。
 
 ## 安装
 
@@ -12,17 +12,20 @@ cd codev
 ./setup
 ```
 
-`./setup` 会把当前仓库安装到 `~/.codex/skills/`：
+`./setup` 会把当前仓库安装到 `~/.codex/skills/`，并建立受管 skills 的链接：
 
 ```text
 ~/.codex/skills/
 ├── codev -> /path/to/your/clone
-├── issue2task -> codev/issue2task
-├── plantask -> codev/plantask
-├── checktask -> codev/checktask
-├── simplify -> codev/simplify
-└── ships -> codev/ships
+├── memorize -> codev/skills/memorize
+├── issue2task -> codev/skills/issue2task
+├── plantask -> codev/skills/plantask
+├── checktask -> codev/skills/checktask
+├── simplify -> codev/skills/simplify
+└── ships -> codev/skills/ships
 ```
+
+`setup` 目前受管的 skill 列表是 `memorize`、`issue2task`、`plantask`、`checktask`、`simplify`、`ships`。
 
 ## 调用方式
 
@@ -37,6 +40,7 @@ Codex skills 支持两种常见使用方式：
 
 ```text
 $issue2task 42
+$memorize
 $plantask T05
 $checktask
 $ships
@@ -47,17 +51,18 @@ $simplify
 ## 典型工作流
 
 1. 在 GitHub 上创建或整理 issue。
-2. 用 `$issue2task` 分析 issue、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
-3. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
-4. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
-5. 用 `$checktask` 逐项核对验收标准，更新 checklist；如果用户在执行过程中改动了实现，导致 task 文档与实际结果漂移，则以已验证的实际结果为准同步任务文档，并在流程末尾自动对本次相关 diff 做一次语义不变的精简，再按最新已验证内容更新 `memory/` 与 `docs/`；全部通过后归档到 `tasks/done/`。
-6. 需要提交时用 `$ships` 提交并推送。
-7. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
-8. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
+2. 新项目或已有项目需要补齐/刷新 `AGENTS.md` 与 `memory/` 时，用 `$memorize` 先建立 Codex 的项目记忆体系。
+3. 用 `$issue2task` 分析 issue、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
+4. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
+5. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
+6. 用 `$checktask` 逐项核对验收标准，更新 checklist；如果用户在执行过程中改动了实现，导致 task 文档与实际结果漂移，则以已验证的实际结果为准同步任务文档，并在流程末尾自动对本次相关 diff 做一次语义不变的精简，再按最新已验证内容更新 `memory/` 与 `docs/`；全部通过后归档到 `tasks/done/`。
+7. 需要提交时用 `$ships` 提交并推送。
+8. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
+9. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
 
-## 项目文档约定
+## 下游项目文档约定
 
-所有基于这组 skill 的项目，默认都应具备三类文档目录：
+所有基于这组 skill 的下游项目，默认都应具备三类文档目录：
 
 - `tasks/`：管理工作任务。这部分已经由 `issue2task`、`plantask`、`checktask` 这套流程直接消费和维护。
 - `memory/`：管理面向 Codex 的检索型项目记忆，并与根目录的 `AGENTS.md` 一起构成项目记忆系统。`AGENTS.md` 负责高优先级规则、默认工作方式和最短入口；`memory/` 负责按主题组织长期知识、约束、排查路径和模块落点。Codex 了解项目，主要依赖这套记忆系统和具体代码，而不是依赖面向人类的说明文档。
@@ -71,20 +76,23 @@ $simplify
 - 维护原则上，尽量不要在两处重复堆文案：能放在 `AGENTS.md` 的，应当是全局规则；需要按主题展开、未来会持续补充的，再放进 `memory/`。
 - 使用方式上，Codex 应优先依赖 `AGENTS.md`、`memory/` 和实际代码理解项目；`docs/` 主要服务人类沟通，不承担默认机器记忆入口的职责。
 
-推荐结构：
+下游项目推荐结构：
 
 ```text
 project/
 ├── AGENTS.md
-├── tasks/
 ├── memory/
-└── docs/
+├── skills/
+├── setup
+├── test/
+└── README.md
 ```
 
 ## Skills 一览
 
 | Skill | 调用 | 说明 |
 |------|------|------|
+| `memorize` | `$memorize` | 为项目构建或刷新 `AGENTS.md` 与 `memory/` 记忆体系 |
 | `issue2task` | `$issue2task` | 从 GitHub issues 生成带依赖关系的任务文件 |
 | `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案，并在结尾收口到“开始实现/继续讨论” |
 | `checktask` | `$checktask` | 验收任务、更新 checklist、同步相关文档、归档已完成任务 |
@@ -92,6 +100,26 @@ project/
 | `simplify` | `$simplify` | 供 `checktask` 内部复用，或在无 task 时单独精简给定 diff |
 
 ## Skill 说明
+
+### memorize
+
+为新项目建立或为已有项目刷新面向 Codex 的记忆体系。它会系统分析项目结构，围绕根目录的 `AGENTS.md` 和 `memory/` 建立 Codex 的上手路径、问题路由、系统边界和更新落点；如果仓库里存在 `CLAUDE.md`，会把其中对 Codex 有价值的内容合并进 `AGENTS.md`，并把 `CLAUDE.md` 收敛成跳转语。
+
+常见用法：
+
+```text
+$memorize
+```
+
+适用场景：
+
+- 新项目第一次补齐 Codex 记忆系统
+- 仓库结构变化后刷新 `AGENTS.md` 和 `memory/`
+- 想让新来的 Codex session 最快熟悉项目
+- 需要重建“先读什么、问题去哪找、改动该落哪”的导航
+- 需要把 `CLAUDE.md` 的有效内容合并进 `AGENTS.md`
+
+默认会优先识别项目根目录、主要入口、共享层、业务层、调试入口和部署入口，再把这些信息整理成简短、可检索、可持续更新的文档结构。
 
 ### issue2task
 
@@ -178,10 +206,11 @@ $simplify
 最小目录结构如下：
 
 ```text
-my-skill/
-├── SKILL.md
-└── agents/
-    └── openai.yaml   # 可选
+skills/
+└── my-skill/
+    ├── SKILL.md
+    └── agents/
+        └── openai.yaml   # 可选
 ```
 
 `SKILL.md` 最小模板：
@@ -216,3 +245,4 @@ policy:
 - `description` 既要描述能力，也要描述“什么时候使用它”。
 - 推荐 `display_name` 直接使用原始 skill 名；`short_description` 和 `default_prompt` 可继续使用中文。
 - `allow_implicit_invocation: false` 表示这个 skill 只适合显式调用。
+- 新 skill 默认放在 `skills/` 下，仓库根目录只保留仓库级文件、`memory/` 和测试。

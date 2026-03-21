@@ -4,7 +4,7 @@ set -euo pipefail
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SKILLS_DIR="${HOME}/.codex/skills"
-MANAGED_SKILLS=(issue2task plantask checktask simplify ships)
+MANAGED_SKILLS=(memorize issue2task plantask checktask simplify ships)
 
 die() {
   echo "codev setup failed: $*" >&2
@@ -30,7 +30,7 @@ done
 ln -snf "$REPO_ROOT" "${SKILLS_DIR}/${PROJECT_NAME}"
 
 for skill_name in "${MANAGED_SKILLS[@]}"; do
-  ln -snf "${PROJECT_NAME}/${skill_name}" "${SKILLS_DIR}/${skill_name}"
+  ln -snf "${PROJECT_NAME}/skills/${skill_name}" "${SKILLS_DIR}/${skill_name}"
 done
 
 echo "codev ready."
