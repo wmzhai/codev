@@ -24,7 +24,7 @@ cd codex-dev
 └── ships -> codex-dev/ships
 ```
 
-如果检测到旧布局是“直接把整个仓库放进 `~/.codex/skills`”，`./setup` 会自动迁移并清理这套旧安装留下的 `.git`、`README.md`、`.gitignore` 以及本项目旧 skill 目录；不会删除 `.system`、`gstack`、`gstack-*` 或其他无关条目。
+如果检测到旧布局是“直接把整个仓库放进 `~/.codex/skills`”，`./setup` 会自动迁移并清理这套旧安装留下的 `.git`、说明文件、`.gitignore` 以及本项目旧 skill 目录；不会删除 `.system`、`gstack`、`gstack-*` 或其他无关条目。
 
 ## 调用方式
 
@@ -50,8 +50,8 @@ $simplify
 
 1. 在 GitHub 上创建或整理 issue。
 2. 用 `$issue2task` 分析 issue、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
-3. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案。
-4. 按方案实现并迭代。
+3. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
+4. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
 5. 用 `$checktask` 逐项核对验收标准，更新 checklist，并在流程末尾自动对本次相关 diff 做一次语义不变的精简；全部通过后归档到 `tasks/done/`。
 6. 需要提交时用 `$ships` 提交并推送。
 7. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
@@ -62,7 +62,7 @@ $simplify
 | Skill | 调用 | 说明 |
 |------|------|------|
 | `issue2task` | `$issue2task` | 从 GitHub issues 生成带依赖关系的任务文件 |
-| `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案 |
+| `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案，并在结尾收口到“开始实现/继续讨论” |
 | `checktask` | `$checktask` | 验收任务、更新 checklist、归档已完成任务 |
 | `ships` | `$ships` | 提交并推送当前分支，可选创建 release tag |
 | `simplify` | `$simplify` | 供 `checktask` 内部复用，或在无 task 时单独精简给定 diff |
@@ -84,9 +84,8 @@ $issue2task --label backend
 产出通常包括：
 
 - `tasks/Txx-*.md`
-- `tasks/README.md`
 
-这个 skill 关注需求整理和任务拆分，不负责实现方案设计。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问。
+这个 skill 关注需求整理和任务拆分，不负责实现方案设计。`tasks/` 里不需要额外索引，任务文件名本身就是索引。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问。
 
 ### plantask
 
@@ -99,7 +98,7 @@ $plantask
 $plantask T05
 ```
 
-这个 skill 只做规划，不会改代码。默认应一次性给出可执行方案，而不是把“等你确认实现方向”当成常规中间步骤。
+这个 skill 本轮只做规划，不会直接改代码。默认应一次性给出可执行方案，并在结尾主动问用户是接受后开始实现，还是继续讨论；用户接受后，下一轮直接进入实现，不需要重新把改动要求再说一遍。
 
 ### checktask
 
