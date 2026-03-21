@@ -39,26 +39,27 @@ Codex skills 支持两种常见使用方式：
 示例：
 
 ```text
-$issue2task 42
 $memorize
+$issue2task 42
 $plantask T05
 $checktask
+$memorize
 $ships
 $ships v1.2.3
-$simplify
 ```
 
 ## 典型工作流
 
-1. 在 GitHub 上创建或整理 issue。
-2. 新项目或已有项目需要补齐/刷新 `AGENTS.md` 与 `memory/` 时，用 `$memorize` 先建立 Codex 的项目记忆体系。
+1. 在开始本轮工作前，先用 `$memorize` 建立或刷新 Codex 的项目记忆体系。
+2. 在 GitHub 上创建或整理 issue。
 3. 用 `$issue2task` 分析 issue、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
 4. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
 5. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
 6. 用 `$checktask` 逐项核对验收标准，更新 checklist；如果用户在执行过程中改动了实现，导致 task 文档与实际结果漂移，则以已验证的实际结果为准同步任务文档，并在流程末尾自动对本次相关 diff 做一次语义不变的精简，再按最新已验证内容更新 `memory/` 与 `docs/`；全部通过后归档到 `tasks/done/`。
-7. 需要提交时用 `$ships` 提交并推送。
-8. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
-9. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
+7. 如果 `$checktask` 之后项目结构、约束或导航有变化，再用 `$memorize` 刷新一次记忆体系。
+8. 需要提交时用 `$ships` 提交并推送。
+9. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
+10. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
 
 ## 下游项目文档约定
 
@@ -181,7 +182,7 @@ $ships v1.0.0-rc1
 
 ### simplify
 
-针对给定 diff 做语义不变的精简重构，目标是降低嵌套、去重、改进局部命名、使用更惯用的写法，但不改变行为、不引入依赖、不改 API。它主要作为 `checktask` 的内部步骤存在；没有 task 时也可以单独使用。默认直接落地最小修改，并只返回简短摘要，不打印完整 patch 或大段源码。
+针对给定 diff 做语义不变的精简重构，目标是降低嵌套、去重、改进局部命名、使用更惯用的写法，但不改变行为、不引入依赖、不改 API。它通常作为 `checktask` 的内部步骤自动执行；只有想单独精简某个 patch 时才显式调用。默认直接落地最小修改，并只返回简短摘要，不打印完整 patch 或大段源码。
 
 常见用法：
 
