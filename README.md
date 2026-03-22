@@ -41,6 +41,7 @@ Codex skills 支持两种常见使用方式：
 ```text
 $memorize
 $issue2task 42
+$issue2task 修复结算页在空购物车时的 500 报错，并补齐空状态
 $plantask T05
 $checktask
 $memorize
@@ -52,7 +53,7 @@ $ships v1.2.3
 
 1. 在开始本轮工作前，先用 `$memorize` 建立或刷新 Codex 的项目记忆体系。
 2. 在 GitHub 上创建或整理 issue。
-3. 用 `$issue2task` 分析 issue、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
+3. 用 `$issue2task` 分析 issue 或直接需求描述、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
 4. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
 5. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
 6. 用 `$checktask` 逐项核对验收标准，更新 checklist；如果用户在执行过程中改动了实现，导致 task 文档与实际结果漂移，则以已验证的实际结果为准同步任务文档，并在流程末尾自动对本次相关 diff 做一次语义不变的精简，再按最新已验证内容更新 `memory/` 与 `docs/`；全部通过后归档到 `tasks/done/`。
@@ -94,7 +95,7 @@ project/
 | Skill | 调用 | 说明 |
 |------|------|------|
 | `memorize` | `$memorize` | 为项目构建或刷新 `AGENTS.md` 与 `memory/` 记忆体系 |
-| `issue2task` | `$issue2task` | 从 GitHub issues 生成带依赖关系的任务文件 |
+| `issue2task` | `$issue2task` | 从 GitHub issues 或直接需求描述生成带依赖关系的任务文件 |
 | `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案，并在结尾收口到“开始实现/继续讨论” |
 | `checktask` | `$checktask` | 验收任务、更新 checklist、同步相关文档、归档已完成任务 |
 | `ships` | `$ships` | 提交并推送当前分支，可选创建 release tag |
@@ -124,7 +125,7 @@ $memorize
 
 ### issue2task
 
-读取一个或多个 GitHub issue，结合代码现状先自行收敛需求，再生成 `tasks/Txx-*.md`。
+读取一个或多个 GitHub issue，或直接接收用户附带的一段任务描述，结合代码现状先自行收敛需求，再生成 `tasks/Txx-*.md`。任务号默认按 `tasks/` 和 `tasks/done/` 中现有最大编号顺延；如果任务来自 issue，会在任务开头记录 issue 编号。
 
 常见用法：
 
@@ -132,13 +133,14 @@ $memorize
 $issue2task 42
 $issue2task #42
 $issue2task --label backend
+$issue2task 修复结算页在空购物车时的 500 报错，并补齐空状态
 ```
 
 产出通常包括：
 
 - `tasks/Txx-*.md`
 
-这个 skill 关注需求整理和任务拆分，不负责实现方案设计。`tasks/` 里不需要额外索引，任务文件名本身就是索引。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问。
+这个 skill 关注需求整理和任务拆分，不负责实现方案设计。`tasks/` 里不需要额外索引，任务文件名本身就是索引。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问；如果用户在 `$issue2task` 后面直接给了一段自然语言需求，就不会再去查 issue 列表。
 
 ### plantask
 
