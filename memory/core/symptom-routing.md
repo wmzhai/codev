@@ -42,7 +42,7 @@
 - `skills/checktask/SKILL.md`
 
 ## 想做提交或发版
-- `skills/ships/SKILL.md`
+- `skills/checkpoint/SKILL.md`
 - `memory/core/gstack-interoperability.md`
 
 ## 想做语义不变精简

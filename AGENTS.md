@@ -14,7 +14,7 @@
 - `issue2task` 保留 GitHub issue 或直接需求到 `tasks/` 的路径，不消费 gstack 工件。
 - `gstack2task` 负责把 `~/.gstack/projects/` 下的 gstack 工件收敛成 `tasks/`。
 - `plantask`、`checktask`、`simplify` 围绕 repo 内部任务流工作。
-- `ships` 是轻量 `commit/push/tag` fallback；需要 PR、review gate、QA 串联或全局文档同步时，优先使用 gstack `/ship` 与 `/document-release`。
+- `checkpoint` 是轻量 `commit/push` fallback；需要 PR、review gate、QA 串联或全局文档同步时，优先使用 gstack `/ship` 与 `/document-release`。
 
 ## 维护规则
 - 新增或修改 skill 时，先改 `SKILL.md`，再同步 `agents/openai.yaml`，最后回看 `README.md`、`setup` 和 `test/setup-smoke.sh` 是否需要更新。

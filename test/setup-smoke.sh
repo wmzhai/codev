@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SETUP_SCRIPT="${REPO_ROOT}/setup"
-MANAGED_SKILLS=(memorize issue2task gstack2task plantask checktask simplify ships)
+MANAGED_SKILLS=(memorize issue2task gstack2task plantask checktask simplify checkpoint)
 
 fail() {
   echo "FAIL: $*" >&2
@@ -65,6 +65,7 @@ fi
 
 assert_exists "${conflict_skills}/issue2task"
 assert_missing "${conflict_skills}/codev"
+assert_missing "${conflict_skills}/checkpoint"
 assert_missing "${conflict_skills}/ships"
 
 echo "setup smoke tests passed"

@@ -22,7 +22,7 @@
 - `checktask` 默认只更新 `memory/` 和任务直接相关的局部 `docs/`，不要顺手改 repo 级文档。
 - repo 级文档漂移默认交给 gstack `/document-release`。
 - 需要 PR、review gate、覆盖率审计或自动文档同步时，优先 gstack `/ship`。
-- 只有明确需要轻量 `commit/push/tag` 时，才用 codev `ships`。
+- 只有明确需要轻量 `commit/push` 时，才用 codev `checkpoint`。
 
 ## 推荐组合流程
 1. gstack `/office-hours`、`/plan-ceo-review`、`/plan-eng-review`

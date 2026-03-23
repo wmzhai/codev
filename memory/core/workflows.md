@@ -14,7 +14,7 @@
 4. 实现后优先用 gstack `/review`、`/qa` 做结构和浏览器验证
 5. `checktask` 负责关 task、更新 `memory/` 和任务直接相关的局部 `docs/`
 6. 需要 PR、release gate 或 repo 级文档同步时，优先用 gstack `/ship` 和 `/document-release`
-7. 只有明确需要轻量 `commit/push/tag` 时，才用 `ships`
+7. 只有明确需要轻量 `commit/push` 时，才用 `checkpoint`
 
 ## 新增 skill
 1. 创建 skill 目录和 `SKILL.md`

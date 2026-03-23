@@ -19,7 +19,7 @@
 - `gstack2task` 只处理 `~/.gstack/projects/` 下的 gstack 工件，不查询 GitHub issue。
 - 如果 `CLAUDE.md` 承载宿主代理说明、gstack section 或工具约束，`memorize` 只能收敛 repo 事实，不能删掉这些兼容块。
 - `checktask` 可以更新 `memory/` 与任务直接相关的局部 `docs/`，但默认不改 `README.md`、`CHANGELOG`、`VERSION`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS` 这类 repo 级文档。
-- `ships` 是轻量 fallback；仓库接入 gstack 时，默认发布入口应是 gstack `/ship`。
+- `checkpoint` 是轻量 `commit/push` fallback；仓库接入 gstack 时，默认发布入口应是 gstack `/ship`。
 
 ## 验证基线
 - 修改安装链路后，优先跑 `./test/setup-smoke.sh`。

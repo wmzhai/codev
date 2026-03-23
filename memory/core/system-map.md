@@ -12,7 +12,7 @@
 - `skills/plantask/`：围绕任务文件产出实现方案
 - `skills/checktask/`：验收任务、同步 `memory/` 与任务相关文档、归档完成项
 - `skills/simplify/`：语义不变精简 diff
-- `skills/ships/`：轻量提交、推送、发版 fallback
+- `skills/checkpoint/`：轻量提交、推送 fallback
 - `memory/core/gstack-interoperability.md`：说明 codev 和 gstack 的职责边界与组合流程
 
 ## 外部工件边界
