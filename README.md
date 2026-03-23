@@ -36,18 +36,6 @@ cd ~/codev
 ./setup
 ```
 
-安装后会把这些 `codev` skills 链接到 `~/.codex/skills/`：
-
-```text
-memorize
-issue2task
-gstack2task
-plantask
-checktask
-simplify
-checkpoint
-```
-
 ## 最短上手
 
 ### 纯 codev
