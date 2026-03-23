@@ -15,7 +15,7 @@ cd ~/gstack
 ### 再安装 codev
 
 ```bash
-git clone git@github.com:wmzhai/codev.git ~/codev
+git clone https://github.com/wmzhai/codev.git ~/codev
 cd ~/codev
 ./setup
 ```
