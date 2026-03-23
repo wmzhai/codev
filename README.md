@@ -18,15 +18,25 @@
 
 ## 安装
 
-### 安装 codev
+### 先安装 gstack
 
 ```bash
-git clone git@github.com:wmzhai/codev.git
-cd codev
+git clone https://github.com/garrytan/gstack.git ~/gstack
+cd ~/gstack
+./setup --host codex
+```
+
+安装后统一使用 Codex 风格命令：`$office-hours`、`$plan-ceo-review`、`$plan-design-review`、`$plan-eng-review`、`$review`、`$qa`、`$ship`。
+
+### 再安装 codev
+
+```bash
+git clone git@github.com:wmzhai/codev.git ~/codev
+cd ~/codev
 ./setup
 ```
 
-安装后会把这些 skills 链接到 `~/.codex/skills/`：
+安装后会把这些 `codev` skills 链接到 `~/.codex/skills/`：
 
 ```text
 memorize
@@ -37,30 +47,6 @@ checktask
 simplify
 checkpoint
 ```
-
-### 可选：安装 gstack
-
-如果你还想用 `$office-hours`、`$plan-ceo-review`、`$plan-design-review`、`$plan-eng-review`、`$review`、`$qa`、`$ship` 这些上游/发布流程，再装 `gstack`：
-
-```bash
-git clone https://github.com/garrytan/gstack.git ~/gstack
-cd ~/gstack
-./setup --host codex
-```
-
-如果你想把 `gstack` 跟项目一起放进仓库，也可以放到 repo 内的 `.agents/skills/gstack/` 后再运行：
-
-```bash
-cd /path/to/your/project
-git clone https://github.com/garrytan/gstack.git .agents/skills/gstack
-cd .agents/skills/gstack
-./setup --host codex
-```
-
-说明：
-
-- 这里统一使用 Codex 风格命令：`$review`、`$qa`、`$ship`
-- 不再使用 Claude 风格的 `/review`、`/qa`、`/ship`
 
 ## 最短上手
 
