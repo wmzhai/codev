@@ -12,8 +12,6 @@ cd ~/gstack
 ./setup --host codex
 ```
 
-安装后统一使用 Codex 风格命令：`$office-hours`、`$plan-ceo-review`、`$plan-design-review`、`$plan-eng-review`、`$review`、`$qa`、`$ship`。
-
 ### 再安装 codev
 
 ```bash
