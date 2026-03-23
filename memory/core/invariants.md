@@ -4,6 +4,7 @@
 - `setup` 必须把 `codev` 本身链接到 `~/.codex/skills/codev`。
 - 受管 skills 必须通过 `setup` 一次性链接，不手工散装维护。
 - `test/setup-smoke.sh` 必须覆盖受管 skills 的链接列表。
+- `gstack2task` 属于受管 skills，新增后必须和其它 skills 一样进入 `setup` 与 smoke test。
 
 ## 目录约束
 - `skills/<name>/` 目录名必须和 `SKILL.md` 的 `name` 一致。
@@ -14,6 +15,11 @@
 - `SKILL.md` 的 `description` 必须同时说明“做什么”和“什么时候用”。
 - 新增 skill 时，README、setup、smoke test 必须同步。
 - `memorize` 的职责是建立或刷新 `AGENTS.md` 与 `memory/`，不负责业务逻辑。
+- `issue2task` 只处理 GitHub issue 或用户直接需求，不读取 `~/.gstack/projects/`。
+- `gstack2task` 只处理 `~/.gstack/projects/` 下的 gstack 工件，不查询 GitHub issue。
+- 如果 `CLAUDE.md` 承载宿主代理说明、gstack section 或工具约束，`memorize` 只能收敛 repo 事实，不能删掉这些兼容块。
+- `checktask` 可以更新 `memory/` 与任务直接相关的局部 `docs/`，但默认不改 `README.md`、`CHANGELOG`、`VERSION`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS` 这类 repo 级文档。
+- `ships` 是轻量 fallback；仓库接入 gstack 时，默认发布入口应是 gstack `/ship`。
 
 ## 验证基线
 - 修改安装链路后，优先跑 `./test/setup-smoke.sh`。

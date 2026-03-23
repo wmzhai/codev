@@ -1,6 +1,6 @@
 # Codev Skills
 
-一组面向 Codex 的自定义 skills，用来整理需求、规划实现、验收任务、构建项目记忆体系、提交发版，以及对 diff 做语义不变的精简重构。
+一组面向 Codex 的自定义 skills，用来管理开发过程内部细节：整理需求、把上游规划落成任务、规划实现、验收任务、构建项目记忆体系、提交轻量发布，以及对 diff 做语义不变的精简重构。默认可单独使用，也可以和 gstack 搭配工作。
 
 ## 安装
 
@@ -19,13 +19,14 @@ cd codev
 ├── codev -> /path/to/your/clone
 ├── memorize -> codev/skills/memorize
 ├── issue2task -> codev/skills/issue2task
+├── gstack2task -> codev/skills/gstack2task
 ├── plantask -> codev/skills/plantask
 ├── checktask -> codev/skills/checktask
 ├── simplify -> codev/skills/simplify
 └── ships -> codev/skills/ships
 ```
 
-`setup` 目前受管的 skill 列表是 `memorize`、`issue2task`、`plantask`、`checktask`、`simplify`、`ships`。
+`setup` 目前受管的 skill 列表是 `memorize`、`issue2task`、`gstack2task`、`plantask`、`checktask`、`simplify`、`ships`。
 
 ## 调用方式
 
@@ -41,8 +42,10 @@ Codex skills 支持两种常见使用方式：
 ```text
 $memorize
 $issue2task
+$gstack2task
 $issue2task 42
 $issue2task 修复结算页在空购物车时的 500 报错，并补齐空状态
+$gstack2task ~/.gstack/projects/my-project/diweiming-main-implementation-plan-20260322-105643.md
 $plantask T05
 $checktask
 $memorize
@@ -50,18 +53,360 @@ $ships
 $ships v1.2.3
 ```
 
-## 典型工作流
+## 两种工作流
 
-1. 在开始本轮工作前，先用 `$memorize` 建立或刷新 Codex 的项目记忆体系。
-2. 在 GitHub 上创建或整理 issue。
-3. 用 `$issue2task` 分析 issue 或直接需求描述、阅读相关代码、澄清需求，并生成 `tasks/` 下的任务文件。
-4. 用 `$plantask` 读取待办任务，结合代码现状产出详细实现方案，并在结尾主动询问用户是接受后进入实现，还是继续讨论。
-5. 用户接受方案后，直接按方案实现并迭代；如果用户有疑问或想改范围，则继续讨论后再定。
-6. 用 `$checktask` 逐项核对验收标准，更新 checklist；如果用户在执行过程中改动了实现，导致 task 文档与实际结果漂移，则以已验证的实际结果为准同步任务文档，并在流程末尾自动对本次相关 diff 做一次语义不变的精简，再按最新已验证内容更新 `memory/` 与 `docs/`；全部通过后归档到 `tasks/done/`。
-7. 如果 `$checktask` 之后项目结构、约束或导航有变化，再用 `$memorize` 刷新一次记忆体系。
-8. 需要提交时用 `$ships` 提交并推送。
-9. 没有 task，或需要单独精简某次 patch 时，用 `$simplify` 对 diff 做语义不变的重构。
-10. 需要发版时，用 `$ships vX.Y.Z` 或 `$ships vX.Y.Z-rcN`。
+`codev` 有两条推荐主线：
+
+- 纯 `codev`：适合老项目、需求已经比较明确、只想在 repo 内管理任务与记忆，不依赖 gstack。
+- `codev + gstack` 协同：适合还需要上游问题定义、设计/工程评审、test plan、QA、PR gate 和 repo 级文档同步的项目。
+
+### 纯 codev 工作流
+
+这条线可以完全脱离 gstack 运行。
+
+- 不依赖 `~/.gstack/projects/`
+- 不依赖 `/office-hours`、`/plan-*`、`/qa`、`/ship`
+- 任务入口统一走 `$issue2task`
+- 验证主要依赖项目现有测试、人工验收和 `$checktask`
+- 发布默认走 `$ships`
+
+#### 默认主线流程
+
+```text
+$memorize
+  ├─ writes AGENTS.md
+  └─ writes memory/
+       ├─→ $issue2task
+       ├─→ $plantask
+       └─→ $checktask
+  ↓
+$issue2task
+  ├─ reads GitHub issue / 用户直接需求
+  └─ writes tasks/Txx-*.md + switches to a new branch
+       └─→ $plantask
+  ↓
+$plantask
+  ├─ reads tasks/Txx-*.md
+  └─ outputs implementation plan in-chat
+  ↓
+实现 + 项目内测试 / 人工验证
+  ↓
+$checktask
+  ├─ reads tasks/Txx-*.md + code + 必要测试结果
+  ├─ writes tasks/done/Txx-*.md
+  └─ updates memory/ + 与本 task 直接相关的局部 docs/
+  ↓
+$memorize   (仅当结构、导航、约束真的变了)
+  ├─ refreshes AGENTS.md
+  └─ refreshes memory/
+  ↓
+$ships
+  ├─ commits current branch
+  ├─ pushes current branch
+  └─ may create/push tag
+```
+
+#### 适用场景
+
+- 老项目，没有 gstack 使用习惯
+- 需求已经在 GitHub issue 或口头描述里比较明确
+- 你只想把需求压成 `tasks/`，做实现规划、验收和轻量发布
+- 这次变更不需要额外的产品评审、设计评审、test plan 或 PR gate
+
+#### 这条线的边界
+
+- `codev` 会负责 `tasks/`、`AGENTS.md`、`memory/` 和任务收口
+- `codev` 不会替代 gstack 产出 feature 级 design doc、test plan、QA 报告或 PR review gate
+- 如果后续某个需求需要更重的 planning 或 QA，可以从这条线切换到下面的协同工作流，不冲突
+
+### codev + gstack 协同工作流
+
+当两个仓库一起用时，推荐把它们视为两层系统：
+
+- gstack：负责上游问题定义、产品/设计/工程评审、测试计划、QA、ship、repo 级人类文档同步。
+- codev：负责把上游输入压成 `tasks/`、围绕 `tasks/` 做实现规划与验收、维护 `AGENTS.md` 与 `memory/`。
+
+#### 先记住的硬依赖
+
+- `/office-hours` 产出的 design doc 是 `/plan-ceo-review` 和 `/plan-eng-review` 最重要的上游输入。没有 design doc 时，这两个 skill 都会先建议你回去跑 `/office-hours`。
+- `/design-consultation` 会写 `DESIGN.md`；`/plan-design-review` 会用 `DESIGN.md` 校准设计决策。对“新 UI / 还没有设计系统”的项目，推荐顺序是先 `/design-consultation`，再 `/plan-design-review`。
+- `/plan-eng-review` 会把 test plan 写到 `~/.gstack/projects/`；`/qa` 和 `/qa-only` 会优先消费这份 test plan，而不是只靠 git diff 猜。
+- `/ship` 会在创建 PR 后自动调用 `/document-release`；如果你已经决定走 gstack `/ship`，通常就不需要再手工单独跑 `/document-release`。
+- `issue2task` 和 `gstack2task` 是两个平行入口，不互相替代：
+  - GitHub issue 或直接需求：`$issue2task`
+  - `~/.gstack/projects/` 下的 design doc / test plan / handoff：`$gstack2task`
+
+#### 默认主线流程
+
+下图把“步骤”和“文件工件”拆开画；凡是单独列出来的路径，都是后续步骤会实际读取的输入。
+
+```text
+$memorize
+  ├─ writes AGENTS.md
+  └─ writes memory/
+       ├─→ $gstack2task
+       ├─→ $plantask
+       └─→ $checktask
+  ↓
+/office-hours
+  └─ writes ~/.gstack/projects/<slug>/*-design-*.md
+       ├─→ /plan-ceo-review
+       ├─→ /plan-eng-review
+       └─→ $gstack2task
+  ↓
+/plan-ceo-review
+  ├─ reads ~/.gstack/projects/<slug>/*-design-*.md
+  ├─ appends ~/.gstack/analytics/review-log.jsonl
+  └─ may write ~/.gstack/projects/<slug>/<user>-<branch>-ceo-handoff-<datetime>.md
+       └─→ /plan-ceo-review   (仅中断后恢复时回读)
+  ↓
+[有 UI 吗?]
+  ├─ 否 → 跳过设计支线
+  └─ 是
+      ↓
+      [已有 DESIGN.md 吗?]
+        ├─ 否 → /design-consultation
+        │       ├─ writes DESIGN.md
+        │       └─ updates CLAUDE.md
+        │            ├─→ /plan-design-review
+        │            ├─→ /design-review
+        │            ├─→ /review
+        │            └─→ /ship
+        └─ 是 → 直接沿用现有 DESIGN.md + CLAUDE.md
+      ↓
+      /plan-design-review
+        ├─ reads 当前 plan + DESIGN.md + CLAUDE.md + TODOS.md
+        ├─ edits 当前 plan 文件
+        └─ appends ~/.gstack/analytics/review-log.jsonl
+             └─→ /ship   (review readiness gate)
+  ↓
+/plan-eng-review
+  ├─ reads ~/.gstack/projects/<slug>/*-design-*.md
+  ├─ reads 已收敛后的当前 plan
+  ├─ writes ~/.gstack/projects/<slug>/*-test-plan-*.md
+  │    ├─→ /qa
+  │    ├─→ /qa-only
+  │    └─→ $gstack2task
+  └─ appends ~/.gstack/analytics/review-log.jsonl
+       └─→ /ship   (review readiness gate)
+  ↓
+$gstack2task  或  $issue2task
+  ├─ $gstack2task reads ~/.gstack/projects/<slug>/*-design-*.md
+  ├─ $gstack2task reads ~/.gstack/projects/<slug>/*-test-plan-*.md
+  ├─ $gstack2task may read ~/.gstack/projects/<slug>/*-implementation-plan-*.md
+  ├─ $issue2task reads GitHub issue / 用户直接需求
+  └─ writes tasks/Txx-*.md + switches to a new branch
+       └─→ $plantask
+  ↓
+$plantask
+  ├─ reads tasks/Txx-*.md
+  └─ outputs implementation plan in-chat
+  ↓
+实现
+  ├─ 遇到根因不清的 bug → /investigate
+  ├─ 有已实现 UI 要做视觉审查 → /design-review
+  │    ├─ reads DESIGN.md   (if present)
+  │    └─ writes .gstack/design-reports/...
+  ├─ 结构与风险审查 → /review
+  │    ├─ reads current diff (+ DESIGN.md if present)
+  │    └─ appends ~/.gstack/analytics/review-log.jsonl
+  │         └─→ /ship   (review readiness gate)
+  └─ 浏览器验证 → /qa 或 /qa-only
+       ├─ reads ~/.gstack/projects/<slug>/*-test-plan-*.md
+       ├─ writes .gstack/qa-reports/qa-report-{domain}-{YYYY-MM-DD}.md
+       └─ writes .gstack/qa-reports/screenshots/
+  ↓
+$checktask
+  ├─ reads tasks/Txx-*.md + code + 必要测试结果
+  ├─ writes tasks/done/Txx-*.md
+  └─ updates memory/ + 与本 task 直接相关的局部 docs/
+  ↓
+$memorize   (仅当结构、导航、约束真的变了)
+  ├─ refreshes AGENTS.md
+  └─ refreshes memory/
+  ↓
+/ship
+  ├─ reads ~/.gstack/analytics/review-log.jsonl
+  ├─ reads ~/.gstack/projects/<slug>/<branch>-reviews.jsonl
+  ├─ creates PR
+  └─ auto /document-release
+       └─ updates README.md / CHANGELOG / VERSION / CLAUDE.md / CONTRIBUTING.md / TODOS ...
+  ↓
+/retro
+```
+
+#### 详细执行顺序与依赖链
+
+#### 1. 建立 repo 记忆层
+
+先跑 `$memorize`。
+
+- 目标：让当前项目的 `AGENTS.md` 与 `memory/` 追上真实代码状态。
+- 产物：repo 内长期记忆层。
+- 为什么先做：后面的 `gstack2task`、`plantask`、`checktask` 都要依赖这层 repo 事实。
+
+#### 2. 先做 feature 级问题定义
+
+对新功能或范围还没锁定的变更，先跑 gstack `/office-hours`。
+
+- 产物：`~/.gstack/projects/<slug>/*-design-*.md`
+- 下游依赖：`/plan-ceo-review`、`/plan-eng-review`
+- 说明：这份 design doc 是“这个 feature 为什么存在、边界是什么”的源头，不是 repo 级长期文档。
+
+#### 3. 先锁 scope，再锁设计，再锁工程
+
+这一段不要写反。
+
+1. `/plan-ceo-review`
+   - 输入：`/office-hours` 的 design doc
+   - 输出：更稳定的产品边界、scope 决策、review readiness 记录
+   - 为什么先做：如果 scope 还会被放大/收缩，后面的设计和工程规划都容易返工
+
+2. `/design-consultation`
+   - 只在“有 UI 且还没有 `DESIGN.md`”时进入这步
+   - 输出：repo 根目录 `DESIGN.md`
+   - 为什么在 `/plan-design-review` 前：`/plan-design-review` 的逻辑会先检查 `DESIGN.md`，没有它时只能退化为按通用设计原则审查；对新 UI 项目，这不是推荐主线
+
+3. `/plan-design-review`
+   - 输入：当前 plan + `DESIGN.md`（如果存在）
+   - 输出：被补齐过交互状态、层级、响应式和 AI slop 风险的 plan
+   - 说明：这是“计划内的设计审查”，不是上线后的视觉 QA
+
+4. `/plan-eng-review`
+   - 输入：design doc + 已经稳定下来的 plan
+   - 输出：工程审查结果 + `~/.gstack/projects/<slug>/*-test-plan-*.md`
+   - 为什么放在最后：它产出的 test plan 应该覆盖已经过 CEO 和设计收敛后的最终 plan；否则 `/qa` 测的就不是最终版本
+
+如果是纯后端或无 UI 范围的变更，可以跳过 `/design-consultation` 和 `/plan-design-review`，直接在 `/plan-ceo-review` 之后进入 `/plan-eng-review`。
+
+#### 4. 把上游规划压成 repo 内 task
+
+这一步由 codev 接手。
+
+- 如果输入源是 GitHub issue 或用户直接需求：`$issue2task`
+- 如果输入源是 `~/.gstack/projects/` 下的 design doc、test plan、handoff：`$gstack2task`
+
+两个 skill 都会：
+
+- 写 `tasks/Txx-*.md`
+- 按当前最大编号顺延
+- 在写 task 前先切到一个新分支
+
+推荐等 plan reviews 稳定后再跑 task 化，不要在上游 scope 还在变时过早写 task。
+
+#### 5. 做单任务实现规划
+
+跑 `$plantask`。
+
+- 输入：repo 内 `tasks/Txx-*.md`
+- 输出：单个 task 的实现顺序、文件落点、验证方案
+- 说明：`plantask` 是“把 task 变成可写代码的实施方案”，不是再做一轮产品讨论
+
+#### 6. 实现期的分支技能
+
+实现阶段不是一条直线，有几个常见分支：
+
+- `/investigate`
+  - 用在 bug 根因不清时
+  - 先查根因，再决定修法
+
+- `/design-review`
+  - 只在“已经有可运行 UI，要做上线前视觉 QA”时使用
+  - 它和 `/plan-design-review` 不是一回事：前者是 live site 审查，后者是 plan mode 审查
+
+- `/review`
+  - 结构性代码审查
+  - 适合在 diff 已经成形后跑一遍，提前暴露 race condition、边界条件、trust boundary 等问题
+
+- `/qa` / `/qa-only`
+  - 浏览器和交互验证
+  - 如果前面跑过 `/plan-eng-review`，这里会优先消费 `~/.gstack/projects/` 下的 test plan
+
+#### 7. 推荐的验证顺序
+
+默认推荐这样排：
+
+1. `/design-review`，仅在 UI-heavy 分支上
+2. `/review`
+3. `/qa` 或 `/qa-only`
+
+但这三者是可回环的，不是一次性线性结束：
+
+- `/design-review` 会提交设计修复 commit
+- `/qa` 也可能提交 bug fix 和 regression test commit
+- 任何会改代码的验证技能，都可能让前面的审查结果变旧
+
+所以正确做法是：
+
+- 把它们当成一个“验证循环”
+- 分支稳定后再进入 `$checktask`
+- 最终由 `/ship` 再做一次发布前 fresh gate
+
+#### 8. 关 task，而不是顺手接管整个 release
+
+跑 `$checktask`。
+
+- 目标：逐条验收 `tasks/`，更新 checkbox，归档到 `tasks/done/`
+- 它会顺带做：
+  - 一次 `simplify` 风格的局部语义不变精简
+  - `memory/` 更新
+  - 与本 task 直接相关的局部 `docs/` 更新
+- 它不会默认接管：
+  - `README.md`
+  - `CHANGELOG`
+  - `VERSION`
+  - `CLAUDE.md`
+  - `CONTRIBUTING.md`
+  - `TODOS`
+
+这些 repo 级文档默认留给 gstack `/document-release`。
+
+#### 9. 只在真的需要时再刷新记忆
+
+如果 task 完成后，repo 结构、约束、导航或落点发生了真实变化，再跑一次 `$memorize`。不要把它当成每次结束都机械追加的一步。
+
+#### 10. 正式发布走 gstack，轻量提交才走 codev
+
+默认发布主线：
+
+1. `/ship`
+2. 自动触发 `/document-release`
+3. `/retro`
+
+这条链会处理：
+
+- review readiness gate
+- fresh test verification
+- PR 创建
+- repo 级文档同步
+- 发布后的回顾
+
+只有在你明确只想做轻量 `commit/push/tag`、不需要 PR、review gate、QA 串联或 repo 级文档同步时，才用 `$ships`。
+
+#### 协同模式下最常见的三种实际走法
+
+#### A. 新功能，且已经用 gstack 做过完整 planning
+
+`$memorize` → `/office-hours` → `/plan-ceo-review` → `(/design-consultation)` → `(/plan-design-review)` → `/plan-eng-review` → `$gstack2task` → `$plantask` → 实现 → `(/design-review)` → `/review` → `/qa` → `$checktask` → `($memorize)` → `/ship` → `/retro`
+
+#### B. 需求本来就在 GitHub issue 里
+
+`$memorize` → `$issue2task` → `$plantask` → 实现 → `/review` → `/qa` → `$checktask` → `($memorize)` → `/ship`
+
+#### C. 纯 debug / 修 bug
+
+`$memorize` → `/investigate` → 如需补 task 再走 `$issue2task` 或 `$gstack2task` → `/review` → `/qa` → `$checktask` → `/ship`
+
+## 与 gstack 搭配时的职责边界
+
+推荐把两边的职责固定成两层，不要双写：
+
+- gstack 负责上游产品与工程评审、测试计划、QA、ship、repo 级人类文档同步。
+- codev 负责把需求或 gstack 工件收敛成 `tasks/`、围绕 `tasks/` 做实现规划与验收、维护 `AGENTS.md` 与 `memory/`。
+- `issue2task` 只处理 GitHub issue 或用户直接需求，不读取 `~/.gstack/projects/`。
+- `gstack2task` 只处理 `~/.gstack/projects/` 下的 gstack 工件，不去查询 GitHub issue。
+- `memorize` 维护 repo 事实和 Codex 记忆，但不删除 `CLAUDE.md` 中仍然服务宿主代理或 gstack 的兼容说明。
+- `checktask` 可以更新 `memory/` 和任务直接相关的局部 `docs/`；`README.md`、`CHANGELOG`、`VERSION`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS` 这类 repo 级文档优先交给 gstack `/document-release`。
 
 ## 下游项目文档约定
 
@@ -70,6 +415,7 @@ $ships v1.2.3
 - `tasks/`：管理工作任务。这部分已经由 `issue2task`、`plantask`、`checktask` 这套流程直接消费和维护。
 - `memory/`：管理面向 Codex 的检索型项目记忆，并与根目录的 `AGENTS.md` 一起构成项目记忆系统。`AGENTS.md` 负责高优先级规则、默认工作方式和最短入口；`memory/` 负责按主题组织长期知识、约束、排查路径和模块落点。Codex 了解项目，主要依赖这套记忆系统和具体代码，而不是依赖面向人类的说明文档。
 - `docs/`：管理给人类阅读的说明文档，例如背景介绍、设计说明、使用手册、对外文档等。正常情况下 agent 不需要把它作为默认阅读入口。
+- 如果项目已接入 gstack，`~/.gstack/projects/` 下的 design doc、handoff、test plan 是 repo 外的上游工件，不应手工复制到 `memory/`；需要转成 repo 内执行单元时，走 `$gstack2task` 写入 `tasks/`。
 
 `AGENTS.md` 和 `memory/` 的配合方式建议如下：
 
@@ -84,7 +430,10 @@ $ships v1.2.3
 ```text
 project/
 ├── AGENTS.md
+├── CLAUDE.md
+├── tasks/
 ├── memory/
+├── docs/
 ├── skills/
 ├── setup
 ├── test/
@@ -97,16 +446,17 @@ project/
 |------|------|------|
 | `memorize` | `$memorize` | 为项目构建或刷新 `AGENTS.md` 与 `memory/` 记忆体系 |
 | `issue2task` | `$issue2task` | 从 GitHub issues 或直接需求描述生成带依赖关系的任务文件 |
+| `gstack2task` | `$gstack2task` | 从 `~/.gstack/projects/` 下的 gstack 工件生成任务文件 |
 | `plantask` | `$plantask` | 基于任务文件和代码现状输出实现方案，并在结尾收口到“开始实现/继续讨论” |
-| `checktask` | `$checktask` | 验收任务、更新 checklist、同步相关文档、归档已完成任务 |
-| `ships` | `$ships` | 提交并推送当前分支，可选创建 release tag |
+| `checktask` | `$checktask` | 验收任务、更新 checklist、同步 `memory/` 与任务相关文档、归档已完成任务 |
+| `ships` | `$ships` | 轻量提交并推送当前分支，可选创建 release tag |
 | `simplify` | `$simplify` | 供 `checktask` 内部复用，或在无 task 时单独精简给定 diff |
 
 ## Skill 说明
 
 ### memorize
 
-为新项目建立或为已有项目刷新面向 Codex 的记忆体系。它会系统分析项目结构，围绕根目录的 `AGENTS.md` 和 `memory/` 建立 Codex 的上手路径、问题路由、系统边界和更新落点；如果仓库里存在 `CLAUDE.md`，会把其中对 Codex 有价值的内容合并进 `AGENTS.md`，并把 `CLAUDE.md` 收敛成跳转语。
+为新项目建立或为已有项目刷新面向 Codex 的记忆体系。它会系统分析项目结构，围绕根目录的 `AGENTS.md` 和 `memory/` 建立 Codex 的上手路径、问题路由、系统边界和更新落点；如果仓库里存在 `CLAUDE.md`，会把其中对 Codex 有价值的 repo 事实合并进 `AGENTS.md`，但保留仍然服务 Claude、gstack 或其它宿主代理的兼容块。
 
 `memorize` 默认使用简体中文生成或刷新相关项目文档，避免把 `AGENTS.md`、`memory/` 或收敛后的 `CLAUDE.md` 写成英文默认稿。
 
@@ -122,7 +472,7 @@ $memorize
 - 仓库结构变化后刷新 `AGENTS.md` 和 `memory/`
 - 想让新来的 Codex session 最快熟悉项目
 - 需要重建“先读什么、问题去哪找、改动该落哪”的导航
-- 需要把 `CLAUDE.md` 的有效内容合并进 `AGENTS.md`
+- 需要把 `CLAUDE.md` 的 repo 事实合并进 `AGENTS.md`，同时保留宿主或 gstack 的兼容说明
 
 默认会优先识别项目根目录、主要入口、共享层、业务层、调试入口和部署入口，再把这些信息整理成简短、可检索、可持续更新的文档结构。
 
@@ -147,6 +497,20 @@ $issue2task 修复结算页在空购物车时的 500 报错，并补齐空状态
 
 这个 skill 关注需求整理和任务拆分，不负责实现方案设计。`tasks/` 里不需要额外索引，任务文件名本身就是索引。默认会直接写出可交接的任务文件，只有阻塞性歧义才会中途提问；如果用户在 `$issue2task` 后面直接给了一段自然语言需求，就不会再去查 issue 列表；如果用户完全不带参数，则默认只处理当前仓库编号最小的 open issue，而不是批量处理全部 open issues。
 
+### gstack2task
+
+读取 `~/.gstack/projects/` 下与当前仓库相关的 design doc、implementation handoff、test plan 等工件，收敛成可执行的 `tasks/Txx-*.md`。
+
+常见用法：
+
+```text
+$gstack2task
+$gstack2task wyckoff
+$gstack2task ~/.gstack/projects/wyckoff/diweiming-main-implementation-plan-20260322-105643.md
+```
+
+这个 skill 负责把 gstack 的上游规划压成 repo 内部任务，不查询 GitHub issue。默认优先读取当前仓库、当前分支下最新的 implementation handoff，再补充 test plan、design doc、CEO handoff 等上下文；如果 gstack 工件里已经有明确的实现边界和验证路径，应直接收敛到 `tasks/`，而不是重复做一轮高层产品讨论。
+
 ### plantask
 
 读取 `tasks/` 中的待办任务，检查依赖是否完成，深入相关代码，输出可直接实施的计划。
@@ -162,7 +526,7 @@ $plantask T05
 
 ### checktask
 
-逐项核对任务文件中的验收标准，更新通过项的 checkbox；如果执行过程中实现已经变化，以已验证的实际结果同步任务文档；在流程末尾最多自动对本次相关 diff 做一次语义不变的精简，并按最新已验证内容更新 `memory/` 与 `docs/`；全部通过时归档到 `tasks/done/`。
+逐项核对任务文件中的验收标准，更新通过项的 checkbox；如果执行过程中实现已经变化，以已验证的实际结果同步任务文档；在流程末尾最多自动对本次相关 diff 做一次语义不变的精简，并按最新已验证内容更新 `memory/` 与任务直接相关的 `docs/`；全部通过时归档到 `tasks/done/`。
 
 常见用法：
 
@@ -171,11 +535,11 @@ $checktask
 $checktask T04
 ```
 
-它会优先做最小侵入验证，只在标准明确要求时运行测试或命令。遇到模糊标准时，应标记为需要人工确认，而不是猜测通过。如果用户在验收过程中修改了实现，导致 task 文案过期，应以已验证的实际结果为准回写相关任务内容，而不是强行要求实现继续贴合旧文案。验收步骤结束后，会在整个流程末尾最多自动调用一次 `simplify` 风格的本地精简，并顺带对与本任务直接相关的 `memory/` 和 `docs/` 做基于已验证事实的同步更新；这里的更新可以是新增、修改，也可以是删除过期内容，但不应扩大成无关的文档整理。
+它会优先做最小侵入验证，只在标准明确要求时运行测试或命令。遇到模糊标准时，应标记为需要人工确认，而不是猜测通过。如果用户在验收过程中修改了实现，导致 task 文案过期，应以已验证的实际结果为准回写相关任务内容，而不是强行要求实现继续贴合旧文案。验收步骤结束后，会在整个流程末尾最多自动调用一次 `simplify` 风格的本地精简，并顺带对与本任务直接相关的 `memory/` 和局部 `docs/` 做基于已验证事实的同步更新；`README.md`、`CHANGELOG`、`VERSION`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS` 这类 repo 级文档默认交给 gstack `/document-release` 维护。
 
 ### ships
 
-提交当前工作区并推送当前分支；如果提供版本号，再创建并推送 tag。
+轻量提交当前工作区并推送当前分支；如果提供版本号，再创建并推送 tag。
 
 常见用法：
 
@@ -186,6 +550,8 @@ $ships v1.0.0-rc1
 ```
 
 `ships` 是显式调用优先的 skill。当前配置下不会默认隐式触发。
+
+如果仓库同时使用 gstack，默认应优先使用 gstack `/ship` 来处理 review gate、PR、测试覆盖和 repo 级文档同步；`$ships` 只适合明确想要轻量 `commit/push/tag` 时使用。
 
 ### simplify
 

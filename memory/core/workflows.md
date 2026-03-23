@@ -3,8 +3,18 @@
 ## 新会话默认动作
 1. 读 `AGENTS.md`
 2. 读 `memory/core/symptom-routing.md`
-3. 按问题进入对应 skill 的 `SKILL.md`
-4. 用 `rg` 定位源码或脚本，再开始改动
+3. 如果仓库同时用 gstack，再读 `memory/core/gstack-interoperability.md`
+4. 按问题进入对应 skill 的 `SKILL.md`
+5. 用 `rg` 定位源码或脚本，再开始改动
+
+## 与 gstack 配合
+1. gstack `/office-hours`、`/plan-ceo-review`、`/plan-eng-review` 先把上游设计、交接和测试计划写到 `~/.gstack/projects/`
+2. GitHub issue 或直接需求走 `issue2task`；gstack 工件走 `gstack2task`
+3. `plantask` 围绕 repo 内 `tasks/` 输出可执行实现方案
+4. 实现后优先用 gstack `/review`、`/qa` 做结构和浏览器验证
+5. `checktask` 负责关 task、更新 `memory/` 和任务直接相关的局部 `docs/`
+6. 需要 PR、release gate 或 repo 级文档同步时，优先用 gstack `/ship` 和 `/document-release`
+7. 只有明确需要轻量 `commit/push/tag` 时，才用 `ships`
 
 ## 新增 skill
 1. 创建 skill 目录和 `SKILL.md`
@@ -24,6 +34,7 @@
 1. 先改对应 `SKILL.md`
 2. 必要时同步 `agents/openai.yaml`
 3. 如果影响触发、安装或导航，再改 `README.md`、`setup` 或 smoke test
+4. 如果影响 codev 与 gstack 的职责边界，再改 `memory/core/gstack-interoperability.md` 和 `AGENTS.md`
 
 ## 维护原则
 - 先让记忆系统追上真实代码，再考虑增加解释。

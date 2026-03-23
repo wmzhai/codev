@@ -5,12 +5,14 @@
 ## 热路径
 1. `AGENTS.md`
 2. `memory/core/symptom-routing.md`
-3. 对应的 skill 目录：`skills/memorize/`、`skills/issue2task/`、`skills/plantask/`、`skills/checktask/`、`skills/simplify/`、`skills/ships/`
+3. `memory/core/gstack-interoperability.md`
+4. 对应的 skill 目录：`skills/memorize/`、`skills/issue2task/`、`skills/gstack2task/`、`skills/plantask/`、`skills/checktask/`、`skills/simplify/`、`skills/ships/`
 
 ## 冷路径
 - 仓库结构边界：`memory/core/system-map.md`
 - 稳定约束：`memory/core/invariants.md`
 - 默认动作与验证：`memory/core/workflows.md`
+- 与 gstack 的协同边界：`memory/core/gstack-interoperability.md`
 
 ## 范围
 - `core/`：仓库总图、症状路由、稳定约束、默认工作流

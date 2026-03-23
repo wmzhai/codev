@@ -6,6 +6,11 @@
 - `README.md`
 - `AGENTS.md`
 
+## 想知道 codev 和 gstack 怎么配合
+- `memory/core/gstack-interoperability.md`
+- `README.md`
+- `AGENTS.md`
+
 ## 想新增或修改一个 skill
 - 对应 skill 的 `SKILL.md`
 - `agents/openai.yaml`
@@ -26,13 +31,19 @@
 - 当前仓库的 `README.md`
 - 根目录 `AGENTS.md`
 
+## 想把 gstack 工件落成 task
+- `skills/gstack2task/SKILL.md`
+- `memory/core/gstack-interoperability.md`
+
 ## 想走任务流
 - `skills/issue2task/SKILL.md`
+- `skills/gstack2task/SKILL.md`
 - `skills/plantask/SKILL.md`
 - `skills/checktask/SKILL.md`
 
 ## 想做提交或发版
 - `skills/ships/SKILL.md`
+- `memory/core/gstack-interoperability.md`
 
 ## 想做语义不变精简
 - `skills/simplify/SKILL.md`
