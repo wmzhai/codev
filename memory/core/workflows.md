@@ -10,8 +10,8 @@
 ## 与 gstack 配合
 1. gstack `/office-hours`、`/plan-ceo-review`、`/plan-eng-review` 先把上游设计、交接和测试计划写到 `~/.gstack/projects/`
 2. GitHub issue 或直接需求走 `issue2task`；gstack 工件走 `gstack2task`
-3. `plantask` 围绕 repo 内 `tasks/` 输出可执行实现方案
-4. 默认更安全的 task 闭环是 `autodev`：它会在 task 分支上推进实现、审查、测试、分支部署，并持续更新对应 `tasks/Txx-*.md`
+3. 人工路径里由 `plantask` 围绕 repo 内 `tasks/` 输出可执行实现方案；半自动路径里这一步被 `autodev` 内建吸收
+4. 默认更安全的 task 闭环是 `autodev`：它会先做一轮 `plantask` 式收敛，再在 task 分支上推进实现、审查、测试、分支部署，并持续更新对应 `tasks/Txx-*.md`
 5. 用户确认分支部署结果后，用 `automerge` 完成主干合并、版本号、正式发布和任务归档
 6. 如果不用 `autodev` / `automerge`，手动路径仍可继续使用 `simplify`、`checkpoint`、gstack `/review`、`/qa`、`/ship` 与 `/document-release`
 7. `checktask` 仍负责手动验收、更新 `memory/` 和任务直接相关的局部 `docs/`

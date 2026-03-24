@@ -31,10 +31,9 @@
 ## 推荐组合流程
 1. gstack `/office-hours`、`/plan-ceo-review`、`/plan-eng-review`
 2. `gstack2task` 把上游工件落成 `tasks/`
-3. `plantask`
-4. `autodev` 在 task 分支上自动推进实现、验证、分支部署，并持续更新任务文档
-5. 用户确认部署结果
-6. `automerge` 合并主干、处理版本号、正式发布并归档任务
+3. `autodev` 在 task 分支上自动推进内部方案收敛、实现、验证、分支部署，并持续更新任务文档
+4. 用户确认部署结果
+5. `automerge` 合并主干、处理版本号、正式发布并归档任务
 
 ## 手动路径仍然可用
 1. `plantask`
