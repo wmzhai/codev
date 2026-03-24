@@ -7,21 +7,13 @@
 
 ## 1. 安装
 
-### 先安装 gstack
-
-```bash
-git clone https://github.com/garrytan/gstack.git ~/gstack
-cd ~/gstack
-./setup --host codex
-```
-
-### 再安装 codev
-
 ```bash
 git clone https://github.com/wmzhai/codev.git ~/codev
 cd ~/codev
 ./setup
 ```
+
+`./setup` 会自动 clone 或更新 `~/gstack`，执行 `~/gstack/setup --host codex`，然后再安装当前项目的 skills。
 
 ## 2. 高层摘要
 
