@@ -14,6 +14,8 @@
 - `issue2task` 保留 GitHub issue 或直接需求到 `tasks/` 的路径，不消费 gstack 工件。
 - `gstack2task` 负责把 `~/.gstack/projects/` 下的 gstack 工件收敛成 `tasks/`。
 - `plantask`、`checktask`、`simplify` 围绕 repo 内部任务流工作。
+- `autodev` 负责在 task 分支上自动推进规划、实现、验证、分支部署与 task 文档持续维护，但不 merge 主分支，也不打版本号。
+- `automerge` 负责在用户确认后，把已验证的任务分支合并到 `main/master`，处理版本号、正式发布与任务归档。
 - `checkpoint` 是轻量 `commit/push` fallback；需要 PR、review gate、QA 串联或全局文档同步时，优先使用 gstack `/ship` 与 `/document-release`。
 
 ## 维护规则
@@ -21,6 +23,7 @@
 - `setup` 是真实安装入口；`test/setup-smoke.sh` 是安装行为的最小验证。
 - 任何新增受管 skill，都必须同步到 `setup`、`README.md` 和 `test/setup-smoke.sh`。
 - 修改任务入口 skill 时，保持 `issue2task` 与 `gstack2task` 的输入边界稳定，不要把两者揉成一个大而全入口。
+- 修改 `autodev` / `automerge` 时，保持“分支内开发闭环”和“人工确认后的主干收尾”这条边界稳定，不要重新把 merge、版本号塞回 `autodev`。
 - 如果仓库存在 `CLAUDE.md`，尤其已经承载 gstack section、浏览器约束或宿主代理说明，`memorize` 只能收敛 repo 事实，不能把这些兼容说明删掉。
 - `README.md` 里只放用户需要看到的高层说明，不重复展开各 skill 的全部内部流程。
 - 这里不写冗长教程；详细工作流放到各 skill 自己的 `SKILL.md`。

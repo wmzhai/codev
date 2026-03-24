@@ -1,6 +1,6 @@
 # Codev Skills
 
-`codev` 是一组给 Codex 用的开发流程 skills，和 `gstack` 配合，覆盖从需求到部署的完整链路。
+`codev` 是一组给 Codex 用的开发流程 skills，和 `gstack` 配合，覆盖从需求到部署的完整链路，并提供更安全的 branch-first 自动闭环快捷路径。
 
 ## 1. 安装
 
@@ -106,6 +106,8 @@ cd ~/codev
 ```
 
 > **`$autoplan` 快捷路径：** 如果不想手动依次跑 `$plan-ceo-review` → `$plan-design-review` → `$plan-eng-review`，可以直接用 `$autoplan`。它自动串联 CEO + Design + Eng 三个 review，只在需要品味判断时才停下来问用户，其余中间决策自动处理。
+>
+> **`$autodev` + `$automerge` 安全快捷路径：** 如果 task 阶段后面的流程基本固定，可以先用 `$autodev` 在 task 分支上自动完成规划、实现、验证、分支部署和 task 文档持续维护，停在“已部署待人工确认”；等用户确认部署结果后，再用 `$automerge` 合并到 `main/master`、打版本号并做正式发布收尾。`$autodev` 默认全程中文交流，不会为了部署而提前 merge 主干。
 
 ## 3. 阶段详解
 
@@ -143,6 +145,18 @@ cd ~/codev
 | `$plantask` | 基于任务文件和代码现状，输出可直接实施的计划 | 详细实现方案 | 对话输出（不改代码） |
 
 > `$plantask` 会检查前置任务是否已完成，优先复用现有模式，默认直接收敛实现方向。方案结尾会询问用户：接受后进入实现，还是继续讨论。
+
+### 阶段 3.5：安全自动闭环快捷路径（可选）
+
+| 步骤 | 做什么 | 产出 | 存储位置 |
+|------|--------|------|---------|
+| `$autodev` | 在当前 task 分支上自动推进规划、实现、精简、提交、审查、测试、分支部署与部署后验证，并持续更新对应 task 文档 | 已部署待人工确认的分支结果 + 最新 task 文档 | 当前 task 分支 + `tasks/` |
+| 用户确认 | 在最新部署结果上确认功能、交互和整体效果 | 确认结论 | 对话 / review 流程 |
+| `$automerge` | 在确认后合并主干、处理版本号、正式发布收尾，并归档对应 task | 主干已更新 + 版本号 + 归档任务 | `main/master` + `tasks/done/` |
+
+> `$autodev` 不是机械地把现有 skills 硬拼起来。它会优先复用 `plantask`、`simplify`、`checkpoint`、`design-review`、`review`、`qa` 等现有能力；如果某一步无法完整复用，就按 `autodev` 自己定义的工作步骤继续执行。
+>
+> `$autodev` 的一个核心要求是：执行过程中持续更新对应 `tasks/T{nn}-{slug}.md`，记录关键实现决策、重要执行步骤、验证结果、部署信息和待人工确认项，而不是只在结尾打勾。
 
 ### 阶段 4：实现 → 精简 → 提交
 
@@ -209,7 +223,7 @@ cd ~/codev
 | 设计系统 | `DESIGN.md`（repo 根目录） | `$plan-eng-review`、`$plan-design-review`、`$design-review` |
 | Review 日志 | `~/.gstack/`（via `gstack-review-log`） | 按 branch 记录；`$ship` 用它判断当前分支的 review readiness |
 | Canary 基线 | `~/.gstack/canary/` | `$canary` 截图对比 |
-| 任务文件 | `tasks/T{nn}-{slug}.md` | `$plantask`、`$checktask`、`$simplify` |
+| 任务文件 | `tasks/T{nn}-{slug}.md` | `$plantask`、`$autodev`、`$checktask`、`$simplify`、`$automerge` |
 | 归档任务 | `tasks/done/` | 编号避让 |
 | 记忆体系 | `AGENTS.md` + `memory/` | Codex 新 session |
 
@@ -226,6 +240,15 @@ Session 6:  $review + $qa                     → 审查测试
 Session 7:  $checktask + $ship                → 验收 + 创建 PR
 Session 8:  $land-and-deploy                  → 合并 PR + 部署 + 生产验证
 Session 9:  $document-release                 → 更新文档（可选）
+```
+
+如果走安全快捷路径，也可以这样分段：
+
+```
+Session 4:  $gstack2task + $plantask          → 创建任务 + 实施方案
+Session 5:  $autodev                          → task 分支实现 + 验证 + 分支部署 + task 文档更新
+Session 6:  人工确认部署结果                  → 决定是否进入主干
+Session 7:  $automerge                        → merge 主干 + 版本号 + 正式发布 + 任务归档
 ```
 
 也可以把多步合在一个 session 里 — 完全由你决定。
@@ -309,6 +332,10 @@ Session 9:  $document-release                 → 更新文档（可选）
 
 ### 6.6 什么时候合并回 main
 
+- 如果走 `$autodev` / `$automerge` 快捷路径：
+  - `$autodev` 不会合并回 `main/master`
+  - 它会停在“task 分支已部署并验证完成，等待人工确认”
+  - 等用户确认后，再用 `$automerge` 合并主干、打版本号并归档任务
 - `$ship` 创建 PR 后，用 `$land-and-deploy` 完成合并和部署验证
 - `$land-and-deploy` 会执行预合并就绪门禁（CI 绿 + review approved），然后 `gh pr merge`，等待部署完成，并用 `$canary` 验证生产环境
 - 合并完成后，切回 `main`，同步主线，再开始下一轮 task

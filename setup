@@ -4,7 +4,7 @@ set -euo pipefail
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SKILLS_DIR="${HOME}/.codex/skills"
-MANAGED_SKILLS=(memorize issue2task gstack2task plantask checktask simplify checkpoint)
+MANAGED_SKILLS=(memorize issue2task gstack2task plantask autodev automerge checktask simplify checkpoint)
 
 die() {
   echo "codev setup failed: $*" >&2

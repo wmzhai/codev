@@ -10,6 +10,8 @@
 - `skills/issue2task/`：把 issue 收敛成任务文件
 - `skills/gstack2task/`：把 `~/.gstack/projects/` 下的 gstack 工件收敛成任务文件
 - `skills/plantask/`：围绕任务文件产出实现方案
+- `skills/autodev/`：在 task 分支上自动推进规划、实现、验证、分支部署，并持续维护对应任务文档
+- `skills/automerge/`：在用户确认后把任务分支收口到 `main/master`，处理版本号、正式发布和任务归档
 - `skills/checktask/`：验收任务、同步 `memory/` 与任务相关文档、归档完成项
 - `skills/simplify/`：语义不变精简 diff
 - `skills/checkpoint/`：轻量提交、推送 fallback
@@ -27,6 +29,7 @@
 - `README.md` 只放仓库级说明与技能导航。
 - `setup` 和 `test/setup-smoke.sh` 共同定义“哪些 skill 算受管”。
 - `issue2task` 与 `gstack2task` 是两个平行入口：前者处理 GitHub issue 或直接需求，后者处理 `~/.gstack/projects/` 工件。
+- `autodev` 与 `automerge` 是两个平行收尾层：前者停在“分支已部署待确认”，后者才进入主干合并与版本号。
 
 ## 常见改动落点
 - 新增 skill：新增 `skills/<name>/` 目录，同时同步 `setup`、`test/setup-smoke.sh`、`README.md`
