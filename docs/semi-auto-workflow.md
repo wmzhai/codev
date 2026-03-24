@@ -34,6 +34,7 @@
 /office-hours
 -> /autoplan
 -> $gstack2task 或 $issue2task
+-> 审核 task plan
 -> $autodev
 -> 人工确认部署结果
 -> $automerge
@@ -46,8 +47,9 @@
 | 阶段 | 主导者 | 主要输入 | 主要输出 |
 |------|--------|---------|---------|
 | 上游规划 | gstack | 需求、问题定义、已有设计上下文 | 设计文档、review 过的 plan、测试计划 |
-| 任务生成 | codev | gstack 工件或 issue / 直接需求 | `tasks/T{nn}-{slug}.md` + task 分支 |
-| 分支内自动闭环 | codev | task 文件、代码、已有规划结果 | 含内部实现方案收敛的已部署待人工确认 task 分支 |
+| 任务生成 | codev | gstack 工件或 issue / 直接需求 | `tasks/T{nn}-{slug}.md` + task 分支 + executable plan |
+| plan 审核 | 人类 | task 文件中的 `Implementation Plan` / `Validation Plan` | 明确接受 plan 或退回重写 |
+| 分支内自动闭环 | codev | 已审核的 task 文件、代码、已有规划结果 | 基于 task plan 的已部署待人工确认 task 分支 |
 | 人工确认 | 人类 | 最新部署结果 + task 文档 | 明确确认或退回修改 |
 | 正式收尾 | codev / gstack | 已确认的 task 分支 | merge、版本号、正式发布、任务归档 |
 
@@ -89,16 +91,28 @@
 
 - 一个或多个 `tasks/T{nn}-{slug}.md`
 - 每个 task 自己的分支
+- 每个 task 自带的实现计划和验证计划
 
 半自动路径默认仍是一 task 一分支。`autodev` 一次只闭环一个 task，不批量扫完整个待办列表。
 
-## 阶段 3：`$autodev` 在 task 分支上自动闭环
+## 阶段 3：先审核 task plan
+
+这里的人类职责很明确：
+
+- 确认 task 边界没有漂移
+- 确认 `Implementation Plan` 的默认路径就是你要的方案
+- 确认 `Validation Plan` 足以覆盖关键风险
+
+如果 plan 不成立，应该先回到 task 文件收敛，而不是让 `autodev` 带着错误前提直接开工。
+
+## 阶段 4：`$autodev` 在 task 分支上自动闭环
 
 这是半自动路径的核心阶段。
 
 `$autodev` 接手之后，会在 task 分支内自动推进：
 
-- 先做一轮 `plantask` 风格的实现方案收敛
+- 先读取 task 中已有的 `Implementation Plan` / `Validation Plan`
+- 必要时按代码现状小幅校准 task plan
 - 读取并补齐 task 文档
 - 规划与实现
 - `simplify`
@@ -111,7 +125,7 @@
 
 1. `autodev` 默认全程中文交流。
 2. 它会持续更新对应的 `tasks/T{nn}-{slug}.md`，而不是只在最后打勾。
-3. 它内部已经包含实现前的方案收敛阶段，因此半自动路径里不需要再单独运行 `$plantask`。
+3. 它的起点是“已经写好并被用户审核过的 task plan”，不是从零再做一轮独立规划。
 4. 它停在“已部署待人工确认”。
 5. 它不 merge 主干，不打版本号，不归档任务。
 
@@ -139,7 +153,7 @@
 
 这样能避免“为了看看效果先 merge 一次”的高风险习惯。
 
-## 阶段 4：人工确认
+## 阶段 5：人工确认
 
 这一步是半自动路径里最重要的人类职责。
 
@@ -154,7 +168,7 @@
 - 继续在当前 task 分支修正，然后再跑一次 `$autodev`
 - 或切回人工路径，手动修正和验证
 
-## 阶段 5：`$automerge` 正式收尾
+## 阶段 6：`$automerge` 正式收尾
 
 只有在用户明确确认后，才进入 `$automerge`。
 
@@ -174,6 +188,7 @@
 半自动不等于无人值守。默认的人类停点只有几类：
 
 - `/autoplan` 遇到真正需要人拍板的 taste / scope 决策
+- 用户审核 task plan
 - `$autodev` 遇到硬阻塞：
   - 缺权限
   - 缺凭证

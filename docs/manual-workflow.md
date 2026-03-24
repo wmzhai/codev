@@ -23,7 +23,7 @@ $memorize
 -> /plan-design-review
 -> /plan-eng-review
 -> $gstack2task 或 $issue2task
--> $plantask
+-> 审核 task plan
 -> 实现
 -> $simplify
 -> 普通 commit 或 $checkpoint
@@ -45,8 +45,8 @@ $memorize
 |------|--------------|-----------|------------------------|
 | 仓库记忆 | 确认 repo 结构和约束是否最新 | `$memorize` | `AGENTS.md` 和 `memory/` 与真实代码一致 |
 | 上游规划 | 决定问题、方向、范围、设计与工程边界 | gstack 规划类 skill | 上游设计文档、review 结果、测试计划稳定 |
-| 任务生成 | 决定 task 如何拆分 | `$gstack2task` / `$issue2task` | `tasks/` 中有可执行任务，且分支已切好 |
-| task 实施方案 | 决定本 task 的具体实现路径 | `$plantask` | 可执行方案明确 |
+| 任务生成 | 决定 task 如何拆分，并让 task 自带可执行 plan | `$gstack2task` / `$issue2task` | `tasks/` 中有可执行任务、实现计划和对应分支 |
+| plan 审核 | 决定是否接受当前 task 的实现路径 | 人工审核 task 文件 | 可执行方案明确 |
 | 实现与收口 | 亲自控制代码演进、精简和提交节奏 | 实现 + `$simplify` + commit / `$checkpoint` | 当前 task 分支形成稳定 patch |
 | 设计 / 代码 / 浏览器验证 | 逐步判断是否需要继续改 | `/design-review`、`/review`、`/qa` | 验证结果明确，必要修复已完成 |
 | 验收 | 人工确认验收标准是否真的通过 | `$checktask` | task 文档更新完毕并归档或保留缺口 |
@@ -110,13 +110,13 @@ $memorize
 
 - 一个 task 是否够小，能在一条分支上安全推进
 - 依赖关系是否清楚
-- 任务命名和边界是否让后续 `plantask` 能直接接手
+- task 文件里的 `Implementation Plan` 和 `Validation Plan` 是否已经足够让后续直接执行
 
-## 阶段 4：task 分支上先做实现方案，再开始编码
+## 阶段 4：审核 task plan，再开始编码
 
-`$plantask` 的作用，是在真正写代码前把 task 压成实现方案。
+现在 `$gstack2task` / `$issue2task` 产出的 task 文件，本身就应该包含可以直接执行的实现方案。
 
-人工路径里，这一步的人类职责比半自动路径更重：
+人工路径里，这一步的人类职责是：
 
 - 审核实现方向是不是你真正想要的
 - 纠正过度设计或漏掉的边界
@@ -208,8 +208,8 @@ $memorize
 ## 这条路径里的分支和 git 规则
 
 - `main/master` 更适合作为初始化与上游规划的起点。
-- `gstack2task` / `issue2task` 会把执行切入 task 分支。
-- `plantask`、实现、`simplify`、`checkpoint`、`design-review`、`review`、`qa`、`checktask`、`ship` 都应围绕当前 task 分支推进。
+- `gstack2task` / `issue2task` 会把执行切入 task 分支，并在 task 文件中写入初版实现计划。
+- 审核 task plan、实现、`simplify`、`checkpoint`、`design-review`、`review`、`qa`、`checktask`、`ship` 都应围绕当前 task 分支推进。
 - `/land-and-deploy` 是进入主干的门禁，不应提前被偷偷替代。
 - `design-review` 和 `qa` 需要 clean working tree；所以在它们之前，人必须先把手头改动收成稳定状态。
 

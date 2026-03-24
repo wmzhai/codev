@@ -4,7 +4,8 @@ set -euo pipefail
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SKILLS_DIR="${HOME}/.codex/skills"
-MANAGED_SKILLS=(memorize issue2task gstack2task plantask autodev automerge checktask simplify checkpoint)
+MANAGED_SKILLS=(memorize issue2task gstack2task autodev automerge checktask simplify checkpoint)
+LEGACY_CODEV_SKILLS=(plantask)
 
 die() {
   echo "codev setup failed: $*" >&2
@@ -16,6 +17,22 @@ ensure_symlink_or_absent() {
 
   if [ -e "$path" ] && [ ! -L "$path" ]; then
     die "${path} already exists and is not a symlink"
+  fi
+}
+
+cleanup_legacy_codev_skill() {
+  local skill_name="$1"
+  local path="${SKILLS_DIR}/${skill_name}"
+  local actual
+
+  if [ ! -L "$path" ]; then
+    return
+  fi
+
+  actual="$(readlink "$path")"
+
+  if [ "$actual" = "codev/skills/${skill_name}" ] || [ "$actual" = "${REPO_ROOT}/skills/${skill_name}" ]; then
+    rm -f "$path"
   fi
 }
 
@@ -31,6 +48,10 @@ ln -snf "$REPO_ROOT" "${SKILLS_DIR}/${PROJECT_NAME}"
 
 for skill_name in "${MANAGED_SKILLS[@]}"; do
   ln -snf "${PROJECT_NAME}/skills/${skill_name}" "${SKILLS_DIR}/${skill_name}"
+done
+
+for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
+  cleanup_legacy_codev_skill "$skill_name"
 done
 
 echo "codev ready."

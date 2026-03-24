@@ -1,4 +1,0 @@
-interface:
-  display_name: "plantask"
-  short_description: "为任务文件产出可直接实施的详细实现方案并收口确认步骤"
-  default_prompt: "使用 $plantask 读取 tasks/ 中的待办任务；如果当前还在 main/master，锁定目标任务后先切到与该任务文件同名的分支，再继续规划；默认直接收敛实现方向，并在编码前产出可直接实施的详细实现方案；方案结尾主动询问用户是接受后进入实现，还是继续讨论。"

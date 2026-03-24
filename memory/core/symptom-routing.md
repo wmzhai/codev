@@ -38,7 +38,6 @@
 ## 想走任务流
 - `skills/issue2task/SKILL.md`
 - `skills/gstack2task/SKILL.md`
-- `skills/plantask/SKILL.md`
 - `skills/checktask/SKILL.md`
 
 ## 想做提交或发版
