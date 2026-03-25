@@ -10,29 +10,24 @@ cd ~/codev
 ./setup
 ```
 
-`./setup` 会自动 clone 或更新 `~/gstack`，执行 `~/gstack/setup --host codex`，然后再安装当前项目的 skills。
-它也会自动检测并清理早期版本遗留的旧 codev skill symlink。
+## 2. 快速入门
 
-## 2. 高层摘要
+- 使用本项目时，优先按 [docs/workflows/README.md](docs/workflows/README.md) 的流程走。
+- 某一步涉及哪个 skill、不清楚怎么用时，去看 [docs/skills/README.md](docs/skills/README.md) 和对应的 `docs/skills/<skill>.md`。
+- 如果要看更底层的运行规则，再去看 `skills/<name>/SKILL.md`。
 
-- 半自动路径：`$office-hours -> $autoplan -> $codev-gstack2task/$codev-issue2task -> 审核 task plan -> $codev-autodev -> 人工确认 -> $codev-automerge`
-- 人工路径：`$office-hours -> ... -> $codev-gstack2task/$codev-issue2task -> 审核 task plan -> $codev-taskdev -> $codev-simplify -> ... -> $codev-checktask -> $ship`
-- repo 内的 `tasks/` 是 codev 的执行单元；任务文件本身同时承载需求、实现计划与验收基线；`~/.gstack/projects/` 是 gstack 的上游工件目录。
+## 3. 其他使用方式
 
-## 3. 详细文档
+1. 先读 [docs/workflows/README.md](docs/workflows/README.md)，按总流程图决定自己现在处在哪个阶段。
+2. 如果是新仓库或记忆体系过期，先用 `$codev-memorize`。
+3. 如果需求来自 gstack 工件，用 `$codev-gstack2task`；如果需求来自 issue 或直接需求，用 `$codev-issue2task`。
+4. 审核生成出来的 task plan。
+5. 想手动推进实现，用 `$codev-taskdev`；想自动推进到“已部署待人工确认”，用 `$codev-autodev`。
+6. 需要正式收尾时，走 `$ship -> $land-and-deploy`，或在自动链路里走 `$codev-automerge`。
+
+## 4. 相关文档
 
 - [总流程图与总导航](docs/workflows/README.md)
 - [旁支流程目录](docs/workflows/)
 - [所有 skill 详细手册索引](docs/skills/README.md)
 
-## 4. 受管 codev skills
-
-- `$codev-memorize`
-- `$codev-issue2task`
-- `$codev-gstack2task`
-- `$codev-taskdev`
-- `$codev-autodev`
-- `$codev-automerge`
-- `$codev-checktask`
-- `$codev-simplify`
-- `$codev-checkpoint`
