@@ -1,7 +1,0 @@
-interface:
-  display_name: "simplify"
-  short_description: "在保持行为不变前提下精简代码 diff，常用于 checkpoint 前收窄 patch"
-  default_prompt: "使用 $simplify 在保持行为、API 和依赖不变的前提下精简给定代码 diff；触发后立即用中文与用户交流，整个过程中的判断说明、风险说明和结果摘要默认都用中文。"
-
-policy:
-  allow_implicit_invocation: false

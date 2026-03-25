@@ -5,6 +5,7 @@
 ## 想知道这个仓库是干什么的
 - `README.md`
 - `AGENTS.md`
+- `docs/workflows/README.md`
 
 ## 想知道 codev 和 gstack 怎么配合
 - `memory/core/gstack-interoperability.md`
@@ -13,6 +14,7 @@
 
 ## 想新增或修改一个 skill
 - 对应 skill 的 `SKILL.md`
+- `docs/skills/<skill>.md`
 - `agents/openai.yaml`
 - `README.md`
 - `setup`
@@ -23,28 +25,35 @@
 - `test/setup-smoke.sh`
 
 ## 想知道该用哪个 skill
-- 先看 `README.md` 的 Skills 一览
-- 再看对应 skill 的 `SKILL.md`
+- 先看 `docs/workflows/README.md`
+- 再看 `docs/skills/README.md`
+- 最后看对应 skill 的 `SKILL.md`
 
 ## 想给项目建立 Codex 记忆体系
-- `skills/memorize/SKILL.md`
+- `docs/skills/codev-memorize.md`
+- `skills/codev-memorize/SKILL.md`
 - 当前仓库的 `README.md`
 - 根目录 `AGENTS.md`
 
 ## 想把 gstack 工件落成 task
-- `skills/gstack2task/SKILL.md`
+- `docs/skills/codev-gstack2task.md`
+- `skills/codev-gstack2task/SKILL.md`
 - `memory/core/gstack-interoperability.md`
 
 ## 想走任务流
-- `skills/issue2task/SKILL.md`
-- `skills/gstack2task/SKILL.md`
-- `skills/taskdev/SKILL.md`
-- `skills/autodev/SKILL.md`
-- `skills/checktask/SKILL.md`
+- `docs/workflows/README.md`
+- `docs/skills/codev-issue2task.md`
+- `docs/skills/codev-gstack2task.md`
+- `docs/skills/codev-taskdev.md`
+- `docs/skills/codev-autodev.md`
+- `docs/skills/codev-checktask.md`
 
 ## 想做提交或发版
-- `skills/checkpoint/SKILL.md`
+- `docs/skills/codev-checkpoint.md`
+- `docs/skills/ship.md`
+- `skills/codev-checkpoint/SKILL.md`
 - `memory/core/gstack-interoperability.md`
 
 ## 想做语义不变精简
-- `skills/simplify/SKILL.md`
+- `docs/skills/codev-simplify.md`
+- `skills/codev-simplify/SKILL.md`

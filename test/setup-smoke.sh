@@ -3,7 +3,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SETUP_SCRIPT="${REPO_ROOT}/setup"
-MANAGED_SKILLS=(memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint)
+MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-autodev codev-automerge codev-checktask codev-simplify codev-checkpoint)
+LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
 
 fail() {
   echo "FAIL: $*" >&2
@@ -131,22 +132,28 @@ done
 assert_missing "${fresh_skills}/plantask"
 
 ln -snf "codev/skills/plantask" "${fresh_skills}/plantask"
+for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
+  ln -snf "codev/skills/${skill_name}" "${fresh_skills}/${skill_name}"
+done
 run_setup "$fresh_home" "$fake_bin"
-assert_missing "${fresh_skills}/plantask"
+for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
+  assert_missing "${fresh_skills}/${skill_name}"
+done
 
 conflict_home="${TMP_ROOT}/conflict-home"
 conflict_skills="${conflict_home}/.codex/skills"
-mkdir -p "${conflict_skills}/issue2task"
+mkdir -p "${conflict_skills}/codev-issue2task"
 
 if TEST_GIT_LOG="${conflict_home}/git.log" HOME="$conflict_home" PATH="${fake_bin}:$PATH" "$SETUP_SCRIPT" >/dev/null 2>&1; then
   fail "setup should fail when a managed skill path is a real directory"
 fi
 
-assert_exists "${conflict_skills}/issue2task"
+assert_exists "${conflict_skills}/codev-issue2task"
 assert_missing "${conflict_skills}/codev"
-assert_missing "${conflict_skills}/checkpoint"
-assert_missing "${conflict_skills}/plantask"
-assert_missing "${conflict_skills}/ships"
+assert_missing "${conflict_skills}/codev-checkpoint"
+for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
+  assert_missing "${conflict_skills}/${skill_name}"
+done
 
 non_repo_home="${TMP_ROOT}/non-repo-home"
 mkdir -p "${non_repo_home}/gstack"
