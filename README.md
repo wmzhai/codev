@@ -10,13 +10,21 @@ cd ~/codev
 ./setup
 ```
 
-## 2. 快速入门
+## 2. 升级
+
+```bash
+cd ~/codev
+git pull --ff-only
+./setup
+```
+
+## 3. 快速入门
 
 - 使用本项目时，优先按 [docs/workflows/README.md](docs/workflows/README.md) 的流程走。
 - 某一步涉及哪个 skill、不清楚怎么用时，去看 [docs/skills/README.md](docs/skills/README.md) 和对应的 `docs/skills/<skill>.md`。
 - 如果要看更底层的运行规则，再去看 `skills/<name>/SKILL.md`。
 
-## 3. 其他使用方式
+## 4. 其他使用方式
 
 1. 先读 [docs/workflows/README.md](docs/workflows/README.md)，按总流程图决定自己现在处在哪个阶段。
 2. 如果是新仓库或记忆体系过期，先用 `$codev-memorize`。
@@ -25,9 +33,8 @@ cd ~/codev
 5. 想手动推进实现，用 `$codev-taskdev`；想自动推进到“已部署待人工确认”，用 `$codev-autodev`。
 6. 需要正式收尾时，走 `$ship -> $land-and-deploy`，或在自动链路里走 `$codev-automerge`。
 
-## 4. 相关文档
+## 5. 相关文档
 
 - [总流程图与总导航](docs/workflows/README.md)
 - [旁支流程目录](docs/workflows/)
 - [所有 skill 详细手册索引](docs/skills/README.md)
-
