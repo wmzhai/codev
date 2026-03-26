@@ -13,7 +13,7 @@
 - `skills/codev-issue2task/`：把 issue 收敛成带实现计划的任务文件
 - `skills/codev-gstack2task/`：把 `~/.gstack/projects/` 下的 gstack 工件收敛成带实现计划的任务文件
 - `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简
-- `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在仓库已有版本工件时做最小同步，然后提交、合并、推送主干
+- `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在仓库已有版本工件时做最小同步，然后提交、合并、推送主干；若 task 明确映射 GitHub issue，则在 push 成功后用 `gh` 关闭对应 issue
 - `skills/codev-simplify/`：语义不变精简 diff
 - `skills/codev-checkpoint/`：轻量提交、推送 fallback
 - `memory/core/gstack-interoperability.md`：说明 codev 和 gstack 的职责边界与组合流程
