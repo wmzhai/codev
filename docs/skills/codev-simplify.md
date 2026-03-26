@@ -41,4 +41,4 @@ Source: `codev`
 
 - 普通 commit 或 `$codev-checkpoint`
 - 后续的 `$design-review`、`$review`、`$qa`
-- 在 `$codev-checktask` 内作为末尾精简步骤被调用
+- 在 `$codev-taskdev` 内作为实现收尾精简步骤被调用

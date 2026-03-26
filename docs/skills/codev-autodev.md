@@ -30,7 +30,7 @@ Source: `codev`
 
 1. 选择目标 task 与任务分支，读取最新 task 文档。
 2. 校准 task 中已有的 `Implementation Plan` / `Validation Plan`。
-3. 执行内含的 `$codev-taskdev` 阶段，完成编码与最小本地验证。
+3. 执行内含的 `$codev-taskdev` 阶段，完成编码、task 文档同步和一次实现收尾精简。
 4. 继续推进 `$codev-simplify`、中间提交、`$design-review`、`$review`、`$qa` 等必要门禁。
 5. 在 task 分支完成 preview、staging 或 branch deploy，并做部署后验证。
 6. 持续更新 task 文档，最后停在“已部署待人工确认”。
@@ -45,6 +45,6 @@ Source: `codev`
 ## Next Recommended Steps
 
 - 人工确认部署结果
-- 小改动且允许直推主干时进入 `$codev-quickship`
+- 人工确认通过后进入 `$codev-quickship`
 - 需要正式发布收尾时进入 `$codev-automerge`
 - 确认不通过则继续在当前 task 分支修复

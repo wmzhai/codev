@@ -38,6 +38,6 @@ Source: `gstack`
 
 ## Next Recommended Steps
 
-- `$codev-checktask`
+- 人工验证通过后进入 `$codev-quickship`
 - `$ship`
 - 只想报告不修时使用 `$qa-only`

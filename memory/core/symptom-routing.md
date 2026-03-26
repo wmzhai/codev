@@ -46,7 +46,7 @@
 - `docs/skills/codev-gstack2task.md`
 - `docs/skills/codev-taskdev.md`
 - `docs/skills/codev-autodev.md`
-- `docs/skills/codev-checktask.md`
+- `docs/skills/codev-quickship.md`
 
 ## 想做提交或发版
 - `docs/skills/codev-checkpoint.md`

@@ -6,7 +6,8 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 SKILLS_DIR="${HOME}/.codex/skills"
 GSTACK_DIR="${HOME}/gstack"
 GSTACK_REPO_URL="https://github.com/garrytan/gstack.git"
-MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-autodev codev-quickship codev-automerge codev-checktask codev-simplify codev-checkpoint)
+MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-autodev codev-quickship codev-automerge codev-simplify codev-checkpoint)
+REMOVED_MANAGED_SKILLS=(codev-checktask)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
 
 die() {
@@ -83,6 +84,10 @@ for skill_name in "${MANAGED_SKILLS[@]}"; do
 done
 
 for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
+  cleanup_legacy_codev_skill "$skill_name"
+done
+
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
   cleanup_legacy_codev_skill "$skill_name"
 done
 

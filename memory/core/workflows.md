@@ -14,12 +14,11 @@
 2. GitHub issue 或直接需求走 `codev-issue2task`；gstack 工件走 `codev-gstack2task`
 3. `codev-issue2task` 与 `codev-gstack2task` 都要结合代码直接写出带实现计划的 `tasks/Txx-*.md`
 4. 用户先审核 task 文件中的 plan，再决定进入 `$codev-taskdev` 或 `codev-autodev`
-5. `$codev-taskdev` 负责按已审核 plan 选择任务、实施代码并做最小本地验证
+5. `$codev-taskdev` 负责按已审核 plan 选择任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简
 6. 默认更安全的自动闭环是 `codev-autodev`：它内含 `$codev-taskdev` 阶段，再继续推进实现、审查、测试、分支部署，并持续更新对应 `tasks/Txx-*.md`
-7. 用户确认当前结果后，小改动可用 `codev-quickship` 快速直推主干；在分支上就 merge，在主干上就 commit + push；需要正式收尾时再用 `codev-automerge`
-8. 如果不用 `codev-autodev` / `codev-automerge` / `codev-quickship`，手动路径仍可继续使用 `codev-simplify`、`codev-checkpoint`、gstack `$review`、`$qa`、`$ship`、`$document-release` 与 `$land-and-deploy`
-9. `codev-checktask` 仍负责手动验收、更新 `memory/` 和任务直接相关的局部 `docs/`
-10. `codev-checkpoint` 只保留给显式的轻量 `commit/push` 场景
+7. 手动路径下，功能默认由人工验证；人工验证通过后，再用 `codev-quickship` 完成 task 归档、任务相关文档同步，以及 commit / merge / push
+8. 需要正式收尾时，再用 `codev-automerge`；需要正式发布链路时，也可走 gstack `$ship`、`$document-release` 与 `$land-and-deploy`
+9. `codev-checkpoint` 只保留给显式的轻量 `commit/push` 场景
 
 ## 新增 skill
 1. 创建 skill 目录和 `SKILL.md`

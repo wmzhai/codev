@@ -50,7 +50,7 @@
                               ▼
 ┌──────────────────────────── task 分支执行 ──────────────────────────┐
 │  手动主线：                                                         │
-│  $codev-taskdev -> $codev-simplify -> commit / $codev-checkpoint    │
+│  $codev-taskdev -> 人工验证 -> $codev-quickship                     │
 │                                                                     │
 │  自动旁支：                                                         │
 │  $codev-autodev                                                     │
@@ -61,13 +61,11 @@
 │  有 UI 时 $design-review                                            │
 │  结构审查 $review                                                   │
 │  流程测试 $qa / $qa-only                                            │
-│                                                                     │
-│  验收：$codev-checktask                                             │
 └─────────────────────────────┬───────────────────────────────────────┘
                               │
                               ▼
 ┌──────────────────────────── 合并与发布收尾 ─────────────────────────┐
-│  轻量路径：确认当前结果可直推 -> $codev-quickship                   │
+│  手动默认路径：人工验证通过 -> $codev-quickship                     │
 │                                                                     │
 │  人工路径：$ship -> $land-and-deploy -> $document-release -> $canary│
 │                                                                     │
@@ -100,14 +98,15 @@
 
 ### 4. task 分支执行
 
-- 手动主线默认入口是 `$codev-taskdev`。
-- `$codev-simplify` 和 `$codev-checkpoint` 只负责收窄 patch 与轻量提交。
+- 手动主线默认入口是 `$codev-taskdev`，负责 task 分支内的 plan 校准、编码、任务文档持续同步和一次实现收尾精简，不自动启动服务或执行验证。
+- 功能验证默认由人工完成；`$codev-taskdev` 完成后，先人工验证，再决定是否进入 `$codev-quickship`。
+- `$codev-simplify` 仍可单独使用；`$codev-checkpoint` 只负责显式的轻量提交 fallback。
 - `$codev-autodev` 是旁支自动闭环：它内含 `$codev-taskdev` 阶段，但不会 merge 主干。
 - `$design-review`、`$review`、`$qa`、`$qa-only` 是验证门禁，不应该提前偷换成发布动作。
 
 ### 5. 合并与发布收尾
 
-- 小改动且允许直接推主干时，可走 `$codev-quickship`：在分支上就 merge 到主干，在主干上就直接 commit + push。
+- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并完成 commit / merge / push。
 - 人工路径默认是 `$ship -> $land-and-deploy`，再视需要补 `$document-release` 与 `$canary`。
 - 自动正式路径必须先人工确认，再运行 `$codev-automerge`。
 - `codev-quickship` 不处理版本号和正式发布；`$codev-automerge` 才负责 codev 自动链路中的正式发布收尾。

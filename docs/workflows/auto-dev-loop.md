@@ -45,7 +45,7 @@ $office-hours / $autoplan / $plan-*
 ### 5. `$codev-quickship` / `$codev-automerge`
 
 - 两者都只在人工明确确认后使用。
-- `$codev-quickship` 负责快速直推主干：在分支上就 merge 到主干，在主干上就直接 commit + push，不走 PR、版本号或正式发布。
+- `$codev-quickship` 负责人工确认后的手动收尾：归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，再提交、合并并推送主干；不走 PR、版本号或正式发布。
 - `$codev-automerge` 负责正式发布式收尾：merge、版本号、正式发布与任务归档。
 
 ## 这条旁支不负责什么

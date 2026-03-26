@@ -4,7 +4,7 @@ Source: `codev`
 
 ## Purpose
 
-按已审核的 task plan 在 task 分支上落代码，并同步最小必要的本地验证与 task 文档。
+按已审核的 task plan 在 task 分支上落代码，持续同步实现记录与待人工验证项，并在实现收尾自动做一次语义不变精简。
 
 ## Preconditions
 
@@ -23,7 +23,8 @@ Source: `codev`
 
 - 工作区代码改动
 - 更新后的 `tasks/Txx-*.md`
-- task 文档中的执行记录、实现说明、验证说明
+- task 文档中的执行记录、实现说明、待人工验证项说明
+- 一次内置的 `codev-simplify` 式语义不变精简结果
 
 ## Execution Flow
 
@@ -31,19 +32,19 @@ Source: `codev`
 2. 切到对应 task 分支；如不存在，则基于当前 `HEAD` 新建。
 3. 读取 task 文件并检查依赖任务、目标、验收标准和相关代码。
 4. 在编码前先校准 `Implementation Plan` 与 `Validation Plan`，避免 plan 已经漂移。
-5. 分阶段实现代码，优先做可验证的小步修改。
-6. 运行最小必要本地验证，并把结果、剩余缺口和实际采用路径同步回 task 文档。
+5. 分阶段实现代码，优先做容易收敛的小步修改。
+6. 持续把实际采用路径、待执行人工验证和剩余缺口同步回 task 文档，不主动启动服务或运行验证。
+7. 在实现收尾自动做一次语义不变精简，再把精简结果和当前状态同步回 task 文档。
 
 ## Stops / Failure Modes
 
 - task 依赖未完成。
 - 当前工作区无法安全切换分支。
 - plan 与代码现状冲突严重，已经不是“轻微校准”能解决。
-- 最小验证暴露出必须人工判断的高影响路径选择。
+- 实现过程中暴露出必须人工判断的高影响路径选择。
 
 ## Next Recommended Steps
 
-- `$codev-simplify`
-- 普通 commit 或 `$codev-checkpoint`
-- `$design-review`、`$review`、`$qa`
+- 人工验证功能
+- 验证通过后进入 `$codev-quickship`
 - 想自动继续闭环时，改走 `$codev-autodev`

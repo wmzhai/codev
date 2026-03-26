@@ -4,7 +4,7 @@
 
 ## 职责分工
 - gstack：负责产品探索、计划评审、测试计划、QA、ship、repo 级人类文档同步。
-- codev：负责 `tasks/`、任务内实现计划、`codev-taskdev`、`codev-checktask`、`codev-memorize`、`codev-simplify`，以及把外部输入压成 repo 内任务；`codev-autodev` / `codev-quickship` / `codev-automerge` 负责把下游固定流程收口成更安全的自动化编排。
+- codev：负责 `tasks/`、任务内实现计划、`codev-taskdev`、`codev-memorize`、`codev-simplify`，以及把外部输入压成 repo 内任务；`codev-autodev` / `codev-quickship` / `codev-automerge` 负责把下游固定流程收口成更安全的自动化编排。
 
 ## 两条任务入口
 - `codev-issue2task`：输入是 GitHub issue 或用户直接需求。
@@ -21,17 +21,16 @@
 
 ## 不冲突规则
 - `codev-memorize` 可以把 `CLAUDE.md` 里的 repo 事实并入 `AGENTS.md`，但必须保留宿主代理或 gstack 仍然需要的兼容块。
-- `codev-checktask` 默认只更新 `memory/` 和任务直接相关的局部 `docs/`，不要顺手改 repo 级文档。
 - repo 级文档漂移默认交给 gstack `$document-release`。
 - 需要 PR、review gate、覆盖率审计或自动文档同步时，优先 gstack `$ship`。
-- `$codev-taskdev` 只负责按已审核 plan 实施代码和最小本地验证；不要把它扩成 QA、部署或发布入口。
+- `$codev-taskdev` 只负责按已审核 plan 实施代码、同步任务文档并在实现收尾做一次语义不变精简；不要把它扩成验证、QA、部署或发布入口。
 - 在 task 分支准备第一次提交或 `codev-checkpoint` 前，可以先用 `codev-simplify` 收窄当前 patch，再把工作区收成 clean tree。
 - 只有明确需要轻量 `commit/push` 时，才用 `$codev-checkpoint`。
 - `codev-autodev` 内含 `$codev-taskdev` 的任务选择、plan 校准和编码阶段；如果已经决定走 `codev-autodev`，不需要先显式运行 `$codev-taskdev`。
 - `codev-autodev` 可以复用 gstack 的 `review`、`qa` 或仓库现有部署能力，但默认停在 task 分支的“已部署待人工确认”，不 merge 主干，也不打版本号。
-- `codev-quickship` 只做当前工作状态快速直推主干；在分支上就 merge，在主干上就 commit + push，不调用 gstack 的正式发布技能。
+- `codev-quickship` 负责人工验证后的手动收尾：归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，再提交、合并并推送主干；不调用 gstack 的正式发布技能。
 - `codev-automerge` 才负责进入正式发布路径；如兼容，优先复用 gstack `$ship`、`$land-and-deploy` 与 `$document-release`。
-- `codev-autodev` 的 task 文档维护是持续行为，不依赖 `codev-checktask` 的最后一次同步。
+- `codev-autodev` 的 task 文档维护是持续行为，不依赖额外验收 skill 的最后一次同步。
 
 ## 推荐组合流程
 1. gstack `$office-hours`、`$plan-ceo-review`、`$plan-eng-review`
@@ -40,19 +39,16 @@
 4. 手动路径用 `$codev-taskdev` 先把已审核 plan 落成代码；半自动路径则直接交给 `codev-autodev`
 5. `codev-autodev` 在 task 分支上按已审核 plan 推进实现、验证、分支部署，并持续更新任务文档
 6. 用户确认部署结果
-7. 小改动时可用 `codev-quickship` 直接并主干并推送；需要正式发布时再用 `codev-automerge`
+7. 人工确认通过后可用 `codev-quickship` 做手动收尾；需要正式发布时再用 `codev-automerge`
 
 ## 手动路径仍然可用
 1. `codev-issue2task` 或 `codev-gstack2task`
 2. 审核 task 文件中的实现计划
 3. `$codev-taskdev`
-4. `codev-simplify` 收窄当前 patch
-5. 普通 commit 或 `codev-checkpoint`，先把工作区收成 clean tree
-6. gstack `$review`、`$qa`
-7. `codev-checktask`
-8. gstack `$ship`
-9. 视需要补 gstack `$document-release`
-10. gstack `$land-and-deploy`
+4. 视需要跑 gstack `$review`、`$qa`
+5. 人工验证功能
+6. `$codev-quickship`
+7. 需要正式发布时，改走 `codev-automerge` 或 gstack `$ship`
 
 ## 何时不用 codev-gstack2task
 - 需求本来就在 GitHub issue 里，直接用 `codev-issue2task`

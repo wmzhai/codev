@@ -3,7 +3,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SETUP_SCRIPT="${REPO_ROOT}/setup"
-MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-autodev codev-quickship codev-automerge codev-checktask codev-simplify codev-checkpoint)
+MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-autodev codev-quickship codev-automerge codev-simplify codev-checkpoint)
+REMOVED_MANAGED_SKILLS=(codev-checktask)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
 
 fail() {
@@ -120,6 +121,9 @@ for skill_name in "${MANAGED_SKILLS[@]}"; do
   assert_symlink_target "${fresh_skills}/${skill_name}" "codev/skills/${skill_name}"
 done
 assert_missing "${fresh_skills}/plantask"
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
+  assert_missing "${fresh_skills}/${skill_name}"
+done
 assert_missing "${fresh_skills}/ship"
 
 run_setup "$fresh_home" "$fake_bin"
@@ -130,12 +134,21 @@ for skill_name in "${MANAGED_SKILLS[@]}"; do
   assert_symlink_target "${fresh_skills}/${skill_name}" "codev/skills/${skill_name}"
 done
 assert_missing "${fresh_skills}/plantask"
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
+  assert_missing "${fresh_skills}/${skill_name}"
+done
 
 ln -snf "codev/skills/plantask" "${fresh_skills}/plantask"
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
+  ln -snf "codev/skills/${skill_name}" "${fresh_skills}/${skill_name}"
+done
 for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
   ln -snf "codev/skills/${skill_name}" "${fresh_skills}/${skill_name}"
 done
 run_setup "$fresh_home" "$fake_bin"
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
+  assert_missing "${fresh_skills}/${skill_name}"
+done
 for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
   assert_missing "${fresh_skills}/${skill_name}"
 done
@@ -151,6 +164,9 @@ fi
 assert_exists "${conflict_skills}/codev-issue2task"
 assert_missing "${conflict_skills}/codev"
 assert_missing "${conflict_skills}/codev-checkpoint"
+for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
+  assert_missing "${conflict_skills}/${skill_name}"
+done
 for skill_name in "${LEGACY_CODEV_SKILLS[@]}"; do
   assert_missing "${conflict_skills}/${skill_name}"
 done

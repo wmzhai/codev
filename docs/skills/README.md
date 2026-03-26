@@ -31,7 +31,6 @@
 - [codev-simplify](codev-simplify.md)
 - [codev-checkpoint](codev-checkpoint.md)
 - [codev-autodev](codev-autodev.md)
-- [codev-checktask](codev-checktask.md)
 
 ## 5. 浏览器准备与环境接入
 

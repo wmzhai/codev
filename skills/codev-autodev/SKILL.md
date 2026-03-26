@@ -41,7 +41,7 @@ description: 在已有 task 分支上自动完成单个任务的 `$codev-taskdev
 - 不打 tag
 - 不把任务归档到 `tasks/done/`
 
-这些动作留给 `codev-quickship` 或 `codev-automerge`，其中前者是轻量直推，后者是正式发布收尾。
+这些动作留给 `codev-quickship` 或 `codev-automerge`，其中前者是人工验证后的手动收尾，后者是正式发布收尾。
 
 ## Workflow
 
@@ -149,7 +149,6 @@ description: 在已有 task 分支上自动完成单个任务的 `$codev-taskdev
   - `review`
   - `qa`
 - 不要直接把以下 skill 当作 `codev-autodev` 的收尾步骤：
-  - `codev-checktask`：它默认会归档到 `tasks/done/`，不适合 `codev-autodev` 的分支内收尾状态
   - `ship`：它通常伴随正式发布动作，可能引入版本号、CHANGELOG 或 PR 语义
   - `land-and-deploy`：它的默认语义包含合并主干，不适合 `codev-autodev`
 - 如果某个现有 skill 只能覆盖一部分需求，就只复用其中合适的部分约束，由 `codev-autodev` 自己接管剩余步骤。
