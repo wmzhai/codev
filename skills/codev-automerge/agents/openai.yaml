@@ -1,4 +1,0 @@
-interface:
-  display_name: "codev-automerge"
-  short_description: "在用户确认分支部署结果后，自动完成主干合并、版本号、正式发布和任务归档"
-  default_prompt: "使用 $codev-automerge 在用户确认功能完成后收口当前任务：触发后立即用中文与用户交流，锁定用户指定或最合适的“已部署待人工确认”任务与分支，先同步并归档对应 task 文档，再完成合并到 main/master、版本号和正式发布收尾；如现有 gstack 流程兼容则优先复用，否则直接按仓库已有发布方式执行。"

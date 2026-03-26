@@ -20,9 +20,9 @@
 - `codev-issue2task` 只处理 GitHub issue 或用户直接需求，不读取 `~/.gstack/projects/`。
 - `codev-gstack2task` 只处理 `~/.gstack/projects/` 下的 gstack 工件，不查询 GitHub issue。
 - `codev-issue2task` 与 `codev-gstack2task` 都必须直接产出包含实现计划的 task 文件，不再依赖独立 `plantask` 步骤。
-- `$codev-taskdev` 与 `codev-autodev` 默认都按 `tasks/` 中最小整数任务号选择待办任务；`codev-autodev` 内含 `$codev-taskdev` 阶段，不要求显式先运行一次 `$codev-taskdev`。
+- `$codev-taskdev` 默认按 `tasks/` 中最小整数任务号选择待办任务。
 - `codev-taskdev` 负责实现、task 文档同步和一次实现收尾精简，但不做自动验证、不归档到 `tasks/done/`。
-- `codev-quickship` 负责人工验证后的 task 归档、任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md` 同步，以及 commit / merge / push，但不处理版本号、tag 或正式发布。
+- `codev-quickship` 负责人工验证后的 task 归档、任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md` 同步，以及 commit / merge / push；若仓库已有版本号文件或 `CHANGELOG`，还要做最小同步，但不自动新建、不打 tag、也不做正式发布。
 - 如果 `CLAUDE.md` 承载宿主代理说明、gstack section 或工具约束，`codev-memorize` 只能收敛 repo 事实，不能删掉这些兼容块。
 - `codev-checkpoint` 是轻量 `commit/push` fallback；仓库接入 gstack 时，默认发布入口应是 gstack `$ship`。
 

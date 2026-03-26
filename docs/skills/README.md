@@ -28,9 +28,9 @@
 ## 4. task 分支实现与收口
 
 - [codev-taskdev](codev-taskdev.md)
+- [codev-quickship](codev-quickship.md)
 - [codev-simplify](codev-simplify.md)
 - [codev-checkpoint](codev-checkpoint.md)
-- [codev-autodev](codev-autodev.md)
 
 ## 5. 浏览器准备与环境接入
 
@@ -49,8 +49,6 @@
 - [land-and-deploy](land-and-deploy.md)
 - [document-release](document-release.md)
 - [canary](canary.md)
-- [codev-quickship](codev-quickship.md)
-- [codev-automerge](codev-automerge.md)
 - [retro](retro.md)
 
 ## 7. 不属于固定流程的专项工具

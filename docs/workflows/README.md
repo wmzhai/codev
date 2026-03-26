@@ -4,7 +4,7 @@
 
 ## 命名约定
 
-- codev 自定义 skill 统一带 `codev-` 前缀，例如 `$codev-taskdev`、`$codev-autodev`。
+- codev 自定义 skill 统一带 `codev-` 前缀，例如 `$codev-taskdev`、`$codev-quickship`。
 - gstack 安装目录使用 `gstack-*` 包名，但调用仍然使用 `$office-hours`、`$qa`、`$ship` 这类短名。
 
 ## 从开始到结束的完整流程
@@ -49,13 +49,8 @@
                               │
                               ▼
 ┌──────────────────────────── task 分支执行 ──────────────────────────┐
-│  手动主线：                                                         │
+│  默认主线：                                                         │
 │  $codev-taskdev -> 人工验证 -> $codev-quickship                     │
-│                                                                     │
-│  自动旁支：                                                         │
-│  $codev-autodev                                                     │
-│    └─► 内含 $codev-taskdev + 审查 + 测试 + 分支部署                 │
-│    └─► 停在“已部署待人工确认”                                        │
 │                                                                     │
 │  验证门禁：                                                         │
 │  有 UI 时 $design-review                                            │
@@ -65,12 +60,10 @@
                               │
                               ▼
 ┌──────────────────────────── 合并与发布收尾 ─────────────────────────┐
-│  手动默认路径：人工验证通过 -> $codev-quickship                     │
+│  默认收尾路径：人工验证通过 -> $codev-quickship                     │
 │                                                                     │
-│  人工路径：$ship -> $land-and-deploy -> $document-release -> $canary│
-│                                                                     │
-│  自动正式路径：人工确认 -> $codev-automerge                         │
-│    └─► 如兼容则复用 $ship / $land-and-deploy / $document-release   │
+│  正式发布路径：$ship -> $land-and-deploy -> $document-release       │
+│                 -> $canary                                          │
 │                                                                     │
 │  可选复盘：$retro                                                   │
 └─────────────────────────────────────────────────────────────────────┘
@@ -98,22 +91,19 @@
 
 ### 4. task 分支执行
 
-- 手动主线默认入口是 `$codev-taskdev`，负责 task 分支内的 plan 校准、编码、任务文档持续同步和一次实现收尾精简，不自动启动服务或执行验证。
+- 默认入口是 `$codev-taskdev`，负责 task 分支内的 plan 校准、编码、任务文档持续同步和一次实现收尾精简，不自动启动服务或执行验证。
 - 功能验证默认由人工完成；`$codev-taskdev` 完成后，先人工验证，再决定是否进入 `$codev-quickship`。
 - `$codev-simplify` 仍可单独使用；`$codev-checkpoint` 只负责显式的轻量提交 fallback。
-- `$codev-autodev` 是旁支自动闭环：它内含 `$codev-taskdev` 阶段，但不会 merge 主干。
 - `$design-review`、`$review`、`$qa`、`$qa-only` 是验证门禁，不应该提前偷换成发布动作。
 
 ### 5. 合并与发布收尾
 
-- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并完成 commit / merge / push。
-- 人工路径默认是 `$ship -> $land-and-deploy`，再视需要补 `$document-release` 与 `$canary`。
-- 自动正式路径必须先人工确认，再运行 `$codev-automerge`。
-- `codev-quickship` 不处理版本号和正式发布；`$codev-automerge` 才负责 codev 自动链路中的正式发布收尾。
+- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在仓库已有版本号文件或 `CHANGELOG` 时做最小同步，再完成 commit / merge / push。
+- 需要 tag、正式发布或全局发布文档时，走 gstack `$ship -> $land-and-deploy -> $document-release`，再视需要补 `$canary`。
+- `codev-quickship` 不创建 PR、不打 tag，也不接管正式发布。
 
 ## 旁支流程入口
 
-- 自动闭环：见 [auto-dev-loop.md](auto-dev-loop.md)
 - 浏览器与部署准备：见 [browser-and-deploy-prep.md](browser-and-deploy-prep.md)
 - 安全、调试与专项审查：见 [safety-and-debug-branches.md](safety-and-debug-branches.md)
 

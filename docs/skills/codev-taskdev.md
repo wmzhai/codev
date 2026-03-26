@@ -47,4 +47,3 @@ Source: `codev`
 
 - 人工验证功能
 - 验证通过后进入 `$codev-quickship`
-- 想自动继续闭环时，改走 `$codev-autodev`

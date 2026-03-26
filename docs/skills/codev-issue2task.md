@@ -53,4 +53,3 @@ Source: `codev`
 
 - 人工审核 task plan
 - 认可后进入 `$codev-taskdev`
-- 若想自动闭环，直接进入 `$codev-autodev`

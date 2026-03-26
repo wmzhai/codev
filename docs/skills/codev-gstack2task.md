@@ -44,4 +44,3 @@ Source: `codev`
 
 - 人工审核 task plan
 - 认可后进入 `$codev-taskdev`
-- 若要自动推进到分支部署，则进入 `$codev-autodev`

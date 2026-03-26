@@ -7,7 +7,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 
 `codev-taskdev` 是 task plan 的手动执行器。它把已经审核通过的 task 文件转成实际代码改动，并把实现过程同步回任务文档。
 
-它只覆盖 task 分支内的“选择任务 -> 校准 plan -> 编码 -> 持续同步 task -> 实现收尾精简”这一段。它不是 `codev-autodev` 的替代发布链，不负责自动验证、完整 QA、分支部署、归档或主干收尾。
+它只覆盖 task 分支内的“选择任务 -> 校准 plan -> 编码 -> 持续同步 task -> 实现收尾精简”这一段，不负责自动验证、完整 QA、分支部署、归档或主干收尾。
 
 ## 第一规则：先用中文交流
 
@@ -29,7 +29,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 - 目标 task 已在对应 task 分支上完成当前 plan 范围内的代码实现。
 - 对应 `tasks/Txx-*.md` 已同步实际采用的实现路径、重要代码改动、待执行人工验证和剩余缺口。
 - 已在收尾阶段自动执行过一次 `codev-simplify` 式语义不变精简；如果没有安全可做的精简，也已明确记录。
-- 当前结果已经适合进入人工验证；人工验证通过后，再进入 `$codev-quickship` 或按场景改走 `$codev-autodev`。
+- 当前结果已经适合进入人工验证；人工验证通过后，再进入 `$codev-quickship`。
 
 `codev-taskdev` 默认不负责以下动作：
 
@@ -75,7 +75,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 9. 不主动执行验证动作：
    - 不自动启动本地服务，不自动跑测试、lint、build、脚本检查或浏览器验证。
    - 不默认触发 `$design-review`、`$review`、`$qa` 或部署；这些属于后续独立门禁。
-   - `Validation Plan` 继续保留给后续人工验证或 `codev-autodev` 使用。
+   - `Validation Plan` 继续保留给后续人工验证或独立验证门禁使用。
 10. 在实现收尾时自动执行一次语义不变精简：
    - 优先沿用 `codev-simplify` 的约束：不改行为、不改公共 API、不引入新依赖、不无故扩大范围。
    - 只在本次 task 相关、已经完成实现的最小必要 diff 上执行这一次；不要在中途重复多轮精简。
@@ -105,7 +105,6 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 - 不要为了验证当前改动而额外启动本地服务或补搭环境。
 - 不要把 task 收尾同步扩大成 repo 级文档巡检；`docs/`、`memory/`、`AGENTS.md` 的更新留给后续 `codev-quickship`。
 - 不要假设必须 commit 才算完成；`codev-taskdev` 默认停在代码与任务文档都已更新的实现阶段。
-- `codev-autodev` 已经内含这一阶段；如果用户明确要“自动推进到可部署待确认”，直接使用 `codev-autodev`，不要先跑一遍 `codev-taskdev` 再重复执行。
 
 ## Hard Blockers
 

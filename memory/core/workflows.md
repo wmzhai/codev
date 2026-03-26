@@ -13,11 +13,11 @@
 1. gstack `$office-hours`、`$plan-ceo-review`、`$plan-eng-review` 先把上游设计、交接和测试计划写到 `~/.gstack/projects/`
 2. GitHub issue 或直接需求走 `codev-issue2task`；gstack 工件走 `codev-gstack2task`
 3. `codev-issue2task` 与 `codev-gstack2task` 都要结合代码直接写出带实现计划的 `tasks/Txx-*.md`
-4. 用户先审核 task 文件中的 plan，再决定进入 `$codev-taskdev` 或 `codev-autodev`
+4. 用户先审核 task 文件中的 plan，再进入 `$codev-taskdev`
 5. `$codev-taskdev` 负责按已审核 plan 选择任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简
-6. 默认更安全的自动闭环是 `codev-autodev`：它内含 `$codev-taskdev` 阶段，再继续推进实现、审查、测试、分支部署，并持续更新对应 `tasks/Txx-*.md`
-7. 手动路径下，功能默认由人工验证；人工验证通过后，再用 `codev-quickship` 完成 task 归档、任务相关文档同步，以及 commit / merge / push
-8. 需要正式收尾时，再用 `codev-automerge`；需要正式发布链路时，也可走 gstack `$ship`、`$document-release` 与 `$land-and-deploy`
+6. 视需要补 gstack `$review`、`$qa`
+7. 功能默认由人工验证；人工验证通过后，再用 `codev-quickship` 完成 task 归档、任务相关文档同步、已有版本工件最小同步，以及 commit / merge / push
+8. 需要正式发布链路时，改走 gstack `$ship`、`$document-release` 与 `$land-and-deploy`
 9. `codev-checkpoint` 只保留给显式的轻量 `commit/push` 场景
 
 ## 新增 skill
