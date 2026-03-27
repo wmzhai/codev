@@ -38,7 +38,7 @@
 ┌────────────────────────── 任务生成与审核 ───────────────────────────┐
 │  gstack 工件 -> $codev-gstack2task                                  │
 │  issue / 直接需求 -> $codev-issue2task                              │
-│    └─► tasks/Txx-*.md + 对应 task 分支                              │
+│    └─► 先需求讨论确认，再产出 tasks/Txx-*.md + 对应 task 分支       │
 │                                                                     │
 │  人工审核 task plan                                                 │
 │    └─► 确认 Implementation Plan / Validation Plan                   │
@@ -86,7 +86,8 @@
 ### 3. 任务生成与审核
 
 - codev 只有两个任务入口：`$codev-issue2task` 和 `$codev-gstack2task`。
-- 两者都必须直接产出包含 `Implementation Plan` 与 `Validation Plan` 的 task 文件。
+- `$codev-gstack2task` 仍然直接产出包含 `Implementation Plan` 与 `Validation Plan` 的 task 文件。
+- `$codev-issue2task` 先基于代码和 issue 做需求讨论与确认，确认完关键细节后才落盘 task 文件。
 - 审核 task plan 是强门禁；不接受就回 task 文件继续收敛。
 
 ### 4. task 分支执行
@@ -98,7 +99,7 @@
 
 ### 5. 合并与发布收尾
 
-- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在仓库已有版本号文件或 `CHANGELOG` 时做最小同步，再完成 commit / merge / push；如果 task 明确源自 GitHub issue，则在主干 push 成功后用 `gh` 关闭对应 issue。
+- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步 `CHANGELOG`，再完成 commit / merge / push；提交信息要带 task 标识和最新版本号；如果 task 明确源自 GitHub issue，则在主干 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue。
 - 需要 tag、正式发布或全局发布文档时，走 gstack `$ship -> $land-and-deploy -> $document-release`，再视需要补 `$canary`。
 - `codev-quickship` 不创建 PR、不打 tag，也不接管正式发布。
 
