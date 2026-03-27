@@ -26,7 +26,7 @@
 - `$codev-taskdev` 只负责按已审核 plan 实施代码、同步任务文档并在实现收尾做一次语义不变精简；不要把它扩成验证、QA、部署或发布入口。
 - 在 task 分支准备第一次提交或 `codev-checkpoint` 前，可以先用 `codev-simplify` 收窄当前 patch，再把工作区收成 clean tree。
 - 只有明确需要轻量 `commit/push` 时，才用 `$codev-checkpoint`。
-- `$codev-quickship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在每次收尾时递增根目录 `VERSION`、同步 `CHANGELOG`，再提交、合并并推送主干；若 task 明确映射 GitHub issue，则在 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue；不调用 gstack 的正式发布技能。
+- `$codev-quickship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在每次收尾时递增根目录 `VERSION`、同步 `CHANGELOG`，再提交、合并并推送主干；若 task 明确映射 GitHub issue，则在 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue；收尾提交信息应采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式；不调用 gstack 的正式发布技能。
 - 需要 tag、正式发布或全局发布文档时，进入 gstack `$ship`、`$land-and-deploy` 与 `$document-release`。
 
 ## 推荐组合流程

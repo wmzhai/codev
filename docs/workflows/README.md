@@ -99,7 +99,7 @@
 
 ### 5. 合并与发布收尾
 
-- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步 `CHANGELOG`，再完成 commit / merge / push；提交信息要带 task 标识和最新版本号；如果 task 明确源自 GitHub issue，则在主干 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue。
+- 人工验证通过后，默认走 `$codev-quickship`：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步 `CHANGELOG`，再完成 commit / merge / push；提交信息要使用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式；如果 task 明确源自 GitHub issue，则在主干 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue。
 - 需要 tag、正式发布或全局发布文档时，走 gstack `$ship -> $land-and-deploy -> $document-release`，再视需要补 `$canary`。
 - `codev-quickship` 不创建 PR、不打 tag，也不接管正式发布。
 

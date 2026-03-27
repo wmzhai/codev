@@ -4,7 +4,7 @@ Source: `codev`
 
 ## Purpose
 
-在用户完成人工验证并确认结果后，完成 task 的统一收尾：归档到 `tasks/done/`、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到主干；如果 task 明确源自 GitHub issue，则在主干 push 成功后先在对应 issue 下追加一条本轮实际工作的摘要，再关闭对应 issue；提交时要把当前 task 标识和最新版本号写进 commit message，避免只写过短的收口语；不走 PR、不打 tag，也不接管正式发布流程。
+在用户完成人工验证并确认结果后，完成 task 的统一收尾：归档到 `tasks/done/`、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到主干；如果 task 明确源自 GitHub issue，则在主干 push 成功后先在对应 issue 下追加一条本轮实际工作的摘要，再关闭对应 issue；提交时要使用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，工作摘要先写清具体工作，版本号放在最后括号里；不走 PR、不打 tag，也不接管正式发布流程。
 
 ## Preconditions
 
@@ -39,7 +39,7 @@ Source: `codev`
 4. 递增根目录 `VERSION` 的最后一位，并对 `CHANGELOG` 做最小同步；如果根目录 `VERSION` 缺失或格式不符，直接停止并说明仓库尚未初始化版本工件。
 5. 检查工作区与主干权限，必要时先在当前分支做最小提交。
 6. 如果当前在分支上，同步远端主干并在本地完成 merge；如果已经在主干上，直接在主干提交这次收尾改动。
-   - commit message 要包含当前 task 标识和最新版本号。
+   - commit message 要采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式；工作摘要先写具体工作，版本号放在最后括号里。
 7. 直接 push 主干。
 8. 若 task 明确映射到 GitHub issue，则在 push 成功后先逐个执行 `gh issue comment <number>` 追加本轮工作摘要，再逐个执行 `gh issue close <number>`。
 
