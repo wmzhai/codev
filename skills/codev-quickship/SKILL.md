@@ -1,6 +1,11 @@
 ---
 name: codev-quickship
-description: 在用户完成人工验证并确认当前结果满足预期后，完成 task 的统一收尾：同步最终 task、归档到 `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到 `main/master`；如果 task 明确源自 GitHub issue，则在主干 push 成功后先把本轮实际完成的工作写到对应 issue 下，再关闭对应 issue；收尾提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，不走 PR、不打 tag，也不做正式发布。
+description: >-
+  在用户完成人工验证并确认当前结果满足预期后，完成 task 的统一收尾：同步最终 task、归档到
+  `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION`
+  递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
+  明确源自 GitHub issue，则在主干 push 成功后先把本轮实际完成的工作写到对应 issue 下，再关闭
+  对应 issue；收尾提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，不走 PR、不打 tag，也不做正式发布。
 ---
 
 # QuickShip

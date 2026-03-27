@@ -4,7 +4,7 @@ Source: `codev`
 
 ## Purpose
 
-在用户完成人工验证并确认结果后，完成 task 的统一收尾：归档到 `tasks/done/`、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到主干；如果 task 明确源自 GitHub issue，则在主干 push 成功后先在对应 issue 下追加一条本轮实际工作的摘要，再关闭对应 issue；提交时要使用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，工作摘要先写清具体工作，版本号放在最后括号里；不走 PR、不打 tag，也不接管正式发布流程。
+在用户完成人工验证并确认结果后，完成 task 的统一收尾：默认以当前 git 分支为起点，归档到 `tasks/done/`、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到默认主干；如果 task 明确源自 GitHub issue，则在主干 push 成功后先在对应 issue 下追加一条本轮实际工作的摘要，再关闭对应 issue；提交时要使用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，工作摘要先写清具体工作，版本号放在最后括号里；不走 PR、不打 tag，也不接管正式发布流程。
 
 ## Preconditions
 
