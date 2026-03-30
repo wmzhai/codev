@@ -7,9 +7,9 @@
 - `docs/workflows/README.md`：从开始到结束的总流程图与总导航
 - `docs/workflows/*.md`：只有总流程中不适合用一段覆盖的旁支流程
 - `docs/skills/*.md`：每个 skill 的详细手册
-- `setup`：安装当前仓库到 `~/.codex/skills/`，并链接受管 skills
+- `setup`：按 `--host claude|codex` 安装当前仓库到对应的全局 skills 目录，并链接受管 skills；默认 `--host codex`
 - `test/setup-smoke.sh`：验证安装、幂等性和冲突处理
-- `skills/codev-memorize/`：为项目建立或刷新 Codex 记忆体系
+- `skills/codev-memorize/`：为项目建立或刷新以 `AGENTS.md + memory/` 为核心、兼容 `CLAUDE.md` 的记忆体系
 - `skills/codev-issue2task/`：把 issue 收敛成带实现计划的任务文件
 - `skills/codev-gstack2task/`：把 `~/.gstack/projects/` 下的 gstack 工件收敛成带实现计划的任务文件
 - `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简
@@ -22,7 +22,7 @@
 ## 外部工件边界
 - `~/.gstack/projects/`：gstack 产出的 design doc、implementation handoff、test plan、review state 等上游工件。本仓库不拥有这些文件，只通过 `codev-gstack2task` 消费它们。
 - `tasks/`：repo 内可执行工作单元，属于 codev 的主落点。
-- `AGENTS.md` 与 `memory/`：repo 内面向 Codex 的长期记忆层。
+- `AGENTS.md` 与 `memory/`：repo 内的长期记忆层；Codex 直接使用，Claude 通过 `CLAUDE.md` 兼容引用。
 - `VERSION` 与 `CHANGELOG`：repo 内的版本工件，属于受管事实，不自动新建多个并行版本源。
 - repo 级人类文档如 `README.md`、`CHANGELOG`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS`：如果项目同时使用 gstack，优先由 gstack `$document-release` 维护。
 

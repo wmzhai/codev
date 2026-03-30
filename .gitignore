@@ -23,6 +23,9 @@ env/
 *.swo
 *~
 
+# Node.js
+node_modules/
+
 # Logs and temp files
 *.log
 .tmp/

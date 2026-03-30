@@ -1,6 +1,6 @@
 # Memory
 
-`memory/` 是本仓库面向 Codex 的检索型记忆系统，回答“先看哪里、该改哪里、怎么验证”。
+`memory/` 是本仓库以 `AGENTS.md + memory/` 为核心的检索型记忆系统，回答“先看哪里、该改哪里、怎么验证”；它主要服务 Codex，并通过根目录 `CLAUDE.md` 为 Claude 提供兼容入口。
 
 ## 热路径
 1. `AGENTS.md`

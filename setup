@@ -3,7 +3,7 @@ set -euo pipefail
 
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-SKILLS_DIR="${HOME}/.codex/skills"
+HOST="codex"
 GSTACK_DIR="${HOME}/gstack"
 GSTACK_REPO_URL="https://github.com/garrytan/gstack.git"
 MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-quickship codev-simplify codev-checkpoint)
@@ -15,9 +15,49 @@ die() {
   exit 1
 }
 
+parse_args() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --host)
+        [ $# -ge 2 ] || die "missing value for --host (expected claude or codex)"
+        HOST="$2"
+        shift 2
+        ;;
+      --host=*)
+        HOST="${1#--host=}"
+        shift
+        ;;
+      *)
+        die "unknown argument: $1"
+        ;;
+    esac
+  done
+
+  case "$HOST" in
+    claude|codex) ;;
+    *) die "unknown host: ${HOST} (expected claude or codex)" ;;
+  esac
+}
+
 ensure_command() {
   local command_name="$1"
   command -v "$command_name" >/dev/null 2>&1 || die "${command_name} is required but not installed"
+}
+
+skills_dir_for_host() {
+  case "$1" in
+    claude) printf '%s\n' "${HOME}/.claude/skills" ;;
+    codex) printf '%s\n' "${HOME}/.codex/skills" ;;
+    *) die "unsupported host: $1" ;;
+  esac
+}
+
+host_label() {
+  case "$1" in
+    claude) printf '%s\n' "Claude" ;;
+    codex) printf '%s\n' "Codex" ;;
+    *) die "unsupported host: $1" ;;
+  esac
 }
 
 ensure_symlink_or_absent() {
@@ -45,6 +85,7 @@ cleanup_legacy_codev_skill() {
 }
 
 bootstrap_gstack() {
+  local host="$1"
   ensure_command git
 
   if [ -e "$GSTACK_DIR" ] && [ ! -d "$GSTACK_DIR" ]; then
@@ -63,11 +104,14 @@ bootstrap_gstack() {
 
   [ -x "${GSTACK_DIR}/setup" ] || die "gstack setup script is missing at ${GSTACK_DIR}/setup"
 
-  echo "Installing gstack for Codex..."
-  "${GSTACK_DIR}/setup" --host codex >/dev/null || die "gstack setup failed"
+  echo "Installing gstack for $(host_label "$host")..."
+  "${GSTACK_DIR}/setup" --host "$host" >/dev/null || die "gstack setup failed"
 }
 
-bootstrap_gstack
+parse_args "$@"
+SKILLS_DIR="$(skills_dir_for_host "$HOST")"
+
+bootstrap_gstack "$HOST"
 
 mkdir -p "$SKILLS_DIR"
 
@@ -92,6 +136,7 @@ for skill_name in "${REMOVED_MANAGED_SKILLS[@]}"; do
 done
 
 echo "codev ready."
+echo "  host: ${HOST}"
 echo "  repo: ${REPO_ROOT}"
 echo "  skills: ${SKILLS_DIR}"
 echo "  linked: ${MANAGED_SKILLS[*]}"

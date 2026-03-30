@@ -38,7 +38,7 @@ Source: `codev`
 - project slug 无法定位。
 - 多份工件相互冲突，无法安全判断以哪份为准。
 - 当前仓库和工件的对应关系不明确。
-- Codex 判断必须拆成多个 task，但用户尚未确认拆分清单。
+- 根据代码边界判断必须拆成多个 task，但用户尚未确认拆分清单。
 
 ## Next Recommended Steps
 

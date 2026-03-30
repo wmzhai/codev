@@ -4,7 +4,7 @@ Source: `codev`
 
 ## Purpose
 
-为当前仓库建立或刷新面向 Codex 的记忆体系，让新 session 知道先读什么、规则从哪里继承、流程文档去哪里找。
+为当前仓库建立或刷新以 `AGENTS.md + memory/` 为核心、兼容 `CLAUDE.md` 入口的记忆体系，让新 session 知道先读什么、规则从哪里继承、流程文档去哪里找。
 
 ## Preconditions
 

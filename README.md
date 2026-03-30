@@ -1,8 +1,12 @@
-# Codex DevFlow
+# codev DevFlow
 
-`codev` 基于一套基于Codex的自用开发工作流整合库, 默认工作环境是macOS,不支持windows平台.
+`codev` 是一套面向 Claude / Codex 的开发工作流整合库，默认工作环境是 macOS，不支持 Windows 平台。
 
 ## 1. 安装
+
+默认 `./setup` 等价于 `./setup --host codex`。
+
+### Codex 全局安装
 
 ```bash
 git clone https://github.com/wmzhai/codev.git ~/codev
@@ -10,7 +14,19 @@ cd ~/codev
 ./setup
 ```
 
+### Claude 全局安装
+
+```bash
+git clone https://github.com/wmzhai/codev.git ~/codev
+cd ~/codev
+./setup --host claude
+```
+
+当前只支持全局安装到 `~/.codex/skills/` 或 `~/.claude/skills/`，暂不支持项目内 `.agents/skills/` / `.claude/skills/` vendored 安装。
+
 ## 2. 升级
+
+### Codex
 
 ```bash
 cd ~/codev
@@ -18,9 +34,18 @@ git pull --ff-only
 ./setup
 ```
 
+### Claude
+
+```bash
+cd ~/codev
+git pull --ff-only
+./setup --host claude
+```
+
 ## 3. 快速入门
 
 - 使用本项目时，优先按 [docs/workflows/README.md](docs/workflows/README.md) 的流程走。
+- Claude 入口见根目录 `CLAUDE.md`；Codex 入口见 `AGENTS.md`。
 - 某一步涉及哪个 skill、不清楚怎么用时，去看 [docs/skills/README.md](docs/skills/README.md) 和对应的 `docs/skills/<skill>.md`。
 - 如果要看更底层的运行规则，再去看 `skills/<name>/SKILL.md`。
 
