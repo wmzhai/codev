@@ -3,14 +3,14 @@ name: codev-quickship
 description: >-
   在用户完成人工验证并确认当前结果满足预期后，完成 task 的统一收尾：同步最终 task、归档到
   `tasks/done/`、更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION`
-  递增一位、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
+  同步到收尾版本、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
   明确源自 GitHub issue，则在主干 push 成功后先把本轮实际完成的工作写到对应 issue 下，再关闭
   对应 issue；收尾提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，不走 PR、不打 tag，也不做正式发布。
 ---
 
 # QuickShip
 
-`codev-quickship` 是人工验证通过后的统一收尾 skill。它基于当前 task 的已确认结果，补齐最终 task 记录、归档任务、同步任务相关文档，并在每次收尾时把根目录 `VERSION` 递增一位、同步已有 `CHANGELOG`，然后完成“提交并推主干”：如果当前在分支上，就先把分支收成稳定状态再合并进主干；如果已经在主干上，就直接在主干上提交并推送。若 task 明确映射到 GitHub issue，它还要在主干 push 成功后先向对应 issue 追加一条本轮实际工作摘要，再关闭对应 issue。它不走标准 PR / release 链路，也不调用 `$ship`、`$land-and-deploy`、`$document-release`。
+`codev-quickship` 是人工验证通过后的统一收尾 skill。它基于当前 task 的已确认结果，补齐最终 task 记录、归档任务、同步任务相关文档，并在每次收尾时同步根目录 `VERSION` 与已有 `CHANGELOG`：如果用户未显式指定版本，则默认按四段版本号 `x.y.z.w -> x.y.(z+1).0`，也就是把第 3 位加一并把第 4 位重置为 0；如果用户显式指定目标版本，则按指定版本写入。随后它完成“提交并推主干”：如果当前在分支上，就先把分支收成稳定状态再合并进主干；如果已经在主干上，就直接在主干上提交并推送。若 task 明确映射到 GitHub issue，它还要在主干 push 成功后先向对应 issue 追加一条本轮实际工作摘要，再关闭对应 issue。它不走标准 PR / release 链路，也不调用 `$ship`、`$land-and-deploy`、`$document-release`。
 
 ## 第一规则：先用中文交流
 
@@ -63,7 +63,9 @@ description: >-
    - 如本任务改变了 repo 的稳定工作流、约束或默认动作，最小范围更新 `AGENTS.md`。
    - 如果没有需要更新的内容，要明确记录“任务相关 docs/memory/AGENTS 无需更新”。
 7. 同步仓库里的版本工件：
-   - 在收尾前先读取根目录 `VERSION`，把末位递增一位，并同步已有 `CHANGELOG`。
+   - 在收尾前先读取根目录 `VERSION`，并同步已有 `CHANGELOG`。
+   - 如果用户未显式指定版本，则默认按四段版本号 `x.y.z.w -> x.y.(z+1).0`，也就是把第 3 位加一并把第 4 位重置为 0。
+   - 如果用户显式指定目标版本，则直接使用该版本；显式版本同样必须是单个可稳定解析的四段纯数字版本号。
    - `VERSION` 必须存在且为单个可稳定解析的四段纯数字版本号；如果不存在、候选不唯一或格式不符，要停止并说明仓库尚未初始化版本工件。
    - `CHANGELOG` 只做与本次收尾相关的最小同步，不扩写成完整发布说明。
 8. 根据当前所在分支决定 quickship 路径：
@@ -96,7 +98,9 @@ description: >-
 - 显式调用 `$codev-quickship` 就视为用户已经确认“人工验证通过 + 可以直接收尾并 push 主干”；不要重复追问同义确认问题。
 - 不要调用 `$ship`、`$land-and-deploy`、`$document-release`。
 - 不要创建 PR。
-- `VERSION` 是 quickship 每次收尾都要递增的标准版本工件；`CHANGELOG` 必须跟随同步。
+- `VERSION` 是 quickship 每次收尾都要同步的标准版本工件；`CHANGELOG` 必须跟随同步。
+- quickship 在未显式指定版本时，默认把四段版本号的第 3 位加一，并把第 4 位重置为 0。
+- 如果用户显式指定目标版本，只接受四段纯数字版本号，并按指定值写入。
 - quickship 的提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式，版本号放在最后的括号里。
 - 不打 tag，也不做正式发布。
 - 不做自动化功能验证；功能验证以用户明确完成的人工验证为准。
