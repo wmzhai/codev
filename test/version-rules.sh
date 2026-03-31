@@ -47,8 +47,8 @@ done
 
 assert_contains "README.md" "quickship 默认把最后一位加一"
 assert_contains "README.md" 'checkpoint 默认会同步根目录 `VERSION` 与 `CHANGELOG`'
-assert_contains "docs/workflows/README.md" "quickship 默认把最后一位加一"
-assert_contains "docs/workflows/README.md" '默认把第 4 位加一'
+assert_contains "docs/workflows.md" "codev-quickship"
+assert_contains "docs/workflows.md" "codev-checkpoint"
 assert_contains "AGENTS.md" "quickship 在未显式指定版本时默认把最后一位加一"
 assert_contains "AGENTS.md" "checkpoint 在未显式指定目标版本时默认把第 4 位加一"
 

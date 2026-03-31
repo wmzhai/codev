@@ -5,7 +5,7 @@
 ## 想知道这个仓库是干什么的
 - `README.md`
 - `AGENTS.md`
-- `docs/workflows/README.md`
+- `docs/workflows.md`
 
 ## 想知道 codev 和 gstack 怎么配合
 - `memory/core/gstack-interoperability.md`
@@ -25,7 +25,7 @@
 - `test/setup-smoke.sh`
 
 ## 想知道该用哪个 skill
-- 先看 `docs/workflows/README.md`
+- 先看 `docs/workflows.md`
 - 再看 `docs/skills/README.md`
 - 最后看对应 skill 的 `SKILL.md`
 
@@ -42,16 +42,17 @@
 - `memory/core/gstack-interoperability.md`
 
 ## 想走任务流
-- `docs/workflows/README.md`
+- `docs/workflows.md`
 - `docs/skills/codev-issue2task.md`
 - `docs/skills/codev-gstack2task.md`
 - `docs/skills/codev-taskdev.md`
 - `docs/skills/codev-quickship.md`
 
-## 想做提交或发版
+## 想做提交或收尾
 - `docs/skills/codev-checkpoint.md`
-- `docs/skills/ship.md`
+- `docs/skills/codev-quickship.md`
 - `skills/codev-checkpoint/SKILL.md`
+- `skills/codev-quickship/SKILL.md`
 - `memory/core/gstack-interoperability.md`
 
 ## 想做语义不变精简

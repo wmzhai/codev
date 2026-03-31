@@ -4,8 +4,7 @@
 
 ## 分层
 - `README.md`：面向用户的总说明、安装方式、调用示例、skills 列表
-- `docs/workflows/README.md`：从开始到结束的总流程图与总导航
-- `docs/workflows/*.md`：只有总流程中不适合用一段覆盖的旁支流程
+- `docs/workflows.md`：从开始到结束的唯一工作流导航
 - `docs/skills/*.md`：每个 skill 的详细手册
 - `setup`：按 `--host claude|codex` 安装当前仓库到对应的全局 skills 目录，并链接受管 skills；默认无参时同时安装 Claude 与 Codex，不依赖 `~/gstack` 安装
 - `test/setup-smoke.sh`：验证安装、幂等性和冲突处理
@@ -16,7 +15,7 @@
 - `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并把根目录 `VERSION` 递增一位、同步 `CHANGELOG`，然后提交、合并、推送主干；若 task 明确映射 GitHub issue，则在 push 成功后先补评论再用 `gh` 关闭对应 issue；收尾提交信息应采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式
 - `skills/codev-simplify/`：语义不变精简 diff
 - `skills/codev-checkpoint/`：轻量提交、推送 fallback
-- `memory/core/gstack-interoperability.md`：说明 codev 和 gstack 的职责边界与组合流程
+- `memory/core/gstack-interoperability.md`：说明 codev 和 gstack 的职责边界与推荐组合方式
 - `VERSION` / `CHANGELOG`：仓库的版本工件，供 `codev-checkpoint` 与 `codev-quickship` 读取和最小同步
 
 ## 外部工件边界
@@ -30,7 +29,7 @@
 - `SKILL.md` 是每个 skill 的主说明和工作流。
 - `agents/openai.yaml` 只放 UI 元数据和调用策略。
 - `README.md` 只放仓库级说明与技能导航。
-- `docs/workflows/README.md` 保留唯一总流程图。
+- `docs/workflows.md` 保留唯一工作流导航。
 - `docs/skills/<skill>.md` 是对外的 skill 详细手册。
 - `setup` 和 `test/setup-smoke.sh` 共同定义“哪些 skill 算受管”。
 - `codev-issue2task` 与 `codev-gstack2task` 是两个平行入口：前者处理 GitHub issue 或直接需求，后者处理 `~/.gstack/projects/` 工件；两者都直接产出可执行 task plan。
@@ -41,5 +40,5 @@
 - 新增 skill 文档：同步新增 `docs/skills/<name>.md`
 - 修改 skill 触发或行为：改对应 `SKILL.md` 和 `agents/openai.yaml`
 - 修改安装链路：改 `setup` 和 `test/setup-smoke.sh`
-- 修改外部说明：改 `README.md`、`docs/workflows/README.md`、`docs/skills/*.md`
+- 修改外部说明：改 `README.md`、`docs/workflows.md`、`docs/skills/*.md`
 - 修改 codev 与 gstack 的边界：先改 `memory/core/gstack-interoperability.md`，再同步 `AGENTS.md`、`README.md` 和相关 skill 文档

@@ -15,7 +15,7 @@
 - 上游产品与工程意图：`~/.gstack/projects/<slug>/`
 - repo 内执行单元：`tasks/`
 - 机器记忆：`AGENTS.md` + `memory/`
-- 对外流程导航：`docs/workflows/README.md`
+- 对外流程导航：`docs/workflows.md`
 - 对外 skill 手册：`docs/skills/README.md`
 - repo 级人类文档：`README.md`、`CHANGELOG`、`CLAUDE.md`、`CONTRIBUTING.md`、`TODOS`
 
@@ -27,25 +27,16 @@
 - 在 task 分支准备第一次提交或 `codev-checkpoint` 前，可以先用 `codev-simplify` 收窄当前 patch，再把工作区收成 clean tree。
 - 只有明确需要轻量 `commit/push` 时，才用 `$codev-checkpoint`。
 - `$codev-quickship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`，并在每次收尾时递增根目录 `VERSION`、同步 `CHANGELOG`，再提交、合并并推送主干；若 task 明确映射 GitHub issue，则在 push 成功后先补一条该轮工作的评论，再用 `gh` 关闭对应 issue；收尾提交信息应采用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式；不调用 gstack 的正式发布技能。
-- 需要 tag、正式发布或全局发布文档时，进入 gstack `$ship`、`$land-and-deploy` 与 `$document-release`。
+- 需要 tag、正式发布或全局发布文档时，再进入 gstack 的外部发布流程。
 
-## 推荐组合流程
-1. gstack `$office-hours`、`$plan-ceo-review`、`$plan-eng-review`
-2. `codev-gstack2task` 把上游工件落成包含实现计划的 `tasks/`
+## 推荐组合方式
+1. 输入来自 GitHub issue 或直接需求时，用 `codev-issue2task`
+2. 输入来自 `~/.gstack/projects/` 工件时，用 `codev-gstack2task`
 3. 用户先审核 task 文件中的实现计划
-4. 用 `$codev-taskdev` 先把已审核 plan 落成代码，并持续维护任务文档
-5. 视需要跑 gstack `$review`、`$qa`
-6. 人工验证功能
-7. 人工确认通过后用 `codev-quickship` 做收尾；需要正式发布时改走 gstack `$ship`
-
-## 默认落地路径
-1. `codev-issue2task` 或 `codev-gstack2task`
-2. 审核 task 文件中的实现计划
-3. `$codev-taskdev`
-4. 视需要跑 gstack `$review`、`$qa`
+4. 用 `$codev-taskdev` 落成代码，并持续维护任务文档
 5. 人工验证功能
-6. `$codev-quickship`
-7. 需要正式发布时，改走 gstack `$ship`
+6. 人工确认通过后用 `codev-quickship` 做收尾
+7. 需要正式发布链路时，再转入外部 gstack 发布流程
 
 ## 何时不用 codev-gstack2task
 - 需求本来就在 GitHub issue 里，直接用 `codev-issue2task`

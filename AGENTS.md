@@ -7,7 +7,7 @@
 ## Codex First
 - 新任务默认先读 `README.md`，再按问题进入 `memory/`。
 - `README.md` 负责对外说明当前仓库有哪些 skills、如何安装、如何调用。
-- `docs/workflows/README.md` 是总流程图与总导航。
+- `docs/workflows.md` 是唯一工作流导航。
 - `docs/skills/README.md` 是所有 skill 详细手册索引。
 - `memory/` 负责给 Codex 提供检索型入口、约束和维护路径。
 - `memory/core/` 负责仓库总图、症状路由、稳定约束、默认工作流和 gstack 协作边界；其中 gstack 是可协同的外部系统，不是本仓库安装前置。
@@ -17,7 +17,7 @@
 ## 仓库定位
 - 本仓库是 Codex skills 的集合，不是应用业务仓库。
 - 每个 `skills/<name>/` 目录都是一个独立能力包，目录名必须与 `SKILL.md` 的 `name` 对齐。
-- `docs/workflows/README.md` 保留完整总流程；只有总流程图中不适合一段讲清的旁支，才拆到 `docs/workflows/*.md`。
+- `docs/workflows.md` 保留完整的 codev 工作流与必要的条件性旁支说明。
 - `docs/skills/` 为每个 skill 提供单独详细手册；用户级说明优先看这里，运行规则优先回到对应 `SKILL.md`。
 - `codev-memorize` 负责为项目建立或刷新 `AGENTS.md` 与 `memory/` 记忆体系，同时保留宿主代理或 gstack 需要继续留在 `CLAUDE.md` 的兼容块。
 - `codev-issue2task` 保留 GitHub issue 或直接需求到 `tasks/` 的路径，不消费 gstack 工件，并直接产出可执行 plan。
@@ -35,5 +35,4 @@
 - 修改 `codev-taskdev` / `codev-quickship` 时，保持“task 分支实现”和“人工验证后的主干收尾”这条边界稳定；`codev-quickship` 只负责人工验证后的归档、版本号同步、`CHANGELOG` 同步、主干收尾，以及对明确映射 issue 的 task 先评论再关闭；其中 quickship 在未显式指定版本时默认把最后一位加一，并把收尾提交信息写成 `type: 具体工作摘要 (vX.Y.Z.W)`；正式发布仍交给 gstack `$ship` / `$land-and-deploy` / `$document-release`。
 - 如果仓库存在 `CLAUDE.md`，尤其已经承载 gstack section、浏览器约束或宿主代理说明，`codev-memorize` 只能收敛 repo 事实，不能把这些兼容说明删掉。
 - `README.md` 里只放用户需要看到的高层说明，不重复展开各 skill 的全部内部流程。
-- `docs/workflows/README.md` 要始终保持“从开始到结束”的最全总流程图。
-- `docs/workflows/*.md` 只收旁支流程，不重复抄写已经在总流程中完整覆盖的主线。
+- `docs/workflows.md` 要始终保持从开始到结束的 codev 主流程与必要旁支说明。

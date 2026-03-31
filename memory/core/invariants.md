@@ -10,7 +10,7 @@
 - `skills/<name>/` 目录名必须和 `SKILL.md` 的 `name` 一致。
 - `SKILL.md` 负责工作流；`agents/openai.yaml` 负责 UI 元数据。
 - `README.md` 是仓库级导航，不替代 `SKILL.md`。
-- `docs/workflows/README.md` 必须保留唯一总流程图。
+- `docs/workflows.md` 必须保留唯一工作流导航。
 - `docs/skills/<skill>.md` 必须覆盖对应 skill 的详细手册。
 
 ## 内容约束

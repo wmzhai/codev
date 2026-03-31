@@ -3,7 +3,7 @@
 默认先读：
 
 1. `README.md`
-2. `docs/workflows/README.md`
+2. `docs/workflows.md`
 3. `docs/skills/README.md`
 4. `AGENTS.md`
 
