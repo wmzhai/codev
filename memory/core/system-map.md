@@ -7,7 +7,7 @@
 - `docs/workflows/README.md`：从开始到结束的总流程图与总导航
 - `docs/workflows/*.md`：只有总流程中不适合用一段覆盖的旁支流程
 - `docs/skills/*.md`：每个 skill 的详细手册
-- `setup`：按 `--host claude|codex` 安装当前仓库到对应的全局 skills 目录，并链接受管 skills；默认 `--host codex`
+- `setup`：按 `--host claude|codex` 安装当前仓库到对应的全局 skills 目录，并链接受管 skills；默认无参时同时安装 Claude 与 Codex，不依赖 `~/gstack` 安装
 - `test/setup-smoke.sh`：验证安装、幂等性和冲突处理
 - `skills/codev-memorize/`：为项目建立或刷新以 `AGENTS.md + memory/` 为核心、兼容 `CLAUDE.md` 的记忆体系
 - `skills/codev-issue2task/`：把 issue 收敛成带实现计划的任务文件

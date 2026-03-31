@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.0 - 2026-03-31
+
+- 去除 `setup` 对 `~/gstack` 安装链路的依赖，并同步 smoke test 与协作文档边界。
+
 ## 0.0.0.6 - 2026-03-31
 
 - 调整 `setup` 默认同时安装 Claude 与 Codex，并同步安装说明与 smoke test。

@@ -10,7 +10,7 @@
 - `docs/workflows/README.md` 是总流程图与总导航。
 - `docs/skills/README.md` 是所有 skill 详细手册索引。
 - `memory/` 负责给 Codex 提供检索型入口、约束和维护路径。
-- `memory/core/` 负责仓库总图、症状路由、稳定约束、默认工作流和 gstack 协作边界。
+- `memory/core/` 负责仓库总图、症状路由、稳定约束、默认工作流和 gstack 协作边界；其中 gstack 是可协同的外部系统，不是本仓库安装前置。
 - 如果当前仓库同时使用 gstack，先确认任务来源：GitHub issue 或直接需求走 `codev-issue2task`，`~/.gstack/projects/` 下的设计/交接/测试计划工件走 `codev-gstack2task`。
 - 维护 skills 时，优先同步 `SKILL.md`、`agents/openai.yaml`、`docs/skills/<skill>.md`、`setup`、`test/setup-smoke.sh` 和 `README.md`。
 

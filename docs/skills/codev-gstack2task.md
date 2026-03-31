@@ -9,7 +9,7 @@ Source: `codev`
 ## Preconditions
 
 - 当前目录是 git 仓库。
-- `~/.gstack/projects/` 存在且能定位到相关 project slug 或工件。
+- `~/.gstack/projects/` 存在且能定位到相关 project slug 或工件；不要求 `~/gstack` 仓库已安装。
 - 允许新建 `tasks/Txx-*.md` 与对应分支。
 
 ## Inputs / Source Of Truth

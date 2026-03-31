@@ -4,7 +4,7 @@
 
 ## 1. 安装
 
-默认 `./setup` 会同时安装到 Claude 和 Codex；只有显式传 `--host` 时才只安装单个宿主。
+默认 `./setup` 会同时安装到 Claude 和 Codex；只有显式传 `--host` 时才只安装单个宿主。`setup` 只安装本仓库受管 skills，不会再 bootstrap `~/gstack` 或调用 `~/gstack/setup`。
 
 ### Claude + Codex 全局安装
 

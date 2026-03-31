@@ -6,8 +6,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 HOST=""
 HOST_EXPLICIT=0
 TARGET_HOSTS=()
-GSTACK_DIR="${HOME}/gstack"
-GSTACK_REPO_URL="https://github.com/garrytan/gstack.git"
 MANAGED_SKILLS=(codev-memorize codev-issue2task codev-gstack2task codev-taskdev codev-quickship codev-simplify codev-checkpoint)
 REMOVED_MANAGED_SKILLS=(codev-checktask codev-autodev codev-automerge)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
@@ -47,11 +45,6 @@ parse_args() {
   fi
 
   TARGET_HOSTS=(claude codex)
-}
-
-ensure_command() {
-  local command_name="$1"
-  command -v "$command_name" >/dev/null 2>&1 || die "${command_name} is required but not installed"
 }
 
 skills_dir_for_host() {
@@ -94,37 +87,11 @@ cleanup_legacy_codev_skill() {
   fi
 }
 
-bootstrap_gstack() {
-  local host="$1"
-  ensure_command git
-
-  if [ -e "$GSTACK_DIR" ] && [ ! -d "$GSTACK_DIR" ]; then
-    die "${GSTACK_DIR} exists and is not a directory"
-  fi
-
-  if [ ! -e "$GSTACK_DIR" ]; then
-    echo "Bootstrapping gstack..."
-    git clone "$GSTACK_REPO_URL" "$GSTACK_DIR" >/dev/null || die "failed to clone gstack into ${GSTACK_DIR}"
-  elif [ ! -d "${GSTACK_DIR}/.git" ]; then
-    die "${GSTACK_DIR} exists but is not a git repository"
-  else
-    echo "Updating gstack..."
-    git -C "$GSTACK_DIR" pull --ff-only >/dev/null || die "failed to update gstack in ${GSTACK_DIR}"
-  fi
-
-  [ -x "${GSTACK_DIR}/setup" ] || die "gstack setup script is missing at ${GSTACK_DIR}/setup"
-
-  echo "Installing gstack for $(host_label "$host")..."
-  "${GSTACK_DIR}/setup" --host "$host" >/dev/null || die "gstack setup failed"
-}
-
 install_for_host() {
   local host="$1"
   local skill_name
 
   SKILLS_DIR="$(skills_dir_for_host "$host")"
-
-  bootstrap_gstack "$host"
 
   mkdir -p "$SKILLS_DIR"
 

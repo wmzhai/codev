@@ -8,7 +8,7 @@
 
 ## 两条任务入口
 - `codev-issue2task`：输入是 GitHub issue 或用户直接需求。
-- `codev-gstack2task`：输入是 `~/.gstack/projects/` 下的 design doc、implementation handoff、test plan、CEO handoff 等工件。
+- `codev-gstack2task`：输入是 `~/.gstack/projects/` 下的 design doc、implementation handoff、test plan、CEO handoff 等工件；它读取这些工件目录，但不要求 `~/gstack` 仓库已安装。
 - 两者都写入 `tasks/`，但不要让一个 skill 去兼做另一个 skill 的输入解析。
 
 ## Source Of Truth

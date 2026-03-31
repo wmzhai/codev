@@ -4,7 +4,7 @@
 - `setup` 必须把 `codev` 本身链接到目标宿主的全局 skills 目录：`~/.codex/skills/codev` 和/或 `~/.claude/skills/codev`；默认无参时同时安装 Claude 与 Codex，显式 `--host` 时只安装指定宿主。
 - 受管 skills 必须通过 `setup` 一次性链接，不手工散装维护。
 - `test/setup-smoke.sh` 必须覆盖受管 skills 的链接列表。
-- `codev-gstack2task` 属于受管 skills，新增后必须和其它 skills 一样进入 `setup` 与 smoke test。
+- `codev-gstack2task` 属于受管 skills，新增后必须和其它 skills 一样进入 `setup` 与 smoke test；它依赖 `~/.gstack/projects/` 工件目录，但不依赖 `~/gstack` 安装。
 
 ## 目录约束
 - `skills/<name>/` 目录名必须和 `SKILL.md` 的 `name` 一致。

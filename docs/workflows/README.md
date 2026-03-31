@@ -1,6 +1,6 @@
 # 总流程图
 
-`docs/workflows/README.md` 是 codev + gstack 的唯一总流程图与总导航。默认先读这里，再跳到对应 skill 手册或旁支流程。
+`docs/workflows/README.md` 是 codev 主流程与 gstack 协作边界的总流程图与总导航。默认先读这里，再跳到对应 skill 手册或旁支流程。
 
 ## 命名约定
 
