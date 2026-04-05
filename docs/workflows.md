@@ -41,7 +41,7 @@ README.md
 ### 4. 验证与收尾
 
 - 功能验证默认由人工完成。
-- 人工确认通过后，用 `$codev-quickship` 做 task 归档、相关文档同步与主干收尾。
+- 人工确认通过后，用 `$codev-quickship` 做 task 归档、相关文档同步与主干收尾；如果仓库没有 task，也可按无 task 模式收尾，但要在 `CHANGELOG` 记录本轮改动摘要。
 - 若只需要中途做一次轻量 `commit / push`，用 `$codev-checkpoint`。
 
 ## 相关文档

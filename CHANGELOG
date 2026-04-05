@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-04-05
+
+- 调整 `codev-quickship` 支持无 task 收尾模式，并要求在 `CHANGELOG` 记录本轮改动摘要。
+- 调整 `codev-checkpoint` 默认不再自动同步 `VERSION` / `CHANGELOG`，并同步相关说明与规则测试。
+
 ## 0.1.0.1 - 2026-03-31
 
 - 重组工作流文档入口，并同步记忆体系与相关说明文档。
