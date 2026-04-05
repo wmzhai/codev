@@ -30,7 +30,7 @@ cd ~/codev
 ./setup --host claude
 ```
 
-当前只支持全局安装到 `~/.codex/skills/` 和/或 `~/.claude/skills/`，暂不支持项目内 `.agents/skills/` / `.claude/skills/` vendored 安装。
+当前只支持全局安装到 `~/.codex/skills/` 和/或 `~/.claude/skills/`，暂不支持项目内 vendored 安装。
 
 ## 2. 升级
 
@@ -58,23 +58,19 @@ git pull --ff-only
 ./setup --host claude
 ```
 
-## 3. 快速入门
+## 3. 使用流程
 
-- 使用本项目时，优先按 [docs/workflows.md](docs/workflows.md) 的流程走。
-- Claude 入口见根目录 `CLAUDE.md`；Codex 入口见 `AGENTS.md`。
-- 某一步涉及哪个 skill、不清楚怎么用时，去看 [docs/skills/README.md](docs/skills/README.md) 和对应的 `docs/skills/<skill>.md`。
-- 如果要看更底层的运行规则，再去看 `skills/<name>/SKILL.md`。
+1. 先读 [docs/workflows.md](docs/workflows.md)。
+2. 新仓库或记忆体系过期时，先用 `$codev-memorize`。
+3. 需求进入任务流时，用 `$codev-issue2task` 生成 `tasks/` 下的 task plan。
+4. 人工审核 task plan 后，用 `$codev-taskdev` 在 task 分支推进实现。
+5. 只需要中途做一次轻量提交时，用 `$codev-checkpoint`。
+6. 人工验证通过后，用 `$codev-quickship` 做归档、版本同步和主干收尾。
 
-## 4. 其他使用方式
+## 4. 文档导航
 
-1. 先读 [docs/workflows.md](docs/workflows.md)，按总流程图决定自己现在处在哪个阶段。
-2. 如果是新仓库或记忆体系过期，先用 `$codev-memorize`。
-3. 如果需求来自 issue 或直接需求，用 `$codev-issue2task`；它会先结合代码和 issue 做需求理解与中文讨论，只有在用户确认关键细节后才写入 task 文件，且显式传多个 issue 编号时支持逗号或空格分隔，默认合并成一个总 task。
-4. 审核生成出来的 task plan；对 `$codev-issue2task` 来说，先完成需求确认对话，再审核落盘后的 task。
-5. 审核通过后，用 `$codev-taskdev` 在 task 分支上推进实现；它会持续更新 task 文档，并在实现收尾自动做一次语义不变精简。若只需要中途做一次轻量提交，可用 `$codev-checkpoint`；checkpoint 默认会同步根目录 `VERSION` 与 `CHANGELOG`，未显式指定目标版本时默认把第 4 位加一。
-6. 功能由人工验证通过后，用 `$codev-quickship` 完成 `tasks/done/` 归档、任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md` 同步，以及同步根目录 `VERSION` 与 `CHANGELOG`；如果未显式指定目标版本，quickship 默认把最后一位加一，再执行 commit / merge / push；提交信息要使用 `type: 具体工作摘要 (vX.Y.Z.W)` 形式；如果 task 明确源自 GitHub issue，还要在主干 push 成功后先补一条该轮工作的评论，再通过 `gh` 关闭对应 issue。
-
-## 5. 相关文档
-
-- [总流程图与总导航](docs/workflows.md)
-- [所有 skill 详细手册索引](docs/skills/README.md)
+- 总流程：[`docs/workflows.md`](docs/workflows.md)
+- skill 索引：[`docs/skills/README.md`](docs/skills/README.md)
+- Codex 入口：`AGENTS.md`
+- Claude 入口：`CLAUDE.md`
+- 底层运行规则：`skills/<name>/SKILL.md`
