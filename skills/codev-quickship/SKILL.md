@@ -53,6 +53,7 @@ description: >-
    - 如果仓库内不存在 task，则进入无 task 收尾模式，并明确本次不做 task 归档，也不基于 task 关闭 issue。
 3. 检查当前工作区：
    - 如果有未提交改动，但它们显然属于本次 quickship，可先在当前分支做一次最小提交再继续。
+   - 如果工作区里的 `Cargo.lock` 变化只是来自上一次或当前 quickship 的版本 bump / manifest 同步，要把它视为本次收尾的一部分，而不是来源不明的脏改。
    - 如果改动混杂、来源不清或存在高风险文件，不要替用户猜，直接停止并说明需要先整理工作区。
 4. 如果存在 task，先同步最终 task 文档：
    - 写入人工验证已经完成且通过的事实。
@@ -80,6 +81,7 @@ description: >-
    - `VERSION` 必须存在且为单个可稳定解析的 `X.Y.Z` 版本号；如果不存在、候选不唯一或格式不符，要停止并说明仓库尚未初始化版本工件。
    - `CHANGELOG` 只做与本次收尾相关的最小同步，不扩写成完整发布说明。
    - 如果本次是无 task 收尾，`CHANGELOG` 里仍必须补一条本轮相关改动摘要，作为收尾记录。
+   - 如果版本 bump、`pnpm version:sync`、锁文件再生成或 manifest 同步导致 `Cargo.lock` 发生变化，要把这类变化视为 quickship 预期产生的版本工件，并与 `VERSION`、`CHANGELOG`、各 manifest 一并提交；不要把它当成异常工作区脏改而单独中断、回退或跳过。
 9. 根据当前所在分支决定 quickship 路径：
    - 如果当前不在主干：先在当前分支提交本次收尾改动，再同步本地主干到最新远端状态，切到目标主干，把当前分支合并进主干；能 fast-forward 就保持简单线性历史，不能 fast-forward 时再做普通 merge。
    - 如果当前已经在主干：直接在当前主干上把本次收尾改动整理成一次最小提交。
@@ -115,6 +117,7 @@ description: >-
 - `VERSION` 是 quickship 每次收尾都要同步的标准版本工件；`CHANGELOG` 必须跟随同步。
 - quickship 在未显式指定版本时，默认把 `VERSION` 的补丁位加一（`z+1`）。
 - 如果用户显式指定目标版本，只接受 `X.Y.Z` 版本号，并按指定值写入。
+- quickship 因版本号同步引起的 `Cargo.lock` 变化属于预期版本工件，必须随本次 quickship 一并提交。
 - quickship 的提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z)` 形式，版本号放在最后的括号里。
 - 不打 tag，也不做正式发布。
 - 不做自动化功能验证；有 task 时默认信任 `codev-taskdev` 收尾阶段已完成的 build / 最小编译校验，不在 quickship 内重复执行；无 task 时才由 quickship 补跑一次默认 build。
