@@ -5,9 +5,14 @@ description: 在开源仓库长期保留本地运行补丁并需要从 upstream 
 
 # Syncpatch
 
-把当前仓库更新到 upstream 最新代码，同时保留本地必要补丁。
+把当前仓库更新到 upstream 最新代码，同时把需要保留的修改转成“脏工作区状态”。
 
-默认在当前主干或当前分支工作区执行：不提交、不 push、不默认创建分支。核心要求是先判断能不能高置信度按原意补回本地修改；如果不能，先和用户确认，不要继续做高风险同步。
+默认在当前主干或当前分支工作区执行：不提交、不 push、不默认创建分支。目标状态是：
+- `HEAD` 对齐到 upstream 最新提交
+- 本地需要保留的改动以未提交的工作区修改存在
+- 不把本地补丁保留为额外提交
+
+核心要求是先判断能不能高置信度按原意补回本地修改；如果不能，先和用户确认，不要继续做高风险同步。
 
 ## 第一规则：先用中文交流
 
@@ -31,6 +36,7 @@ description: 在开源仓库长期保留本地运行补丁并需要从 upstream 
 - 不把 stash 当成唯一备份；必须同时保存 patch 证据到 `.git/codev-syncpatch/<timestamp>/`。
 - 不用简单的 `ours` / `theirs` 策略处理复杂冲突；必须按本地修改意图重新补。
 - 如果不能高置信度判断可以完整补回本地逻辑，必须先停下和用户确认。
+- 如果存在本地提交，但用户目标是“最终只保留脏工作区、不要额外本地提交”，允许把本地提交吸收到工作区修改里；不要把这种场景误判成必须改用 `rebase` / `merge`。
 
 ## 同步前风险评估
 
@@ -55,6 +61,9 @@ description: 在开源仓库长期保留本地运行补丁并需要从 upstream 
    - `git rev-list --left-right --count HEAD...@{u}`
    - `git diff --name-status HEAD...@{u}`
 6. 用自然语言归纳本地补丁意图，并评估是否能高置信度重放。
+7. 如果 `git rev-list --left-right --count HEAD...@{u}` 显示本地领先提交数大于 0，先判断用户目标：
+   - 如果目标是“保留本地提交历史”，停止并改用 `rebase` / `merge` 方案
+   - 如果目标是“最终不要本地提交，只保留脏工作区”，继续走“把本地提交吸收到工作区”的流程
 
 风险判断：
 
@@ -67,15 +76,25 @@ description: 在开源仓库长期保留本地运行补丁并需要从 upstream 
 ## Workflow
 
 1. 完成同步前风险评估；不确定就先停下问用户。
-2. 用 `git stash push -u -m "codev-syncpatch:<timestamp>"` 保存 tracked 和 untracked 改动。
-3. 执行 `git pull --ff-only` 同步当前 upstream。
-   - 如果 fast-forward 失败，停止并说明需要用户选择 merge/rebase/手工处理；不要自动改写历史。
-4. 用 `git stash apply` 恢复本地补丁；不要用 `pop`。
-5. 如果自动应用成功，仍要阅读新 diff，确认本地意图在最新代码里仍成立。
-6. 如果出现冲突，按备份 patch、本地意图和最新代码重新实现等价逻辑。
-7. 如果发现 upstream 已经实现等价能力，删除或收窄对应本地补丁，并说明该部分已被上游吸收。
-8. 运行与本地补丁相关的最小验证。
-9. 输出当前分支、同步结果、本地保留改动、验证结果、stash 与 `.git/codev-syncpatch/` 备份位置。
+2. 把当前 diff 备份到 `.git/codev-syncpatch/<timestamp>/`，并额外记录本地提交范围：
+   - `status.txt`
+   - `unstaged.patch`
+   - `staged.patch`
+   - `untracked-files.txt`
+   - `commits.log`：`git log --oneline @{u}..HEAD`
+   - `commits.patch`：`git diff @{u}..HEAD`
+   - 如有未跟踪文件，保存 `untracked.tar`
+3. 用 `git stash push -u -m "codev-syncpatch:<timestamp>"` 保存 tracked 和 untracked 改动。
+4. 按分支状态分流：
+   - 如果 `git rev-list --left-right --count HEAD...@{u}` 的本地领先数为 0，执行 `git pull --ff-only`，把 `HEAD` 直接推进到 upstream 最新提交
+   - 如果本地领先数大于 0，且用户目标是“最终不要本地提交，只保留脏工作区”，跳过 `pull`，直接执行 `git reset --soft @{u}`，把分支头移到 upstream 最新提交
+5. 若执行了 `git reset --soft @{u}`，再执行 `git restore --staged .`，把由本地提交带来的 staged 变化转成工作区修改
+6. 用 `git stash apply` 恢复本地补丁；不要用 `pop`。
+7. 如果自动应用成功，仍要阅读新 diff，确认本地意图在最新代码里仍成立。
+8. 如果出现冲突，按备份 patch、本地意图和最新代码重新实现等价逻辑。
+9. 如果发现 upstream 已经实现等价能力，删除或收窄对应本地补丁，并说明该部分已被上游吸收。
+10. 运行与本地补丁相关的最小验证。
+11. 输出当前分支、同步结果、本地保留改动、验证结果、stash 与 `.git/codev-syncpatch/` 备份位置。
 
 ## 无法完美合并时
 
