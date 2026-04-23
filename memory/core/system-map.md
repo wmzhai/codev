@@ -6,7 +6,7 @@
 - `README.md`：面向用户的总说明、安装方式、调用示例、skills 列表
 - `docs/workflows.md`：从开始到结束的唯一工作流导航
 - `docs/skills/*.md`：当前受管 codev skills 的详细手册
-- `setup`：按 `--host codex` 安装到 `~/.codex/skills`，并链接受管 skills；默认行为为 Codex 全局安装。
+- `setup`：安装到 `~/.codex/skills`，并链接受管 skills；默认行为为 Codex 全局安装。
 - `test/setup-smoke.sh`：验证安装、幂等性和冲突处理
 - `skills/codev-memorize/`：为项目建立或刷新以 `AGENTS.md + memory/` 为核心的记忆体系
 - `skills/codev-issue2task/`：把 issue 或直接需求收敛成带实现计划的任务文件

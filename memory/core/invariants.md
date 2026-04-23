@@ -1,7 +1,7 @@
 # Invariants
 
 ## 安装与发现
-- `setup` 必须把 `codev` 本身链接到 `~/.codex/skills/codev`；默认无参时安装 Codex，显式 `--host` 时只支持 codex 目标。
+- `setup` 必须把 `codev` 本身链接到 `~/.codex/skills/codev`；默认即安装到 Codex 全局目录。
 - 受管 skills 必须通过 `setup` 一次性链接，不手工散装维护。
 - `test/setup-smoke.sh` 必须覆盖受管 skills 的链接列表。
 

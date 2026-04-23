@@ -3,9 +3,6 @@ set -euo pipefail
 
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-HOST=""
-HOST_EXPLICIT=0
-TARGET_HOSTS=()
 MANAGED_SKILLS=(codev-memorize codev-issue2task codev-taskdev codev-quickship codev-simplify codev-checkpoint codev-syncpatch)
 REMOVED_MANAGED_SKILLS=(codev-gstack2task codev-checktask codev-autodev codev-automerge)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
@@ -15,50 +12,12 @@ die() {
   exit 1
 }
 
-parse_args() {
-  while [ $# -gt 0 ]; do
-    case "$1" in
-      --host)
-        [ $# -ge 2 ] || die "missing value for --host (expected codex)"
-        HOST="$2"
-        HOST_EXPLICIT=1
-        shift 2
-        ;;
-      --host=*)
-        HOST="${1#--host=}"
-        HOST_EXPLICIT=1
-        shift
-        ;;
-      *)
-        die "unknown argument: $1"
-        ;;
-    esac
-  done
+if [ $# -ne 0 ]; then
+  die "no arguments supported; run setup without args to install to ~/.codex/skills"
+fi
 
-  if [ "$HOST_EXPLICIT" -eq 1 ]; then
-    case "$HOST" in
-      codex) ;;
-      *) die "unknown host: ${HOST} (expected codex)" ;;
-    esac
-    TARGET_HOSTS=("$HOST")
-    return
-  fi
-
-  TARGET_HOSTS=(codex)
-}
-
-skills_dir_for_host() {
-  case "$1" in
-    codex) printf '%s\n' "${HOME}/.codex/skills" ;;
-    *) die "unsupported host: $1" ;;
-  esac
-}
-
-host_label() {
-  case "$1" in
-    codex) printf '%s\n' "Codex" ;;
-    *) die "unsupported host: $1" ;;
-  esac
+codex_skills_dir() {
+  printf '%s\n' "${HOME}/.codex/skills"
 }
 
 ensure_symlink_or_absent() {
@@ -85,11 +44,10 @@ cleanup_legacy_codev_skill() {
   fi
 }
 
-install_for_host() {
-  local host="$1"
+install_for_codex() {
   local skill_name
 
-  SKILLS_DIR="$(skills_dir_for_host "$host")"
+  SKILLS_DIR="$(codex_skills_dir)"
 
   mkdir -p "$SKILLS_DIR"
 
@@ -113,14 +71,10 @@ install_for_host() {
     cleanup_legacy_codev_skill "$skill_name"
   done
 
-  echo "codev ready for $(host_label "$host")."
+  echo "codev ready for Codex."
   echo "  repo: ${REPO_ROOT}"
   echo "  skills: ${SKILLS_DIR}"
   echo "  linked: ${MANAGED_SKILLS[*]}"
 }
 
-parse_args "$@"
-
-for host in "${TARGET_HOSTS[@]}"; do
-  install_for_host "$host"
-done
+install_for_codex
