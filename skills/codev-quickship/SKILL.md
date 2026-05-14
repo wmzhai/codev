@@ -7,7 +7,7 @@ description: >-
   收尾阶段已完成的 build / 最小编译校验，不再重复执行；若无 task，则在 quickship 内补跑一次默认 build / 最小编译校验；随后再把根目录
   `VERSION` 同步到收尾版本、同步已有 `CHANGELOG`，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
   明确源自 GitHub issue，则在主干 push 成功后先把本轮实际完成的工作写到对应 issue 下，再关闭对应 issue；收尾提交信息必须采用
-  `type: 具体工作摘要 (vX.Y.Z)` 形式，不走 PR、不打 tag，也不做正式发布。
+  `type: 具体工作摘要 (vX.Y.Z)` 形式，不走 PR，不在 quickship 内执行正式发布流程。
 ---
 
 # QuickShip
@@ -121,7 +121,7 @@ description: >-
 - 如果用户显式指定目标版本，只接受 `X.Y.Z` 版本号，并按指定值写入。
 - quickship 因版本号同步引起的 `Cargo.lock` 变化属于预期版本工件，必须随本次 quickship 一并提交。
 - quickship 的提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z)` 形式，版本号放在最后的括号里。
-- 不打 tag，也不做正式发布。
+- 按仓库约束在收尾时执行 tag 流程；不做正式发布。
 - 不做自动化功能验证；有 task 时默认信任 `codev-taskdev` 收尾阶段已完成的 build / 最小编译校验，不在 quickship 内重复执行；无 task 时才由 quickship 补跑一次默认 build。
 - 如果无 task quickship 需要补跑 build，但找不到稳定 build 入口、build 命令依赖当前不可用环境、或 build 执行失败，要明确报告并停止。
 - 只有当 task 文件里有明确的 GitHub issue 映射时，才关闭 issue；不要根据分支名、提交信息或任务标题模糊猜测。
@@ -130,7 +130,7 @@ description: >-
 - 每个关联 issue 在关闭前都要先补一条本轮实际工作的摘要评论，避免只留关闭动作不留上下文。
 - `docs/`、`memory/`、`AGENTS.md` 的更新必须是任务相关、事实已确认、范围最小的同步，不要借机做全仓重写。
 - 如果主干 push 之后会触发仓库自己的自动部署，这是仓库现状；`codev-quickship` 不负责等待部署或做 canary 验证。
-- 如果用户需要 tag 或正式发布链路，应该转去 gstack 正常发布链路。
+- 如果用户需要正式发布链路，应该转去 gstack 正常发布链路。
 
 ## Output
 
