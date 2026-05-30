@@ -20,13 +20,13 @@
 - `codev-issue2task` 必须直接产出包含实现计划的 task 文件，不再依赖独立 `plantask` 步骤。
 - `$codev-taskdev` 默认按 `tasks/` 中最小整数任务号选择待办任务。
 - `codev-taskdev` 负责实现、task 文档同步、一次实现收尾精简和一次默认 build / 最小编译校验，但不做自动化功能验证、不归档到 `tasks/done/`。
-- `codev-quickship` 负责人工验证后的 task 归档、任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md` 同步，以及 commit / merge / push；有 task 时默认沿用 `codev-taskdev` 收尾阶段已完成的默认 build / 最小编译校验，只有无 task 或用户明确要求复验时才在 quickship 内补跑；若 task 明确映射 GitHub issue，则主干 push 成功后先补一条本轮工作评论，再用 `gh` 关闭对应 issue；收尾提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z)` 形式；但不打 tag、也不做正式发布。
+- `codev-quickship` 负责人工验证后的 task 归档、任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md` 同步，以及 commit / merge / push / tag；有 task 时默认沿用 `codev-taskdev` 收尾阶段已完成的默认 build / 最小编译校验，只有无 task 或用户明确要求复验时才在 quickship 内补跑；若 task 明确映射 GitHub issue，则主干和 tag push 成功后先补一条本轮工作评论，再用 `gh` 关闭对应 issue；收尾提交信息必须采用 `type: 具体工作摘要 (v<VERSION>)` 形式。
 - `codev-memorize` 不再维护额外入口文件，记忆入口统一归并到 `AGENTS.md + memory/`。
 - `codev-checkpoint` 是轻量 `commit/push` fallback。
 - `codev-syncpatch` 默认不提交、不 push、不默认创建分支；在同步 upstream 前必须先备份本地 diff 并判断是否能高置信度按原意重放本地补丁，不能确认时必须先问用户。
 - `codev-quickship` 关闭 GitHub issue 前必须先评论收尾摘要，避免只有关闭动作没有上下文。
-- `codev-quickship` 的提交信息必须采用 `type: 具体工作摘要 (vX.Y.Z)` 形式，版本号放在最后的括号里。
-- `VERSION` 默认采用单一 `X.Y.Z` 格式；需要同步版本工件时，若格式不符必须停止并明确说明原因。
+- `codev-quickship` 的提交信息必须采用 `type: 具体工作摘要 (v<VERSION>)` 形式，版本号放在最后的括号里。
+- `VERSION` 优先按仓库本地规则解析；没有本地规则时默认接受三段或四段数字版本，并递增最后一段。
 
 ## 验证基线
 - 修改安装链路后，优先跑 `./test/setup-smoke.sh`。
