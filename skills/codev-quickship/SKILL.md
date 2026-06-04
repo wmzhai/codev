@@ -4,15 +4,15 @@ description: >-
   在用户完成人工验证并确认当前结果满足预期后，完成统一收尾：若存在 task，则同步最终 task、归档到
   `tasks/done/` 并更新任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`；若不存在 task，则按无 task
   收尾模式继续，并在 `CHANGELOG` 中记录本轮相关改动摘要；若存在 task，则默认沿用 `codev-taskdev`
-  收尾阶段已完成的 build / 最小编译校验，不再重复执行；若无 task，则在 quickship 内补跑一次默认 build / 最小编译校验；随后再把根目录
-  `VERSION` 按仓库本地规则同步到收尾版本、同步已有 `CHANGELOG`、创建并推送版本 tag，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
+  收尾阶段已完成的 build / 最小编译校验，不再重复执行；若无 task，则只补跑与本次未提交改动直接相关的一次最小校验；随后再把根目录
+  `VERSION` 按仓库本地规则同步到收尾版本、同步已有 `CHANGELOG`、按仓库本地规则物化并校验版本工件、创建并推送版本 tag，再把当前工作状态提交、合并并推送到 `main/master`；如果 task
   明确源自 GitHub issue，则在主干 push 成功后先把本轮实际完成的工作写到对应 issue 下，再关闭对应 issue；收尾提交信息必须采用
   `type: 具体工作摘要 (v<VERSION>)` 形式，不走 PR，不在 quickship 内执行正式发布流程。
 ---
 
 # QuickShip
 
-`codev-quickship` 是人工验证通过后的统一收尾 skill。它优先基于当前 task 的已确认结果补齐最终 task 记录、归档任务并同步任务相关文档；如果本次仓库里没有可定位的 task，它也允许进入无 task 收尾模式，跳过 task 归档与 issue 关闭，但仍要求在 `CHANGELOG` 中写清本轮相关改动摘要，并继续同步根目录 `VERSION` 与已有 `CHANGELOG`。有 task 时，它默认沿用 `codev-taskdev` 收尾阶段已经完成的 build / 最小编译校验，不再重复跑同一门禁；无 task 时，由于不存在 `codev-taskdev` 阶段，quickship 仍需自行补跑一次仓库约定的 build / 最小编译校验。这一步不替代人工功能验证。如果用户未显式指定版本，则优先按仓库本地规则计算下一版本；如果仓库没有本地版本规则，默认支持三段或四段数字版本，并递增最后一段。显式目标版本也必须符合仓库本地规则；无本地规则时只接受三段或四段数字版本。随后它完成“提交并推主干”：如果当前在分支上，就先把分支收成稳定状态再合并进主干；如果已经在主干上，就直接在主干上提交并推送。主干 push 成功后，按仓库本地规则创建并推送版本 tag；若本地没有 tag 规则，默认使用 `v<VERSION>`。若 task 明确映射到 GitHub issue，它还要在主干 push 成功后先向对应 issue 追加一条本轮实际工作摘要，再关闭对应 issue。它不走标准 PR / release 链路，也不调用 `$ship`、`$land-and-deploy`、`$document-release`。
+`codev-quickship` 是人工验证通过后的统一收尾 skill。它优先基于当前 task 的已确认结果补齐最终 task 记录、归档任务并同步任务相关文档；如果本次仓库里没有可定位的 task，它也允许进入无 task 收尾模式，跳过 task 归档与 issue 关闭，但仍要求在 `CHANGELOG` 中写清本轮相关改动摘要，并继续同步根目录 `VERSION` 与已有 `CHANGELOG`。有 task 时，它默认沿用 `codev-taskdev` 收尾阶段已经完成的 build / 最小编译校验，不再重复跑同一门禁；无 task 时，quickship 只补跑与本次未提交改动直接相关的一次最小校验：纯文档/规则改动不做完整 build，前端或后端源码改动才跑对应范围的构建/测试。这一步不替代人工功能验证。如果用户未显式指定版本，则优先按仓库本地规则计算下一版本；如果仓库没有本地版本规则，默认支持三段或四段数字版本，并递增最后一段。显式目标版本也必须符合仓库本地规则；无本地规则时只接受三段或四段数字版本。版本同步后，它必须执行仓库本地规则定义的版本工件物化和校验步骤；通用 quickship 不写死具体生态命令。随后它完成“提交并推主干”：如果当前在分支上，就先把分支收成稳定状态再合并进主干；如果已经在主干上，就直接在主干上提交并推送。主干 push 成功后，按仓库本地规则创建并推送版本 tag；若本地没有 tag 规则，默认使用 `v<VERSION>`。若 task 明确映射到 GitHub issue，它还要在主干 push 成功后先向对应 issue 追加一条本轮实际工作摘要，再关闭对应 issue。它不走标准 PR / release 链路，也不调用 `$ship`、`$land-and-deploy`、`$document-release`。
 
 ## 第一规则：先用中文交流
 
@@ -32,7 +32,7 @@ description: >-
 - 如果 task 明确映射到 GitHub issue，必须能从 task 文件稳定解析出 issue 编号；并且本地 `gh` 要可用且有权限先评论再关闭对应 issue。
 - 根目录 `VERSION` 已初始化，且能按仓库本地版本规则稳定解析；如果仓库没有本地版本规则，则必须是单个三段或四段数字版本号，例如 `1.16.8` 或 `0.1.133.1`。
 - 仓库存在可更新的 `CHANGELOG`；如果仓库本地规则指定了文件名或章节，必须能稳定定位。
-- 如果本次是无 task 收尾模式，仓库里必须存在可稳定定位的默认 build / 最小编译校验入口；如果仓库没有默认 build 入口、入口不唯一、或 build 明显依赖当前不可用环境，要明确说明并停止。
+- 如果本次是无 task 收尾模式，仓库里必须能稳定定位与本次改动类型匹配的最小校验入口；纯文档/规则改动可用 `git diff --check` 作为校验，不要求存在默认完整 build。
 
 如果这些前提不成立，要明确说明原因并停止，不要擅自收尾或直推主干。
 
@@ -55,7 +55,7 @@ description: >-
    - 如果仓库内不存在 task，则进入无 task 收尾模式，并明确本次不做 task 归档，也不基于 task 关闭 issue。
 3. 检查当前工作区：
    - 在 `/Users/diweiming/optdev` 工作区内，列出根仓库和所有可见子 Git 仓库的未提交改动，并默认全部纳入本次 quickship；不要使用“既有脏改”“本轮改动”“看起来无关”“来源不清”作为跳过提交的理由。
-   - 如果工作区里的 `Cargo.lock` 变化来自版本 bump / manifest 同步，要把它视为本次收尾的一部分，而不是异常脏改。
+   - 如果工作区里的 lockfile、manifest、生成类型或其他版本工件变化来自版本 bump / manifest 同步，要把它视为本次收尾的一部分，而不是异常脏改。
    - 只有用户同轮明确排除的改动或确实不能安全提交的冲突可以不提交；最终汇报必须列出未提交路径和原因。
 4. 如果存在 task，先同步最终 task 文档：
    - 写入人工验证已经完成且通过的事实。
@@ -70,12 +70,16 @@ description: >-
    - 无 task 时，只做与本轮实际改动直接相关、且已被人工验证确认的最小同步。
    - 如本任务或本轮改动改变了 repo 的稳定工作流、约束或默认动作，最小范围更新 `AGENTS.md`。
    - 如果没有需要更新的内容，要明确记录“任务相关 docs/memory/AGENTS 无需更新”。
-7. 处理默认 build / 最小编译校验责任：
+7. 处理最小校验责任：
    - 如果存在 task，默认沿用 `codev-taskdev` 收尾阶段已经完成的 build / 最小编译校验，不在 quickship 内重复执行；只有用户明确要求复验时才补跑。
-   - 如果本次是无 task 收尾模式，则需要由 quickship 主动跑一次仓库默认 build / 最小编译校验。
-   - 无 task 场景下定位 build 命令时，优先读根 `AGENTS.md`、`README.md`、`memory/`、已有脚本或 manifest，不要凭空发明命令。
-   - 无 task 场景下优先使用仓库已经稳定存在的单一入口，例如 `cargo build --workspace`、`pnpm build`、`npm run build`、`turbo build`、`just build`、`make build` 等同类默认命令。
-   - 如果无 task quickship 需要补跑 build 且 build 失败、命令不可稳定判定、或明显依赖当前不可用环境，要明确报告并停止，不要假装 quickship 已完成。
+   - 如果本次是无 task 收尾模式，只运行与本次未提交改动直接相关的一次最小校验，不默认跑完整 build。
+   - 纯文档、memory、AGENTS、CHANGELOG、VERSION 等规则/文档改动，默认只跑 `git diff --check`。
+   - shell 脚本改动，默认跑 `bash -n` 覆盖被改脚本；只有脚本行为也被改且用户要求时才补运行流程。
+   - 前端站点 overlay 或共享前端改动，优先跑已有的轻量站点前端检查；只有源码影响运行时或没有轻量检查时，才跑对应站点构建。共享前端影响三站时才考虑三站构建。
+   - 后端源码改动，跑对应包/模块的最小测试或构建；不要因为 quickship 进入全仓慢门禁。
+   - 如果用户在同轮已经要求并完成过编译、重启或人工页面验证，quickship 复用该结果摘要，不再执行同类耗时复验。
+   - 提交、push、tag 后，不再为了“新鲜证据”重跑 build、浏览器检查、服务重启或健康检查；只做 `git status`、远端分支/tag 确认。
+   - 如果最小校验入口无法稳定判定、依赖当前不可用环境或执行失败，要明确报告并停止，不要扩展成更慢的猜测式验证。
 8. 同步仓库里的版本工件：
    - 在收尾前先读取根 `AGENTS.md`、`README.md`、已有 `CHANGELOG`，确认是否有仓库本地版本和 changelog 规则。
    - 读取根目录 `VERSION`，并同步已有 `CHANGELOG`。
@@ -85,8 +89,10 @@ description: >-
    - `CHANGELOG` 必须把 `[未发布]` / checkpoint 累积记录整理进本次新版本日志；不要丢弃未发布记录。
    - 如果本次是无 task 收尾，`CHANGELOG` 里仍必须补一条本轮相关改动摘要，作为收尾记录，再并入新版本日志。
    - 按仓库本地规则确定目标 tag 名；如果本地没有 tag 命名规则，默认使用 `v<VERSION>`。
+   - 按仓库本地规则执行版本同步、版本工件物化和版本校验命令；如果本地规则没有定义某一类命令，不要为通用 quickship 自行发明生态专属命令，说明已跳过即可。
    - 在提交和推主干前检查目标 tag 在本地与远端都不存在；如果已存在，立即停止，避免主干已推但 tag 无法创建的半完成状态。
-   - 如果版本 bump、`pnpm version:sync`、锁文件再生成或 manifest 同步导致 `Cargo.lock` 发生变化，要把这类变化视为 quickship 预期产生的版本工件，并与 `VERSION`、`CHANGELOG`、各 manifest 一并提交；不要把它当成异常工作区脏改而单独中断、回退或跳过。
+   - 如果版本 bump、版本同步、lockfile 再生成、manifest 同步、类型生成或其他仓库本地版本工件物化步骤导致文件变化，要把这类变化视为 quickship 预期产生的版本工件，并与 `VERSION`、`CHANGELOG`、各 manifest 一并提交；不要把它当成异常工作区脏改而单独中断、回退或跳过。
+   - 版本工件物化和校验完成后，必须重新列出收尾范围内所有仓库的未提交改动；任何仍然存在的可提交改动都要纳入本次提交，除非用户同轮明确排除或存在安全阻塞。
 9. 根据当前所在分支决定 quickship 路径：
    - 如果当前不在主干：先在当前分支提交本次收尾改动，再同步本地主干到最新远端状态，切到目标主干，把当前分支合并进主干；能 fast-forward 就保持简单线性历史，不能 fast-forward 时再做普通 merge。
    - 如果当前已经在主干：直接在当前主干上把本次收尾改动整理成一次最小提交。
@@ -107,11 +113,12 @@ description: >-
    - 目标 task 与归档位置；若无 task，要明确说明这是无 task 收尾
    - 起始分支
    - 目标主干
-   - 默认 build 是否沿用 taskdev、在 quickship 中跳过，还是在无 task / 用户要求复验时实际执行；如有实际执行，再汇报命令与结果
+   - 最小校验是否沿用 taskdev/本轮已有结果、在 quickship 中跳过，还是实际执行；如有实际执行，再汇报命令与结果
    - 走的是“branch merge”还是“main commit + push”
    - 是否已完成 task 归档
    - docs / memory / AGENTS 的更新结果
    - 版本号 / `CHANGELOG` 的同步结果，或明确说明已跳过
+   - 版本工件物化和提交前最终工作区检查结果
    - 是否已成功完成 commit / merge / push
    - 版本 tag 是否已创建并推送
    - issue 关闭结果，或明确说明 task 不含 issue 映射因此已跳过
@@ -130,11 +137,14 @@ description: >-
 - 如果用户显式指定目标版本，必须符合仓库本地版本规则；没有本地规则时只接受三段或四段数字版本。
 - quickship 必须创建并推送版本 tag；tag 命名优先遵守仓库本地规则，没有本地规则时使用 `v<VERSION>`。
 - quickship 的 `CHANGELOG` 必须把 checkpoint 累积在 `[未发布]` / `Unreleased` 的记录合并到新版本日志里。
-- quickship 因版本号同步引起的 `Cargo.lock` 变化属于预期版本工件，必须随本次 quickship 一并提交。
+- quickship 因版本号同步引起的 lockfile、manifest、生成类型或其他版本工件变化属于预期版本工件，必须随本次 quickship 一并提交。
 - quickship 的提交信息必须采用 `type: 具体工作摘要 (v<VERSION>)` 形式，版本号放在最后的括号里。
 - 按仓库约束在收尾时执行 tag 流程；不做正式发布。
-- 不做自动化功能验证；有 task 时默认信任 `codev-taskdev` 收尾阶段已完成的 build / 最小编译校验，不在 quickship 内重复执行；无 task 时才由 quickship 补跑一次默认 build。
-- 如果无 task quickship 需要补跑 build，但找不到稳定 build 入口、build 命令依赖当前不可用环境、或 build 执行失败，要明确报告并停止。
+- 通用 quickship 不写死项目或生态专属命令；遇到仓库本地规则定义的版本同步、版本工件物化、版本校验命令时必须执行，未定义时只记录跳过。
+- commit / merge / push / tag 前必须做最终工作区检查；如果收尾范围内仍有未提交改动，不能汇报 quickship 完成，必须提交它们或列出未提交路径与原因。
+- 不做自动化功能验证；有 task 时默认信任 `codev-taskdev` 收尾阶段已完成的 build / 最小编译校验，不在 quickship 内重复执行；无 task 时也只补跑与改动类型直接相关的一次最小校验。
+- quickship 以快速收尾为目标：禁止提交后重复完整 build、重复浏览器检查、重复服务重启或重复健康检查；除非用户明确要求复验。
+- 如果无 task quickship 的最小校验入口无法稳定判定、依赖当前不可用环境或执行失败，要明确报告并停止。
 - 只有当 task 文件里有明确的 GitHub issue 映射时，才关闭 issue；不要根据分支名、提交信息或任务标题模糊猜测。
 - 无 task 收尾时必须跳过 issue 评论与关闭，但要在 `CHANGELOG` 中描述本轮相关改动。
 - 如果 task 映射了多个 issue，要逐个关闭，而不是只关第一个。
@@ -153,9 +163,10 @@ description: >-
 - 起始分支
 - 目标分支
 - 本次走的是 branch merge 还是 main commit + push
-- 默认 build 是沿用 `codev-taskdev` 结果、还是在 quickship 中实际执行；如有实际执行，再汇报命令与结果
+- 最小校验是沿用 `codev-taskdev` / 本轮已有结果、还是在 quickship 中实际执行；如有实际执行，再汇报命令与结果
 - docs / memory / AGENTS 的更新结果
 - 版本号 / `CHANGELOG` 的同步结果
+- 版本工件物化和提交前最终工作区检查结果
 - 是否已成功完成 commit / merge
 - 是否已成功 push 主干
 - 是否已成功创建并推送版本 tag
