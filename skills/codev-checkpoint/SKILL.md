@@ -1,70 +1,85 @@
 ---
 name: codev-checkpoint
-description: 轻量提交当前仓库变更并推送当前分支。适用于用户明确要做一次 codev-checkpoint 提交；若存在对应的当前 task，则先同步其最终记录并归档到 `tasks/done/`，再同步已有 `CHANGELOG` 的未发布记录，但不升级 `VERSION`、不打 tag。
+description: 人工验证通过后的统一收口第一阶段：任务归档、验收更新、`CHANGELOG` 同步、最小门禁、主干提交与 issue 处理，不做版本 bump 和 tag。
 ---
 
 # Checkpoint
 
-安全地提交当前工作区变更并推送。
-
-如果仓库同时使用 gstack，默认发布入口应是 gstack `$ship`。`codev-checkpoint` 只保留为轻量 fallback：做 `CHANGELOG` 未发布记录、commit、push，但不处理根目录 `VERSION`、不打 tag、不接管 PR、review gate、QA 串联或 repo 级文档同步。
-
 ## 第一规则：先用中文交流
 
 - skill 一触发，第一句就用中文和用户交流。
-- 整个执行过程中的状态说明、阻塞说明和结果摘要默认都用中文。
+- 整个执行过程中的检查、阻塞说明和结果摘要默认都用中文。
 - 只有用户明确要求英文或双语时，才切换语言。
+
+## 作用与边界
+
+`codev-checkpoint` 仅执行收口第一阶段。
+本阶段必须包含除版本号与 tag 外的全部核心收口动作；
+版本 bump、`VERSION` 工件变更、版本日志归并与 tag 推送，不在本阶段执行。
+
+## Preconditions
+
+- 用户显式调用 `$checkpoint` / `$codev-checkpoint`，且本轮已完成人工验证。
+- 当前仓库允许直接推送主干；若主干受保护、权限不足或必须走 PR，立即阻塞。
+- 默认纳入 `/Users/diweiming/optdev` 下根仓库和可见子仓的未提交改动，不按来源推断过滤。
+- 若可定位 task：必须能稳定找到；若仓库无对应 task 则进入无 task 收口，不得伪造 task。
+- 若 task 映射 issue，需本地 `gh` 可用且能稳定解析 issue 号；否则阻塞并说明。
+- `CHANGELOG` 写入位点必须可定位；若仓库规则要求更新却无法定位，立即停止。
+- 无 task 时可走 `git diff --check`；其他场景需有最小可执行校验入口。
 
 ## Inputs
 
-从用户请求推断发布模式：
+- 当前分支与目标主干。
+- 可定位的 `tasks/Txx-*.md` 与 issue 映射信息。
+- 当前未提交改动范围（根仓库 + 可见子仓）。
+- `CHANGELOG` 的更新规则与可写路径。
 
-- 默认执行已有 `CHANGELOG` 同步 + commit + push。
-- 默认不修改根目录 `VERSION`，不创建 tag，也不推送 tag。
-- 如果仓库本地规则要求 checkpoint 必须记录在指定 changelog 位置，优先遵守本地规则。
-- 如果仓库没有已有 `CHANGELOG`，且本地规则没有要求必须更新 changelog，则只做 commit + push；不要自动新建 `CHANGELOG`。
+## Workflow（第一阶段）
 
-## Workflow
+1. 读取本地规则并校验前置条件。
+2. 定位任务（优先级）：
+   - 用户显式 task；
+   - 与当前分支同名的 `tasks/Txx-*.md`；
+   - 否则无 task 收口。
+3. 列出未提交改动并确认收口范围。
+4. 有 task 时执行任务收口：
+   - 更新人工验收结论、风险与后续项；
+   - 补齐 `Acceptance Criteria` / `验收标准` 的通过项；
+   - 使用 `git mv` 把 task 移入 `tasks/done/`（目录不存在先创建）。
+5. 同步任务相关文档：
+   - 更新与任务直接相关且已确认的 `docs/`、`memory/`；
+   - 任务涉及工作流/约束变更时更新 `AGENTS.md`；
+   - 无 task 时仅做本轮改动直接相关的最小同步，无需更新则写明。
+6. 最小校验（第一阶段）：
+   - 有 task 时默认复用 `codev-taskdev` 已完成的验收与构建结果，不重复；
+   - 无 task 时做与本次改动直接相关的一次最小校验；
+   - 文档/规则类主要走 `git diff --check`，脚本类至少 `bash -n`。
+7. `CHANGELOG` 同步：
+   - 仅更新未发布区（如 `[Unreleased]` / `[未发布]`）；
+   - 不改写历史发布段；
+   - 不做版本归并（与 version 阶段无关）。
+8. 收口提交与主干推送：
+   - 当前在分支：先提交后合并到主干；
+   - 当前在主干：直接形成主干收口提交；
+   - commit message 为普通描述，不带版本后缀。
+9. issue 处理（仅当映射存在且主干推送成功）：
+   - 先逐个 `gh issue comment`；
+   - 再逐个 `gh issue close`；
+   - 逐项记录失败与阻塞原因。
+10. 返回阶段一结果：
+   - 任务归档、`docs/memory/AGENTS`、`CHANGELOG`、校验、issue 处理、主干提交与推送；
+   - 明确写明本阶段未执行版本 bump 与 tag。
 
-1. 用非交互式 git 命令检查仓库状态，例如：
-   - `git status --short --branch`
-   - `git log --oneline -5`
-2. 读取仓库本地规则：
-   - 优先查看根 `AGENTS.md`、`README.md`、已有 `CHANGELOG` 的版本/收尾说明。
-   - 如果本地规则和本 skill 冲突，以本地规则为准，但 checkpoint 仍不得升级 `VERSION`、不得创建或推送 tag。
-3. 定位当前任务（有则处理）：
-   - 优先识别当前用户上下文中的目标任务：优先读取用户显式指定的 task；如无显式指定，优先匹配与当前分支同名的 `tasks/Txx-*.md`。
-   - 找到任务后，最小补齐实现和验收记录（例如人工验证通过、剩余风险、后续动作）并标记任务完成项（如存在 `Acceptance Criteria` / `验收标准` 列表）。
-   - 将该任务文件移动到 `tasks/done/`：优先用 `git mv`，确保目录存在。
-   - 若当前仓库中未能稳定定位对应任务，则跳过 task 同步与归档。
-4. 同步已有 `CHANGELOG`：
-   - 优先定位根目录 `CHANGELOG.md`；如果本地规则指定其它文件，则按本地规则执行。
-   - 基于本次实际 diff，对 `CHANGELOG` 做最小同步，记录这次 checkpoint 的改动摘要，通常写入 `[未发布]` / `Unreleased` 区域。
-   - 不新建 `CHANGELOG`，除非用户同轮明确要求。
-   - 如果本地规则要求必须更新 changelog 但找不到可更新文件，立即停止并说明原因。
-   - 不要把 checkpoint 记录改写成正式发布说明。
-5. 确认没有修改 `VERSION`，没有创建 tag；如果误改了版本或 tag，必须先纠正再继续。
-6. 如果工作区干净，且本次也没有产生可提交变更，明确告知没有可提交内容并停止。
-7. 使用 `git add -A` 暂存所有变更，不做选择性过滤。
-8. 根据 staged diff 生成简洁的 conventional commit message。
-9. 用非交互方式创建 commit：
-   - 不使用 `--amend`
-   - 不使用 `--no-verify`
-   - 不依赖交互式编辑器
-10. 如果 hooks 在 commit 过程中修改了文件，重新暂存这些变更并创建第二个普通 commit，不改写刚才的提交历史。
-11. 推送当前分支。
-12. 返回简洁摘要，包含当前分支、结果 commit hash、任务归档结果、`CHANGELOG` 同步结果，并明确说明未升级版本、未创建 tag。
+## Stops / Failure Modes
+
+- 前置条件失败（主干权限、`CHANGELOG` 不可更新、issue 映射不可解析、校验入口不可用）。
+- 无法确认且安全地纳入未提交改动。
+- `git` 提交/推送失败。
+- 任一阻塞点需立即返回并停止，禁止继续版本阶段。
 
 ## Rules
 
-- 把 codev-checkpoint 视为有副作用的显式操作；不能假装完成。
-- 除非用户明确要求，不要排除任何已改动文件。
-- 不要重写历史。
-- 如果前置条件失败，立即停止并明确说明原因。
-- 不运行 CI；codev-checkpoint 只根据当前现状做一次提交和推送。
-- 不做版本管理；不改 `VERSION`。
-- checkpoint 默认同步已有 `CHANGELOG` 的未发布记录；不新建 `CHANGELOG`，除非用户同轮明确要求。
-- checkpoint 不打 tag、不推送 tag、也不进入 release 管理。
-- 存在可定位的当前任务时，checkpoint 同步任务内容并归档到 `tasks/done/`，仍不修改 repo 级规则文档。
-- 如果用户要求 checkpoint 升级版本或打 tag，要说明这属于 quickship/release 类动作，不属于 checkpoint。
-- 不要创建 PR、补 review gate、同步 repo 级文档；这些属于 gstack `$ship` 与 `$document-release` 的职责。
+- 不创建 PR，不接管发布链路。
+- 不重写历史（包括 amend）。
+- 不执行本阶段版本推导、`VERSION` 编辑、tag 创建与推送。
+- 只在 stage1 成功后方可进入版本阶段。

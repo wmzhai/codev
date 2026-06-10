@@ -22,8 +22,8 @@
 - `codev-issue2task` 保留 GitHub issue 或直接需求到 `tasks/` 的路径，并直接产出可执行 plan。
 - `codev-taskdev` 负责从 `tasks/` 中选择目标 plan，在 task 分支上按已审核 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验，但不接管自动化功能验证、QA、部署、归档和发布。
 - `codev-simplify` 是可单独调用的语义不变精简工具，也可作为 `codev-taskdev` 的内部收尾步骤。
-- `codev-quickship` 负责在用户完成人工验证后，优先按 task 归档并同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`；若存在 task，则默认沿用 `codev-taskdev` 收尾阶段已完成的默认 build / 最小编译校验，不在 quickship 内重复执行；若仓库里没有可定位 task，则 quickship 按无 task 模式收尾，并在版本同步与主干收尾前补跑一次仓库默认 build / 最小编译校验，跳过 task 归档与 issue 关闭，但必须在 `CHANGELOG` 里记录本轮相关改动摘要；随后再按仓库本地规则同步根目录 `VERSION` 与 `CHANGELOG`，并把当前工作状态提交、合并并推送到 `main/master`；quickship 在未显式指定版本且没有本地规则时默认递增版本号最后一段，兼容三段和四段数字版本；如果 task 明确源自 GitHub issue，还要在主干和 tag push 成功后先补一条该轮工作的评论，再通过 `gh` 关闭对应 issue；收尾提交信息应采用 `type: 具体工作摘要 (v<VERSION>)` 形式；不走 PR，按仓库规则创建并推送 `v<VERSION>` tag。
-- `codev-checkpoint` 是轻量 `commit/push` fallback。默认同步已有 `CHANGELOG` 的未发布记录，存在可定位当前任务时会补齐该任务记录并归档到 `tasks/done/`，但不修改根目录 `VERSION`、不创建或推送 tag。
+- `codev-quickship` 与 `codev-checkpoint` 的主流程统一。quickship 在 checkpoint 流程基础上额外执行 `VERSION` 同步与 tag 推送；checkpoint 不做版本 bump 和 tag 动作。两者都可归档可定位 task、更新 `CHANGELOG` 未发布记录并提交推送当前分支。
+- `codev-checkpoint` 是轻量 `commit/push` fallback。默认同步已有 `CHANGELOG` 的未发布记录，存在可定位当前任务时会补齐该任务记录并归档到 `tasks/done/`，但不修改根目录 `VERSION`、不创建或推送 tag；其主流程与 `codev-quickship` 一致。
 - `codev-syncpatch` 负责在不提交、不 push、不默认创建分支的前提下，同步开源 upstream 并按原意重放本地运行补丁；如果同步前无法高置信度判断可完整补回本地逻辑，必须先停下和用户确认。
 
 ## 维护规则
@@ -31,7 +31,7 @@
 - `setup` 是真实安装入口；`test/setup-smoke.sh` 是安装行为的最小验证。
 - 任何新增受管 skill，都必须同步到 `setup`、`README.md` 和 `test/setup-smoke.sh`。
 - 修改任务入口 skill 时，保持 `codev-issue2task` 作为唯一任务生成入口，不要把任务规划、实现、收尾揉成一个大而全入口。
-- 修改 `codev-taskdev` / `codev-quickship` 时，保持“task 分支实现”和“人工验证后的主干收尾”这条边界稳定；`codev-taskdev` 负责实现收尾阶段的一次默认 build / 最小编译校验；`codev-quickship` 只负责人工验证后的归档、无 task 或用户明确要求复验时的默认 build、版本同步、`CHANGELOG` 同步、主干收尾、tag 推送，以及对明确映射 issue 的 task 先评论再关闭；若仓库中没有可定位 task，则 quickship 允许按无 task 模式收尾，但必须在 `CHANGELOG` 里补本轮改动摘要；其中 quickship 在未显式指定版本时优先读仓库本地规则，没有本地规则时默认递增版本号最后一段，并把收尾提交信息写成 `type: 具体工作摘要 (v<VERSION>)`。
+- 修改 `codev-taskdev` / `codev-quickship` / `codev-checkpoint` 时，保持“task 分支实现”和“人工验证后的主干收尾”这条边界稳定；`codev-taskdev` 负责实现收尾阶段的一次默认 build / 最小编译校验；`codev-quickship` 与 `codev-checkpoint` 主流程一致，唯一差异是 quickship 额外处理版本 bump 与 tag 推送，checkpoint 不处理版本与 tag；若仓库中没有可定位 task，仍可按无 task 模式继续流程。
 - `codev-memorize` 统一将仓库事实与约束收敛到 `AGENTS.md + memory/`，不再维护额外入口文件。
 - `README.md` 里只放用户需要看到的高层说明，不重复展开各 skill 的全部内部流程。
 - `docs/workflows.md` 要始终保持从开始到结束的 codev 主流程说明。

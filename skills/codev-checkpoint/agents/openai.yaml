@@ -1,7 +1,7 @@
 interface:
   display_name: "codev-checkpoint"
-  short_description: "轻量提交并推送当前分支；有对应当前任务时先更新并归档 task，再同步已有 CHANGELOG 未发布记录，不升级版本"
-  default_prompt: "使用 $codev-checkpoint 走轻量 codev-checkpoint commit/push 流程；触发后立即用中文与用户交流，整个过程中的状态说明和结果摘要默认都用中文；如果仓库同时使用 gstack，则把它视为不接管 PR、review gate 或 repo 级文档同步的 fallback。默认根据当前上下文识别并更新对应任务状态（必要时标记验收通过、补齐后续说明），并把任务归档到 tasks/done（如可定位到任务）；再同步已有 `CHANGELOG` 的未发布记录，然后 commit + push；默认不修改根目录 `VERSION`，不创建或推送 tag，不进入正式发布流程；如果仓库本地规则要求 checkpoint 必须记录 changelog，必须遵守本地规则；如果用户要求 checkpoint 升级版本或打 tag，要说明这属于 quickship/release 类动作，不属于 checkpoint。"
+  short_description: "收口第一阶段：任务收口、验收同步、`CHANGELOG` 未发布更新、最小校验、主干提交与 issue 处理。"
+  default_prompt: "使用 $codev-checkpoint 执行收口第一阶段。触发后立即用中文交流。完成任务定位与归档、相关 `docs`/`memory`（必要时 `AGENTS.md`）更新、`CHANGELOG` 未发布区同步、最小校验、主干提交 + push，以及 issue 的 comment/close。明确不执行版本 bump 与 tag；若 `CHANGELOG`/`gh` 阻塞，立即返回。"
 
 policy:
   allow_implicit_invocation: false
