@@ -4,6 +4,7 @@
 
 - 明确 `codev-checkpoint` 仍需在本阶段形成并推送收口提交（与版本/Tag 无关）。
 - 细化 `codev-quickship` 执行顺序：quickship 的第一阶段不提交，改为版本 bump 后统一最终提交（供用户确认）。
+
 ## 0.1.4 - 2026-06-10
 
 - 收紧多仓 `codev-quickship` 的版本归属规则，禁止把一个仓库的版本号、提交后缀或 tag 套用到未实际 bump 的仓库。
