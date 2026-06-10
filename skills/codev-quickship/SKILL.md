@@ -13,8 +13,8 @@ description: 先执行 `codev-checkpoint` 的第一阶段，再执行版本 bump
 
 ## 两阶段执行模型
 
-1. **第一阶段**：执行 `codev-checkpoint` 的收口核心（无版本 bump 与 tag）。
-2. **第二阶段**：在第一阶段成功后，执行版本 bump 与 tag 推送。
+1. **第一阶段**：执行 `codev-checkpoint` 的收口核心动作，但不提交不 push（无版本 bump 与 tag）。
+2. **第二阶段**：在第一阶段通过后，再执行版本 bump、版本工件更新，并在最终收口提交前统一提交。
 
 ## Preconditions
 
@@ -27,8 +27,9 @@ description: 先执行 `codev-checkpoint` 的第一阶段，再执行版本 bump
 
 ### 第一阶段：复用 checkpoint 核心
 
-1. 运行 `codev-checkpoint`，执行其全部第一阶段动作（任务定位、收口提交、`CHANGELOG` 收口、主干 push、issue 处理）。
-2. 若第一阶段失败，直接停止，不进入版本阶段；否则默认自动进入版本与 tag 阶段。
+1. 按 `codev-checkpoint` 第一阶段流程执行其核心动作（任务定位、`docs/memory/AGENTS` 同步、`CHANGELOG` 未发布同步、最小校验），但不执行提交与 push。
+2. 将 `issue` 映射关系与 close 前置要求先记录在位，等版本阶段完成后再按顺序处理（先 comment 再 close）。
+3. 若第一阶段失败，直接停止，不进入版本阶段；否则默认自动进入版本与 tag 阶段。
 
 ### 第二阶段：版本与 tag 收口
 
@@ -42,13 +43,16 @@ description: 先执行 `codev-checkpoint` 的第一阶段，再执行版本 bump
    - 按本地规则执行版本工件物化与校验命令（无定义则记录跳过）。
 5. 生成版本提交：
    - 将步骤 4 的变更与第一阶段结果合并；
-   - 使用 `type: 具体工作摘要 (v<目标VERSION>)`；
+   - 在本阶段一次性进行最终收口提交，使用 `type: 具体工作摘要 (v<目标VERSION>)`；
    - 提交前再次确认工作区和可提交范围。
-6. Tag 与推送：
+6. 提交后 issue 处理：
+   - 合并阶段完成后按 issue 映射执行 `gh issue comment`；
+   - 再执行 `gh issue close`。
+7. Tag 与推送：
    - 按规则生成 tag 名（默认 `v<目标VERSION>`）；
    - 检查本地/远端是否已存在同名 tag，存在则阻塞；
    - 创建 tag 并推送。
-7. 返回汇报：
+8. 返回汇报：
    - 回传第一阶段收口结果与第二阶段版本信息；
    - 输出目标版本、版本工件变更、`CHANGELOG` 版本归并结果、tag 推送结果。
 
