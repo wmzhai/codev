@@ -1,6 +1,6 @@
 interface:
   display_name: "codev-quickship"
-  short_description: "先执行 checkpoint 第一阶段，再做版本 bump 与 tag 的第二阶段。"
-  default_prompt: "使用 $codev-quickship 收口。触发后立即用中文交流。先执行 `codev-checkpoint` 的第一阶段核心动作（任务/CHANGELOG/最小校验）但暂不提交，不推主干，不执行 issue close；第一阶段成功后自动进入版本阶段。完成版本 bump/工件更新后，再做一次最终提交（`type: 具体工作摘要 (v<VERSION>)`），再创建并推送 tag（默认 `v<VERSION>`）。最后再执行 `gh issue comment` 后 `gh issue close`。若任一阶段失败或阻塞条件命中，立即阻塞并汇报。"
+  short_description: "用户触发即表示人工验证已完成；先执行 checkpoint 收口核心，再做版本 bump 与 tag。"
+  default_prompt: "使用 $codev-quickship 收口。触发后立即用中文交流。用户触发即表示 `codev-taskdev` 收尾编译责任和人工验证已经完成；无 task 模式也依赖用户已外部确认。先执行 `codev-checkpoint` 的第一阶段核心动作（任务/CHANGELOG/范围确认）但暂不提交，不推主干，不执行 issue close，也不运行 build/test/lint/typecheck 或脚本验证；第一阶段成功后自动进入版本阶段。完成版本 bump/工件更新后，再做一次最终提交（`type: 具体工作摘要 (v<VERSION>)`），再创建并推送 tag（默认 `v<VERSION>`）。最后再执行 `gh issue comment` 后 `gh issue close`。若任一阶段失败或阻塞条件命中，立即阻塞并汇报。"
 policy:
   allow_implicit_invocation: false

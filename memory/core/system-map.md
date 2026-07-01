@@ -10,8 +10,8 @@
 - `test/setup-smoke.sh`：验证安装、幂等性和冲突处理
 - `skills/codev-memorize/`：为项目建立或刷新以 `AGENTS.md + memory/` 为核心的记忆体系
 - `skills/codev-issue2task/`：把 issue 或直接需求收敛成带实现计划的任务文件
-- `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验
-- `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`；有 task 时沿用 `codev-taskdev` 已完成的默认 build，无 task 时补跑，再同步根目录 `VERSION` 与 `CHANGELOG`，然后提交、合并、推送主干
+- `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 前唯一由 codev 自动承担的编译校验责任点
+- `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时 `AGENTS.md`；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；再同步根目录 `VERSION` 与 `CHANGELOG`，然后提交、合并、推送主干和 tag
 - `skills/codev-simplify/`：语义不变精简 diff
 - `skills/codev-checkpoint/`：轻量提交、推送 fallback
 - `skills/codev-syncpatch/`：同步开源 upstream 并按原意重放本地运行补丁；默认不提交、不推送、不默认创建分支
@@ -25,7 +25,7 @@
 - `docs/skills/<skill>.md` 是对外的 skill 详细手册。
 - `setup` 和 `test/setup-smoke.sh` 共同定义“哪些 skill 算受管”。
 - `codev-issue2task` 是唯一任务入口：处理 GitHub issue 或直接需求，并直接产出可执行 task plan。
-- `codev-taskdev` 是 task 分支实现层；`codev-quickship` 负责人工验证后的收尾。
+- `codev-taskdev` 是 task 分支实现层；`codev-quickship` / `codev-checkpoint` 负责人工验证后的收尾，不运行 build/test/lint/typecheck 或脚本验证。
 
 ## 常见改动落点
 - 新增 skill：新增 `skills/<name>/` 目录，同时同步 `setup`、`test/setup-smoke.sh`、`README.md`

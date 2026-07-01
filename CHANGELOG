@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- 精简 `codev-quickship` / `codev-checkpoint` 的收口职责：用户触发即表示 taskdev 收尾校验和人工验证已完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
 - 明确 `codev-checkpoint` 仍需在本阶段形成并推送收口提交（与版本/Tag 无关）。
 - 细化 `codev-quickship` 执行顺序：quickship 的第一阶段不提交，改为版本 bump 后统一最终提交（供用户确认）。
 

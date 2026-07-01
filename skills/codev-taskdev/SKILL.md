@@ -1,13 +1,13 @@
 ---
 name: codev-taskdev
-description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编号待办任务，在当前分支上按 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾自动做一次语义不变精简；适用于 `codev-issue2task` 产出 plan 后，需要先完成编码、把功能验证交给人工、再由 `codev-quickship` 做收尾的场景。
+description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编号待办任务，在当前分支上按 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；适用于 `codev-issue2task` 产出 plan 后，需要先完成编码、把功能验证交给人工、再由 `codev-quickship` / `codev-checkpoint` 做收尾的场景。
 ---
 
 # TaskDev
 
 `codev-taskdev` 是 task plan 的手动执行器。它把已经审核通过的 task 文件转成实际代码改动，并把实现过程同步回任务文档。
 
-它只覆盖当前分支内的“选择任务 -> 校准 plan -> 编码 -> 持续同步 task -> 实现收尾精简 -> 默认 build / 最小编译校验”这一段，不负责自动化功能验证、完整 QA、分支部署、归档或主干收尾。
+它只覆盖当前分支内的“选择任务 -> 校准 plan -> 编码 -> 持续同步 task -> 实现收尾精简 -> 默认 build / 最小编译校验”这一段，不负责自动化功能验证、完整 QA、分支部署、归档或主干收尾。该收尾步骤是进入 `codev-quickship` / `codev-checkpoint` 之前唯一由 codev 自动承担的编译校验责任点。
 
 ## 第一规则：先用中文交流
 
@@ -108,7 +108,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 - 默认按最小整数任务号选择待办任务，不扫描 `tasks/done/`。
 - 任务文件不是只读输入；实际实现路径变化时，必须按事实同步 task。
 - 自动精简是 `codev-taskdev` 的内置收尾步骤，不需要在同一轮实现结束后再额外显式调用一次 `$codev-simplify`。
-- 默认 build / 最小编译校验是 `codev-taskdev` 的内置收尾步骤；后续 `codev-quickship` 在存在 task 的场景下不应再重复执行同一门禁，除非用户明确要求复验。
+- 默认 build / 最小编译校验是 `codev-taskdev` 的内置收尾步骤，也是后续 `codev-quickship` / `codev-checkpoint` 之前唯一由 codev 自动承担的编译校验责任点；收口 skill 不再补做 build/test/lint/typecheck 或脚本验证。
 - 不要为了“顺手收口”而替用户执行验证、QA、部署、归档或发布。
 - 不要为了默认 build 之外的验证而额外启动本地服务或补搭环境。
 - 不要把 task 收尾同步扩大成 repo 级文档巡检；`docs/`、`memory/`、`AGENTS.md` 的更新留给后续 `codev-quickship`。
