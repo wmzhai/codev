@@ -18,7 +18,7 @@
 ## 3. task 分支实现与收口
 
 - [codev-taskdev](codev-taskdev.md)：按已审核 task 在任务分支推进实现，并在收尾自动做一次语义不变精简和默认 build 校验；这是 quickship/checkpoint 前唯一由 codev 自动承担的编译校验责任点。
-- [codev-quickship](codev-quickship.md)：人工验证通过后的统一收尾，主流程与 checkpoint 一致，只额外做 `VERSION` 同步与 tag 推送，不补做自动验证。
+- [codev-quickship](codev-quickship.md)：人工验证通过后的统一收尾，主流程与 checkpoint 一致，只额外做 `VERSION` 同步与 tag 推送；缺少 `VERSION` 或 changelog 时主动创建（首发 `0.0.1`），不补做自动验证。
 - [codev-simplify](codev-simplify.md)：做语义不变的精简，可单独调用。
 - [codev-checkpoint](codev-checkpoint.md)：做一次轻量 `commit / push`；主流程与 quickship 一致，不升级版本号和 tag，不补做自动验证。
 

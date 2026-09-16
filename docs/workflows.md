@@ -45,7 +45,8 @@ README.md
 
 - 功能验证默认由人工完成。
 - 人工确认通过后，用 `$codev-quickship` 做 task 归档、相关文档同步和主干收尾；用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
-- 如果仓库没有 task，也可按无 task 模式收尾，但要在 `CHANGELOG` 记录本轮改动摘要。
+- 如果仓库没有 task，也可按无 task 模式收尾，但要在 `CHANGELOG` 记录本轮改动摘要；若没有 changelog 文件，`$codev-quickship` 会创建 `CHANGELOG.md`。
+- 若仓库没有 `VERSION`，`$codev-quickship` 会创建它；没有已发布 changelog 段时首发版本为 `0.0.1`，本轮不再递增。
 - 无 task 模式同样依赖用户触发前已完成外部确认，不由 `$codev-quickship` 或 `$codev-checkpoint` 承担自动验证。
 - 只想做一次轻量 `commit / push` 时，用 `$codev-checkpoint`；checkpoint 默认同步已有 `CHANGELOG` 的未发布记录，不升级 `VERSION`、不创建或推送 tag。
 

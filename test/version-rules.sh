@@ -135,4 +135,16 @@ assert_not_contains "docs/skills/codev-checkpoint.md" "最后一位加一"
 assert_not_contains "skills/codev-quickship/SKILL.md" "补丁位加一"
 assert_not_contains "docs/skills/codev-quickship.md" "补丁位加一"
 
+for path in "${quickship_rule_files[@]}"; do
+  assert_contains "$path" "0.0.1"
+  assert_contains "$path" "CHANGELOG.md"
+  assert_contains "$path" "缺则创建"
+done
+assert_contains "skills/codev-quickship/SKILL.md" "禁止再递增"
+assert_contains "docs/skills/codev-quickship.md" "不再递增"
+assert_not_contains "skills/codev-quickship/SKILL.md" "仓库未初始化版本体系"
+assert_contains "memory/core/invariants.md" "首发版本为 \`0.0.1\`"
+assert_contains "README.md" "首发版本为 \`0.0.1\`"
+assert_contains "docs/workflows.md" "首发版本为 \`0.0.1\`"
+
 echo "version rules checks passed"

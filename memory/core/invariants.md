@@ -35,12 +35,13 @@
 - `codev-taskdev` 负责从 `tasks/` 中选择目标 plan，按已审核 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点，但不做自动化功能验证、不归档到 `tasks/done/`。
 - 面向用户写出 skill 调用时：对话里按当前宿主写，Codex 用 `$name`，Grok 用 `/name`，Claude Code 用 `/name`；落盘的 `memory/`、`docs/`、`README.md` 必须同时列出三家，不能把 Codex 的 `$` 写成唯一模板。
 - `codev-quickship` 与 `codev-checkpoint` 的主流程一致；quickship 额外做 `VERSION` 同步与 tag 推送，收尾提交信息必须采用 `type: 具体工作摘要 (v<VERSION>)` 形式，版本号放在最后的括号里。checkpoint 不带版本后缀。
+- `codev-quickship` 若目标仓库根没有 `VERSION`，必须创建；changelog 没有已发布版本段时，首发版本为 `0.0.1`，本轮不再递增。若没有 `CHANGELOG.md`、`CHANGELOG` 或 `changelog.md`，必须创建 `CHANGELOG.md` 并写入本轮改动摘要，禁止只建空文件。已有任一 changelog 则沿用，不并行再造一份。
 - `codev-checkpoint` 是轻量 `commit/push` fallback；若当前可定位任务，会补齐任务记录并归档到 `tasks/done/`。默认同步已有 `CHANGELOG` 的未发布记录，不修改根目录 `VERSION`、不创建或推送 tag。
 - 若仓库里没有可定位 task，则 quickship 按无 task 模式收尾，但同样依赖用户触发前已完成外部确认。
 - 用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成；无 task 模式也依赖用户触发前已完成外部确认，收口 skill 不运行 build/test/lint/typecheck 或脚本验证。
 - `codev-syncpatch` 默认不提交、不 push、不默认创建分支；在同步 upstream 前必须先备份本地 diff 并判断是否能高置信度按原意重放本地补丁，不能确认时必须先问用户。
 - `codev-quickship` 关闭 GitHub issue 前必须先评论收尾摘要，避免只有关闭动作没有上下文。
-- `VERSION` 优先按仓库本地规则解析；没有本地规则时默认接受三段或四段数字版本，并递增版本号最后一段，tag 默认使用 `v<VERSION>`。
+- `VERSION` 优先按仓库本地规则解析；没有本地规则时默认接受三段或四段数字版本，并递增版本号最后一段，tag 默认使用 `v<VERSION>`。quickship 遇到缺失的 `VERSION` 时，若 changelog 也没有已发布版本，则初始化为 `0.0.1` 且本轮不再递增。
 
 ## 验证基线
 - 修改安装链路后，优先跑 `./test/setup-smoke.sh`。

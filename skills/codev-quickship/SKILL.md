@@ -1,6 +1,6 @@
 ---
 name: codev-quickship
-description: 人工验证通过后的统一收口；先执行 `codev-checkpoint` 的收口核心，再执行版本 bump、`VERSION` 工件同步与 tag 推送，不负责补做 build/test/lint/typecheck 或脚本验证。
+description: 人工验证通过后的统一收口；先执行 `codev-checkpoint` 的收口核心，再执行版本 bump、`VERSION` 工件同步与 tag 推送。目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入内容（首发版本 `0.0.1`），不负责补做 build/test/lint/typecheck 或脚本验证。
 ---
 
 # QuickShip
@@ -16,16 +16,37 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 1. **第一阶段**：执行 `codev-checkpoint` 的收口核心动作，但不提交不 push（无版本 bump 与 tag）。
 2. **第二阶段**：在第一阶段通过后，再执行版本 bump、版本工件更新，并在最终收口提交前统一提交。
 
+进入第一阶段的 `CHANGELOG` 同步之前，必须先完成版本工件初始化：仓库根没有 `VERSION` 或 changelog 时主动创建并写入内容，不得因文件缺失而停止。
+
 ## Preconditions
 
 - 用户触发即表示 `codev-taskdev` 收尾编译责任与人工功能验证已经完成；无 task 模式也表示用户已在外部完成确认。
 - 收口范围与 `codev-checkpoint` 相同：当前工作目录对应的仓库及其本地规则中的可见子仓，不使用其他项目路径。
 - 第一阶段前置条件通过；本 skill 不负责补做 build/test/lint/typecheck 或脚本验证。
 - 用户触发 `quickship` / `codev-quickship`（Codex 为 `$...`，Grok 与 Claude Code 为 `/...`）即执行两阶段收口，不额外询问是否进入版本阶段。
-- `VERSION` 与 tag 规则可解析（若仓库规则不存在，允许默认规则）。
+- `VERSION` 与 tag 规则可解析（若仓库规则不存在，允许默认规则）。仓库尚未初始化版本工件时不阻塞，按下方规则创建 `VERSION` 与 `CHANGELOG.md`。
 - 本地可判断远端 tag 状态。
 
 ## Execution Flow
+
+### 版本工件初始化（缺则创建）
+
+0. 在 git 仓库根检查版本工件；此步必须先于第一阶段的 `CHANGELOG` 同步：
+
+   - changelog 定位顺序：`CHANGELOG.md`、`CHANGELOG`、`changelog.md`。找到任一则沿用，不另建第二份。
+   - 都没有则创建根目录 `CHANGELOG.md`，先写入结构：
+
+     ```markdown
+     # Changelog
+
+     ## Unreleased
+     ```
+
+     紧接着按本轮改动写入未发布摘要（task 标题、实现范围或 git 改动归纳）。禁止只建空文件或只留标题。
+   - 没有 `VERSION`，且 changelog 也没有已发布版本段：创建 `VERSION`，内容只有一行 `0.0.1`。这就是本轮目标版本，禁止再递增。
+   - 没有 `VERSION`，但 changelog 已有发布段：取最新发布版本作为当前版本，再按规则递增，并补写 `VERSION`。
+   - 已有 `VERSION`：本步不改内容，留到第二阶段按规则处理。
+   - 用户显式给出合法版本时，以用户版本为准。
 
 ### 第一阶段：复用 checkpoint 核心
 
@@ -37,16 +58,17 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 ### 第二阶段：版本与 tag 收口
 
 5. 读取仓库本地版本规则，确认目标版本来源：
-   - 若用户显式给版本，先验有效性后采用；
+   - 若用户给出显式版本，先验有效性后采用；
+   - 若本轮新建 `VERSION` 且取首发 `0.0.1`：目标版本就是 `0.0.1`，不再递增；
    - 否则按本地规则自动递增；
    - 无本地规则时按三段或四段数字最后一段递增。
 6. 执行版本同步与工件更新（默认自动执行）：
-   - 更新根 `VERSION`（及本地约定的衍生版本工件）；
-   - 将 checkpoint 阶段积累的未发布记录整理入本次版本日志；
+   - 更新根 `VERSION`（及本地约定的衍生版本工件）；本轮新建且首发时写入 `0.0.1`；
+   - 将 checkpoint 阶段积累的未发布记录整理入本次版本日志，写入 `## <目标版本> - YYYY-MM-DD`（日期用收口当天）；本轮新建的 `CHANGELOG.md` 同样必须有这一段和具体条目，禁止空段；
    - 按本地规则执行版本工件物化；没有定义则记录跳过；
    - 版本同步属于 quickship 职责，但不能附带通用编译、测试或验证门禁。
 7. 生成版本提交：
-   - 将步骤 6 的变更与第一阶段结果合并；
+   - 将步骤 0 与步骤 6 的变更与第一阶段结果合并；
    - 在本阶段一次性进行最终收口提交，使用 `type: 具体工作摘要 (v<VERSION>)`；
    - 提交前再次确认工作区和可提交范围。
 8. 提交后 issue 处理：
@@ -58,12 +80,14 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
    - 检查本地/远端是否已存在同名 tag，存在则阻塞；
    - 创建 tag 并推送。
 10. 返回汇报：
-   - 回传第一阶段收口结果与第二阶段版本信息；
-   - 输出目标版本、版本工件变更、`CHANGELOG` 版本归并结果、tag 推送结果。
+    - 回传第一阶段收口结果与第二阶段版本信息；
+    - 若本轮新建了 `VERSION` 或 `CHANGELOG.md`，明确写出创建路径与目标版本；
+    - 输出目标版本、版本工件变更、`CHANGELOG` 版本归并结果、tag 推送结果。
 
 ## Stops / Failure Modes
 
 - 第一阶段失败或被阻塞。
-- 版本规则不可解析、仓库未初始化版本体系、或显式版本不符合规则。
-- `CHANGELOG` 归并目标无法定位。
+- 版本规则不可解析，或显式版本不符合规则。
+- 无法创建或写入 `VERSION` / changelog。
+- `CHANGELOG` 归并目标在创建后仍无法定位。
 - tag 已存在或 tag 推送失败。
