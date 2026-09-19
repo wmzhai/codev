@@ -45,11 +45,13 @@ assert_contains "README.md" 'Grok 与 Claude Code 把 `$` 换成 `/`'
 assert_contains "docs/workflows.md" 'Grok 与 Claude Code 把 `$` 换成 `/`'
 
 assert_contains "AGENTS.md" "本文件只服务 Codex / GPT"
-assert_contains "CLAUDE.md" "本文件只服务 Claude Code"
 assert_contains ".grok/rules/memory.md" "本文件只服务 Grok / Grok Build TUI"
 assert_contains "AGENTS.md" "只遵循 \`memory/\`"
-assert_contains "CLAUDE.md" "只遵循 \`memory/\`"
 assert_contains ".grok/rules/memory.md" "只遵循 \`memory/\`"
-assert_contains "skills/codev-memorize/SKILL.md" "都必须一次写齐全部入口"
+assert_contains "skills/codev-memorize/SKILL.md" "都必须一次写齐 \`memory/\`、\`AGENTS.md\` 和 \`.grok/rules/memory.md\`"
+assert_contains "skills/codev-memorize/SKILL.md" "不生成、不更新、不维护 \`CLAUDE.md\`"
+if [[ -e "${REPO_ROOT}/CLAUDE.md" ]]; then
+  fail "CLAUDE.md should not exist"
+fi
 
 echo "skill invocation prefix checks passed"

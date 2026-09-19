@@ -37,7 +37,7 @@ git pull --ff-only
 下面用 Codex 的 `$` 写法；Grok 与 Claude Code 把 `$` 换成 `/`，例如 `/codev-taskdev`。
 
 1. 先读 [docs/workflows.md](docs/workflows.md)。
-2. 新仓库或记忆体系过期时，用 `$codev-memorize`。它会写齐公共 `memory/` 和三份宿主入口，换工具也能接手。
+2. 新仓库或记忆体系过期时，用 `$codev-memorize`。它会写齐公共 `memory/` 以及 Codex / Grok 入口，换工具也能接手；不生成、不维护 `CLAUDE.md`。
 3. 需求进入任务流时，用 `$codev-issue2task` 生成 `tasks/` 下的 task plan；在工作区根目录也可以用 `$codev-issue2task <subdir>#70` 指向当前目录下某个子仓库的 GitHub issue。
 4. 人工审核 task plan 后，用 `$codev-taskdev` 在 task 分支推进实现；它会在收尾自动做一次语义不变精简和默认 build / 最小编译校验，这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。
 5. 跟踪开源上游但需要保留本地运行补丁时，用 `$codev-syncpatch`；它默认不提交、不 push、不默认创建分支，会先评估本地补丁能否安全重放。
@@ -50,7 +50,7 @@ git pull --ff-only
 - 总流程：[`docs/workflows.md`](docs/workflows.md)
 - skill 索引：[`docs/skills/README.md`](docs/skills/README.md)
 - Codex 入口：`AGENTS.md`
-- Claude Code 入口：`CLAUDE.md`
 - Grok 入口：`.grok/rules/memory.md`
+- Claude Code：没有项目入口，直接读 `memory/`
 - 公共记忆：`memory/`
 - 底层运行规则：`skills/<name>/SKILL.md`

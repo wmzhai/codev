@@ -63,7 +63,6 @@ closure_files=(
 version_surface_files=(
   "README.md"
   "AGENTS.md"
-  "CLAUDE.md"
   ".grok/rules/memory.md"
   "memory/core/invariants.md"
   "CHANGELOG"

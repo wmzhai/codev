@@ -20,15 +20,15 @@
 - `docs/workflows.md` 必须保留唯一工作流导航。
 - `docs/skills/<skill>.md` 必须覆盖对应 skill 的详细手册。
 - 公共事实只写在 `memory/`。
-- Codex 入口是 `AGENTS.md`，Claude Code 入口是 `CLAUDE.md`，Grok 入口是 `.grok/rules/memory.md`。三份入口只放宿主守卫、一两句硬规则和专用前缀/路径，不复制公共长文。
+- Codex 入口是 `AGENTS.md`，Grok 入口是 `.grok/rules/memory.md`。两份入口只放宿主守卫、一两句硬规则和专用前缀/路径，不复制公共长文。Claude Code 没有项目入口文件，直接读 `memory/`。不生成、不更新、不维护 `CLAUDE.md`。
 
 ## 内容约束
 - `SKILL.md` 的 `description` 必须同时说明“做什么”和“什么时候用”。
 - 新增 skill 时，README、setup、smoke test 必须同步。
 - 本仓库是 codev skills 的集合，不是应用业务仓库。
-- `codev-memorize` 的职责是建立或刷新 `memory/` 以及三份宿主入口，不负责业务逻辑。
-- 无论当前会话是 Codex、Grok 还是 Claude Code，`codev-memorize` 都必须一次写齐 `memory/`、`AGENTS.md`、`CLAUDE.md` 和 `.grok/rules/memory.md`，保证换工具也能接手。
-- 已有入口中的宿主专用段落必须保留；只把与仓库事实重复的正文迁到 `memory/`，不要整文件覆盖成另一份记忆百科。
+- `codev-memorize` 的职责是建立或刷新 `memory/` 以及 Codex / Grok 两份宿主入口，不负责业务逻辑，不生成、不更新、不维护 `CLAUDE.md`。
+- 无论当前会话是 Codex、Grok 还是 Claude Code，`codev-memorize` 都必须一次写齐 `memory/`、`AGENTS.md` 和 `.grok/rules/memory.md`，保证换工具也能接手。不要创建或改写 `CLAUDE.md`。
+- 已有入口中的宿主专用段落必须保留；只把与仓库事实重复的正文迁到 `memory/`，不要整文件覆盖成另一份记忆百科。已有 `CLAUDE.md` 时只读不写。
 - `codev-issue2task` 只处理 GitHub issue 或用户直接需求。
 - `codev-issue2task` 必须直接产出包含实现计划的 task 文件，不再依赖独立 `plantask` 步骤。
 - `codev-taskdev` 默认按 `tasks/` 中最小整数任务号选择待办任务。

@@ -9,10 +9,9 @@
 - `setup`：探测 PATH 中的 `codex` / `grok` / `claude`，只为已安装客户端刷新全局 skills
 - `test/setup-smoke.sh`：验证客户端探测、跳过、混装、冲突和链接
 - `AGENTS.md`：Codex 短入口
-- `CLAUDE.md`：Claude Code 短入口
 - `.grok/rules/memory.md`：Grok 短入口
-- `memory/`：三家共用的仓库事实、流程和约束
-- `skills/codev-memorize/`：为项目建立或刷新 `memory/` 与三份宿主入口
+- `memory/`：各宿主共用的仓库事实、流程和约束；Claude Code 没有项目入口，直接读这里
+- `skills/codev-memorize/`：为项目建立或刷新 `memory/` 与 Codex / Grok 入口；不生成、不维护 `CLAUDE.md`
 - `skills/codev-issue2task/`：把 issue 或直接需求收敛成带实现计划的任务文件
 - `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 前唯一由 codev 自动承担的编译校验责任点
 - `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；再同步根目录 `VERSION` 与 `CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），然后提交、合并、推送主干和 tag
@@ -37,4 +36,4 @@
 - 修改 skill 触发或行为：改对应 `SKILL.md` 和 `agents/openai.yaml`
 - 修改安装链路：改 `setup` 和 `test/setup-smoke.sh`
 - 修改外部说明：改 `README.md`、`docs/workflows.md`、`docs/skills/*.md`
-- 修改公共约束：改 `memory/core/invariants.md`，不要把长文写进三份入口
+- 修改公共约束：改 `memory/core/invariants.md`，不要把长文写进 Codex / Grok 入口

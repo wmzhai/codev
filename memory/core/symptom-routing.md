@@ -4,7 +4,7 @@
 
 ## 想知道这个仓库是干什么的
 - `README.md`
-- 当前宿主入口：`AGENTS.md` / `CLAUDE.md` / `.grok/rules/memory.md`
+- 当前宿主入口：`AGENTS.md` / `.grok/rules/memory.md`；Claude Code 直接读 `memory/`
 - `memory/core/invariants.md`
 - `docs/workflows.md`
 
@@ -29,7 +29,7 @@
 - `docs/skills/codev-memorize.md`
 - `skills/codev-memorize/SKILL.md`
 - 当前仓库的 `README.md`
-- `memory/` 与三份宿主入口
+- `memory/` 与 Codex / Grok 入口；不维护 `CLAUDE.md`
 
 ## 想走任务流
 - `docs/workflows.md`

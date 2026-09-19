@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.8 - 2026-09-19
+
+- 停止生成和维护 `CLAUDE.md`：`codev-memorize` 只写 `memory/`、`AGENTS.md` 和 `.grok/rules/memory.md`；本仓库删除 `CLAUDE.md`。Claude Code 仍可通过 `setup` 安装 skills，项目事实直接读 `memory/`。
+
 ## 0.1.7 - 2026-09-16
 
 - `codev-quickship` 在目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入本轮内容：没有已发布版本时 `VERSION` 首发为 `0.0.1`，缺 changelog 则创建 `CHANGELOG.md`。

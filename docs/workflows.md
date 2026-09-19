@@ -27,7 +27,7 @@ README.md
 ### 1. 仓库准备
 
 - 默认先读 `README.md`、当前宿主入口、本文和 `docs/skills/README.md`。
-- 需要刷新仓库记忆入口时，用 `$codev-memorize`；它会写齐公共 `memory/` 以及 `AGENTS.md`、`CLAUDE.md`、`.grok/rules/memory.md`。
+- 需要刷新仓库记忆入口时，用 `$codev-memorize`；它会写齐公共 `memory/` 以及 `AGENTS.md`、`.grok/rules/memory.md`。不生成、不维护 `CLAUDE.md`。
 - `setup` 只安装本仓库当前受管的 codev skills，并按 PATH 中的 `codex` / `grok` / `claude` 刷新对应全局目录。
 
 ### 2. 任务入口
@@ -61,5 +61,5 @@ README.md
 - skill 索引：`docs/skills/README.md`
 - 公共记忆：`memory/`
 - Codex 入口：`AGENTS.md`
-- Claude Code 入口：`CLAUDE.md`
 - Grok 入口：`.grok/rules/memory.md`
+- Claude Code：没有项目入口，直接读 `memory/`

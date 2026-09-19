@@ -4,12 +4,13 @@ Source: `codev`
 
 ## Purpose
 
-为当前仓库建立或刷新以 `memory/` 为公共正文、并为 Codex / Grok / Claude Code 各留一份短入口的记忆体系，让任意宿主的新 session 都知道先读什么、规则从哪里继承、流程文档去哪里找。
+为当前仓库建立或刷新以 `memory/` 为公共正文、并为 Codex / Grok 各留一份短入口的记忆体系，让任意宿主的新 session 都知道先读什么、规则从哪里继承、流程文档去哪里找。不生成、不更新、不维护 `CLAUDE.md`；Claude Code 直接读 `memory/`。
 
 ## Preconditions
 
 - 当前目录是可读仓库根目录。
-- 允许更新 `memory/`、`AGENTS.md`、`CLAUDE.md`、`.grok/rules/memory.md` 和相关导航文档。
+- 允许更新 `memory/`、`AGENTS.md`、`.grok/rules/memory.md` 和相关导航文档。
+- 不生成、不更新、不维护 `CLAUDE.md`。
 - 不要求 clean tree，但最好知道现有文档是否已漂移。
 
 ## Inputs / Source Of Truth
@@ -17,7 +18,7 @@ Source: `codev`
 - 仓库根目录结构
 - `README.md`
 - 如果是全新项目，则把用户明确提供的项目目标、边界和约定一起视为初始输入
-- 现有 `AGENTS.md`、`CLAUDE.md`、`.grok/rules/`
+- 现有 `AGENTS.md`、`.grok/rules/`；已有 `CLAUDE.md` 时只读不写
 - `memory/`
 - 主要入口文件、配置文件、脚本与目录分层
 
@@ -26,11 +27,10 @@ Source: `codev`
 - `memory/README.md`
 - `memory/core/*`
 - `AGENTS.md`
-- `CLAUDE.md`
 - `.grok/rules/memory.md`
 - 必要时更新文档导航，例如 `README.md` 或 `docs/workflows.md`
 
-无论当前会话是哪家宿主，都必须写齐公共 `memory/` 和三份入口。
+无论当前会话是哪家宿主，都必须写齐公共 `memory/` 以及 Codex 与 Grok 入口。不要创建或改写 `CLAUDE.md`。
 
 ## Execution Flow
 
@@ -39,7 +39,7 @@ Source: `codev`
 3. 提炼高优先级规则，收敛到 `memory/`，保持公共正文只写一份。
 4. 重写或刷新 `memory/README.md`，把热路径、冷路径和默认读法说清楚。
 5. 更新 `memory/core/` 中的系统图、工作流、稳定约束和仓库职责边界。
-6. 写齐或刷新三份宿主入口：守卫、默认中文、指向 `memory/`、该宿主前缀。保留已有入口中的宿主专用段落。
+6. 写齐或刷新 Codex 与 Grok 入口：守卫、默认中文、指向 `memory/`、该宿主前缀。保留已有入口中的宿主专用段落。不要创建或改写 `CLAUDE.md`。
 7. 删除已经失效的旧路由、旧目录名和过期流程说明。
 
 ## Stops / Failure Modes

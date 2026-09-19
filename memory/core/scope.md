@@ -13,13 +13,13 @@
 ## Source Of Truth
 - repo 内执行单元：`tasks/`
 - 公共记忆正文：`memory/`
-- 宿主入口：`AGENTS.md`、`CLAUDE.md`、`.grok/rules/memory.md`
+- 宿主入口：`AGENTS.md`、`.grok/rules/memory.md`；Claude Code 没有项目入口，直接读 `memory/`
 - 对外流程导航：`docs/workflows.md`
 - 对外 skill 手册：`docs/skills/README.md`
 - repo 级人类文档：`README.md`、`CHANGELOG`
 
 ## 不冲突规则
-- `codev-memorize` 把仓库事实收敛到 `memory/`，并为 Codex / Grok / Claude Code 各留一份短入口；不按当前宿主裁剪项目文件。
+- `codev-memorize` 把仓库事实收敛到 `memory/`，并为 Codex / Grok 各留一份短入口；不按当前宿主裁剪这两份入口；不生成、不更新、不维护 `CLAUDE.md`。
 - `codev-taskdev` 只负责按已审核 plan 实施代码、同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。
 - 只有明确需要轻量 `commit/push` 时，才用 `codev-checkpoint`。
 - `codev-quickship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs` / `memory` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；同步根目录 `VERSION`、`CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），再提交、合并并推送主干和 tag。

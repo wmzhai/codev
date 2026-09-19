@@ -1,7 +1,7 @@
 # Workflows
 
 ## 新会话默认动作
-1. 读当前宿主入口：`AGENTS.md`、`CLAUDE.md` 或 `.grok/rules/memory.md`
+1. 读当前宿主入口：`AGENTS.md` 或 `.grok/rules/memory.md`；Claude Code 直接读 `memory/`
 2. 读 `memory/core/invariants.md`
 3. 读 `docs/workflows.md`
 4. 读 `memory/core/symptom-routing.md`
@@ -31,7 +31,7 @@
 1. 改 `setup`
 2. 同步 `test/setup-smoke.sh`
 3. 更新 `README.md`
-4. 必要时更新 `docs/workflows.md` 与三份宿主入口
+4. 必要时更新 `docs/workflows.md` 与 Codex / Grok 入口
 5. 验证探测、跳过、干净 HOME、幂等性和冲突处理
 
 ## 修改既有 skill
@@ -44,4 +44,4 @@
 ## 维护原则
 - 先让记忆系统追上真实代码，再考虑增加解释。
 - 发现过期内容直接删，不保留“以后也许有用”的历史负担。
-- 谁初始化项目，另外两家都要能从同一份 `memory/` 接手。
+- 谁初始化项目，Codex 与 Grok 都要能从同一份 `memory/` 接手；Claude Code 也读同一份 `memory/`，但不维护 `CLAUDE.md`。
