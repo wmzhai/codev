@@ -42,6 +42,7 @@ Source: `codev`
 - 更新根 `VERSION` 与本地版本工件（若有）；
 - 将本轮未发布变更汇总到版本日志，写入 `## <目标版本> - YYYY-MM-DD`；新建的 `CHANGELOG.md` 同样必须有具体条目；
 - 生成最终收口提交：提交信息格式 `type: 具体工作摘要 (v<VERSION>)`（先把第一阶段变更与版本变更一起提交）；
+- 全仓推送，不看本地规则是否要求记指针。有改动的可见子仓先提交并 push，再把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成根仓 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。根仓提交遵守根仓自己的版本规则，不因子仓发版而加版本后缀或 tag；
 - 检查 tag 冲突并按规则创建 `v<VERSION>`，推送 tag；
 - 若存在映射 issue，在提交与 tag push 后执行 `gh issue comment` 再 `gh issue close`；
 - 输出阶段 1 与阶段 2 的汇总结果（含 target 版本、是否新建 `VERSION` / `CHANGELOG.md`、与 tag 状态）。
@@ -53,3 +54,4 @@ Source: `codev`
 - 无法创建或写入 `VERSION` / changelog。
 - `CHANGELOG` 版本归并目标不可定位。
 - tag 已存在或推送失败。
+- 可见子仓已推送，但根仓 gitlink 提交或 push 失败。

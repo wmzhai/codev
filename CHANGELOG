@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.9 - 2026-09-28
+
+- `codev-quickship` 推送整个收口范围：有改动的可见子仓先提交并 push，再把每个可见 submodule 已 push 的 HEAD 记成根仓 gitlink；根仓只有指针变化时也提交并 push。根仓提交遵守根仓自己的版本规则。
+- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink。被 quickship 内嵌时，gitlink 与整仓 push 由 quickship 第二阶段执行。
+
 ## 0.1.8 - 2026-09-19
 
 - 停止生成和维护 `CLAUDE.md`：`codev-memorize` 只写 `memory/`、`AGENTS.md` 和 `.grok/rules/memory.md`；本仓库删除 `CLAUDE.md`。Claude Code 仍可通过 `setup` 安装 skills，项目事实直接读 `memory/`。

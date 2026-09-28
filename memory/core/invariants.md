@@ -37,6 +37,8 @@
 - `codev-quickship` 与 `codev-checkpoint` 的主流程一致；quickship 额外做 `VERSION` 同步与 tag 推送，收尾提交信息必须采用 `type: 具体工作摘要 (v<VERSION>)` 形式，版本号放在最后的括号里。checkpoint 不带版本后缀。
 - `codev-quickship` 若目标仓库根没有 `VERSION`，必须创建；changelog 没有已发布版本段时，首发版本为 `0.0.1`，本轮不再递增。若没有 `CHANGELOG.md`、`CHANGELOG` 或 `changelog.md`，必须创建 `CHANGELOG.md` 并写入本轮改动摘要，禁止只建空文件。已有任一 changelog 则沿用，不并行再造一份。
 - `codev-checkpoint` 是轻量 `commit/push` fallback；若当前可定位任务，会补齐任务记录并归档到 `tasks/done/`。默认同步已有 `CHANGELOG` 的未发布记录，不修改根目录 `VERSION`、不创建或推送 tag。
+- `codev-quickship` 每次都推送整个收口范围。有改动的可见子仓先提交并 push，再在包含这些子仓的根仓把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。这一步不看本地规则是否要求记指针。根仓提交遵守根仓自己的版本规则，不因子仓发版而给根仓加版本后缀或 tag。可见子仓已推送但根仓 gitlink 提交或 push 失败时，收口未完成。
+- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink；未要求时不为刷新指针额外提交根仓。被 quickship 内嵌调用时，gitlink 与整仓 push 交给 quickship 第二阶段。
 - 若仓库里没有可定位 task，则 quickship 按无 task 模式收尾，但同样依赖用户触发前已完成外部确认。
 - 用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成；无 task 模式也依赖用户触发前已完成外部确认，收口 skill 不运行 build/test/lint/typecheck 或脚本验证。
 - `codev-syncpatch` 默认不提交、不 push、不默认创建分支；在同步 upstream 前必须先备份本地 diff 并判断是否能高置信度按原意重放本地补丁，不能确认时必须先问用户。

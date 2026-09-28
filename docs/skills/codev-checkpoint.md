@@ -23,4 +23,6 @@ Source: `codev`
 - 记录收口前置条件已经由用户触发确认，不运行自动验证。
 - 更新 `CHANGELOG` 的未发布记录；不改写历史发布段。
 - 提交并推送主干，完成后按 task 映射执行 `gh issue comment` 与 `gh issue close`。
+- 独立 checkpoint 只在本地规则要求记录 submodule 快照时，先提交并 push 可见子仓，再把每个已在该子仓 origin 上的 HEAD 记成根仓 gitlink（本轮未改动的子仓也记入）。本地规则未要求时，不为刷新指针额外提交根仓。
+- 被 quickship 内嵌调用时，本阶段不提交、不 push；根仓 gitlink 与整仓 push 由 quickship 第二阶段执行。
 - 明确汇报“阶段一未执行版本 bump 与 tag”。

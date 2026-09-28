@@ -22,6 +22,7 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 
 - 用户触发即表示 `codev-taskdev` 收尾编译责任与人工功能验证已经完成；无 task 模式也表示用户已在外部完成确认。
 - 收口范围与 `codev-checkpoint` 相同：当前工作目录对应的仓库及其本地规则中的可见子仓，不使用其他项目路径。
+- 每次 quickship 必须推送整个收口范围：有改动的可见子仓，以及包含这些子仓的根仓。不得只推 submodule、把根仓指针留在本地。
 - 第一阶段前置条件通过；本 skill 不负责补做 build/test/lint/typecheck 或脚本验证。
 - 用户触发 `quickship` / `codev-quickship`（Codex 为 `$...`，Grok 与 Claude Code 为 `/...`）即执行两阶段收口，不额外询问是否进入版本阶段。
 - `VERSION` 与 tag 规则可解析（若仓库规则不存在，允许默认规则）。仓库尚未初始化版本工件时不阻塞，按下方规则创建 `VERSION` 与 `CHANGELOG.md`。
@@ -71,6 +72,7 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
    - 将步骤 0 与步骤 6 的变更与第一阶段结果合并；
    - 在本阶段一次性进行最终收口提交，使用 `type: 具体工作摘要 (v<VERSION>)`；
    - 提交前再次确认工作区和可提交范围。
+   - 全仓推送，不看本地规则是否要求记指针。有改动的可见子仓先提交并 push。然后在包含这些子仓的根仓，把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。这一步覆盖 checkpoint「本地规则未要求则不刷新指针」。根仓提交遵守根仓自己的版本规则，不因子仓发版而给根仓加版本后缀或 tag。
 8. 提交后 issue 处理：
    - 合并阶段完成后按 issue 映射执行 `gh issue comment`；
    - 再执行 `gh issue close`。
@@ -91,3 +93,4 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 - 无法创建或写入 `VERSION` / changelog。
 - `CHANGELOG` 归并目标在创建后仍无法定位。
 - tag 已存在或 tag 推送失败。
+- 可见子仓已推送，但根仓 gitlink 提交或 push 失败。不得把这种情况报成收口完成。

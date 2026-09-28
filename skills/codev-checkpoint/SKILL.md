@@ -64,6 +64,8 @@ description: 人工验证通过后的统一收口第一阶段：任务归档、�
    - 当前在分支：先提交后合并到主干；
    - 当前在主干：直接形成主干收口提交；
    - commit message 为普通描述，不带版本后缀。
+   - 独立 checkpoint：仅当本地规则要求记录 submodule 快照时，才先提交并 push 可见子仓，再把每个 submodule 目录的当前 HEAD 用 `git add` 记成根仓 gitlink。该 HEAD 必须已经在该子仓 origin 上。本轮未改动的子仓也记入。根仓只因此出现 gitlink 变化时也要提交并 push。本地规则未要求时，不要为了刷新指针额外提交根仓。
+   - quickship 内嵌调用不受上一条限制。根仓 gitlink 与整仓 push 由 quickship 第二阶段强制执行。
 9. issue 处理（仅当映射存在且主干推送成功）：
    - 先逐个 `gh issue comment`；
    - 再逐个 `gh issue close`；
