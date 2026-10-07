@@ -1,6 +1,6 @@
 ---
 name: codev-quickship
-description: 人工验证通过后的统一收口；先执行 `codev-checkpoint` 的收口核心，再执行版本 bump、`VERSION` 工件同步与 tag 推送。目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入内容（首发版本 `0.0.1`），不负责补做 build/test/lint/typecheck 或脚本验证。
+description: 人工验证通过后的统一收口；先执行 `codev-checkpoint` 的收口核心，再执行版本 bump、`VERSION` 工件同步、附注 tag 与 GitHub Release。提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入内容（首发版本 `0.0.1`），不负责补做 build/test/lint/typecheck 或脚本验证。
 ---
 
 # QuickShip
@@ -66,25 +66,31 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 6. 执行版本同步与工件更新（默认自动执行）：
    - 更新根 `VERSION`（及本地约定的衍生版本工件）；本轮新建且首发时写入 `0.0.1`；
    - 将 checkpoint 阶段积累的未发布记录整理入本次版本日志，写入 `## <目标版本> - YYYY-MM-DD`（日期用收口当天）；本轮新建的 `CHANGELOG.md` 同样必须有这一段和具体条目，禁止空段；
+   - 刚写入的这一整段（标题加条目）是本轮版本说明的唯一文本。提交正文、附注 tag、GitHub Release 都复用它，不另写一套摘要；
    - 按本地规则执行版本工件物化；没有定义则记录跳过；
    - 版本同步属于 quickship 职责，但不能附带通用编译、测试或验证门禁。
 7. 生成版本提交：
    - 将步骤 0 与步骤 6 的变更与第一阶段结果合并；
-   - 在本阶段一次性进行最终收口提交，使用 `type: 具体工作摘要 (v<VERSION>)`；
+   - 在本阶段一次性进行最终收口提交。标题使用 `type: 具体工作摘要 (v<VERSION>)`；空一行后的提交正文复用同一份 changelog 版本段；
    - 提交前再次确认工作区和可提交范围。
    - 全仓推送，不看本地规则是否要求记指针。有改动的可见子仓先提交并 push。然后在包含这些子仓的根仓，把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。这一步覆盖 checkpoint「本地规则未要求则不刷新指针」。根仓提交遵守根仓自己的版本规则，不因子仓发版而给根仓加版本后缀或 tag。
 8. 提交后 issue 处理：
    - 合并阶段完成后按 issue 映射执行 `gh issue comment`；
    - 再执行 `gh issue close`。
-9. Tag 与推送：
+9. Tag 与 GitHub Release：
    - 按规则生成 tag 名（默认 `v<目标VERSION>`）；
-   - 推 tag 前确认 tag 与 `VERSION` 一致；
+   - 推送前确认 tag 与 `VERSION` 一致；
    - 检查本地/远端是否已存在同名 tag，存在则阻塞；
-   - 创建 tag 并推送。
+   - 用 `git tag -a <tag> -F <说明文件>` 创建附注 tag。说明文件就是同一份 changelog 版本段。不要创建没有附注的轻量 tag，也不要只用 tag 名当附注；
+   - 推送该 tag；
+   - 远端是 GitHub 且 `gh` 可用时，在该仓库执行 `gh release create <tag> --title <tag> --notes-file <说明文件>`，让 Releases 页面显示新特性。不要使用 `--generate-notes`；
+   - 同名 Release 已存在，或 Release 创建失败，则阻塞。不得把只有 tag、没有发版说明的结果报成完成；
+   - 远端不是 GitHub，或没有 `gh`：附注 tag 仍然必须带上同一份说明并推送；汇报里写明 GitHub Release 未创建的原因；
+   - 本轮没有版本 bump 的仓库不打这个 tag，也不创建 Release。说明只取该仓库自己的 changelog 版本段。
 10. 返回汇报：
     - 回传第一阶段收口结果与第二阶段版本信息；
     - 若本轮新建了 `VERSION` 或 `CHANGELOG.md`，明确写出创建路径与目标版本；
-    - 输出目标版本、版本工件变更、`CHANGELOG` 版本归并结果、tag 推送结果。
+    - 输出目标版本、版本工件变更、`CHANGELOG` 版本归并结果、附注 tag 推送结果，以及 GitHub Release 是否已用同一份说明创建。
 
 ## Stops / Failure Modes
 
@@ -92,5 +98,6 @@ description: 人工验证通过后的统一收口；先执行 `codev-checkpoint`
 - 版本规则不可解析，或显式版本不符合规则。
 - 无法创建或写入 `VERSION` / changelog。
 - `CHANGELOG` 归并目标在创建后仍无法定位。
-- tag 已存在或 tag 推送失败。
+- tag 已存在、附注 tag 没有版本说明，或 tag 推送失败。
+- 远端是 GitHub 时，Release 已存在、说明缺失，或 `gh release create` 失败。
 - 可见子仓已推送，但根仓 gitlink 提交或 push 失败。不得把这种情况报成收口完成。

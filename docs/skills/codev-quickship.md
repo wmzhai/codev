@@ -40,12 +40,15 @@ Source: `codev`
 
 - 解析版本来源：优先显式版本；本轮新建且首发时用 `0.0.1` 且不再递增；否则按仓库规则自动增量（无规则默认三段或四段数字最后一段 +1）；
 - 更新根 `VERSION` 与本地版本工件（若有）；
-- 将本轮未发布变更汇总到版本日志，写入 `## <目标版本> - YYYY-MM-DD`；新建的 `CHANGELOG.md` 同样必须有具体条目；
-- 生成最终收口提交：提交信息格式 `type: 具体工作摘要 (v<VERSION>)`（先把第一阶段变更与版本变更一起提交）；
+- 将本轮未发布变更汇总到版本日志，写入 `## <目标版本> - YYYY-MM-DD`；新建的 `CHANGELOG.md` 同样必须有具体条目。这一整段是本轮版本说明的唯一文本；
+- 生成最终收口提交：标题格式 `type: 具体工作摘要 (v<VERSION>)`，提交正文复用同一份 changelog 版本段（先把第一阶段变更与版本变更一起提交）；
 - 全仓推送，不看本地规则是否要求记指针。有改动的可见子仓先提交并 push，再把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成根仓 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。根仓提交遵守根仓自己的版本规则，不因子仓发版而加版本后缀或 tag；
-- 检查 tag 冲突并按规则创建 `v<VERSION>`，推送 tag；
+- 检查 tag 冲突后，用 `git tag -a <tag> -F <说明文件>` 创建附注 tag（默认 `v<VERSION>`）并推送。说明文件就是同一份 changelog 版本段。不要创建轻量 tag；
+- 远端是 GitHub 且 `gh` 可用时，在该仓库执行 `gh release create <tag> --title <tag> --notes-file <说明文件>`，让 Releases 页面显示新特性。不要使用 `--generate-notes`。同名 Release 已存在或创建失败则阻塞；
+- 远端不是 GitHub 或没有 `gh` 时，仍推送带同一份说明的附注 tag，并在汇报里写明 GitHub Release 未创建的原因；
+- 本轮没有版本 bump 的仓库不打这个 tag，也不创建 Release。说明只取该仓库自己的 changelog 版本段；
 - 若存在映射 issue，在提交与 tag push 后执行 `gh issue comment` 再 `gh issue close`；
-- 输出阶段 1 与阶段 2 的汇总结果（含 target 版本、是否新建 `VERSION` / `CHANGELOG.md`、与 tag 状态）。
+- 输出阶段 1 与阶段 2 的汇总结果（含 target 版本、是否新建 `VERSION` / `CHANGELOG.md`、附注 tag 与 GitHub Release 状态）。
 
 ## Stops / Failure Modes
 
@@ -53,5 +56,6 @@ Source: `codev`
 - 版本规则无法解析或显式版本不合法。
 - 无法创建或写入 `VERSION` / changelog。
 - `CHANGELOG` 版本归并目标不可定位。
-- tag 已存在或推送失败。
+- tag 已存在、附注 tag 没有版本说明，或推送失败。
+- 远端是 GitHub 时，Release 已存在、说明缺失，或 `gh release create` 失败。
 - 可见子仓已推送，但根仓 gitlink 提交或 push 失败。

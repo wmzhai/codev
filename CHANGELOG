@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.10 - 2026-10-07
+
+- `codev-quickship` 的提交正文、附注 tag 和 GitHub Release 说明复用同一份 changelog 版本段。远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。
+
 ## 0.1.9 - 2026-09-28
 
 - `codev-quickship` 推送整个收口范围：有改动的可见子仓先提交并 push，再把每个可见 submodule 已 push 的 HEAD 记成根仓 gitlink；根仓只有指针变化时也提交并 push。根仓提交遵守根仓自己的版本规则。
