@@ -40,6 +40,7 @@ README.md
 - 先人工审核 task 文件里的 `Implementation Plan` / `Validation Plan`。
 - 审核通过后，用 `$codev-taskdev` 在 task 分支推进实现。
 - `codev-taskdev` 负责代码实现、任务文档同步，以及一次实现收尾精简和默认 build / 最小编译校验。
+- `codev-taskdev` 收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-quickship`。
 
 ### 4. 验证与收尾
 

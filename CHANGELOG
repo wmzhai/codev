@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.11 - 2026-10-23
+
+- `codev-taskdev` 在验证后的同一次任务文件写入里，把本轮有验证证据的验收项勾成 `[x]`。证据不足、被阻塞或留给人工的项保持未勾，不再把勾选留给后续会话或 `codev-quickship`。
+
 ## 0.1.10 - 2026-10-07
 
 - `codev-quickship` 的提交正文、附注 tag 和 GitHub Release 说明复用同一份 changelog 版本段。远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。

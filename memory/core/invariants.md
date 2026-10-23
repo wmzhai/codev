@@ -33,6 +33,7 @@
 - `codev-issue2task` 必须直接产出包含实现计划的 task 文件，不再依赖独立 `plantask` 步骤。
 - `codev-taskdev` 默认按 `tasks/` 中最小整数任务号选择待办任务。
 - `codev-taskdev` 负责从 `tasks/` 中选择目标 plan，按已审核 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点，但不做自动化功能验证、不归档到 `tasks/done/`。
+- `codev-taskdev` 收尾同步任务文件时，把本轮有验证证据的验收项勾成 `[x]`；证据不足、被阻塞或留给人工的项保持未勾。不把勾选留给后续会话或 `codev-quickship`。
 - 面向用户写出 skill 调用时：对话里按当前宿主写，Codex 用 `$name`，Grok 用 `/name`，Claude Code 用 `/name`；落盘的 `memory/`、`docs/`、`README.md` 必须同时列出三家，不能把 Codex 的 `$` 写成唯一模板。
 - `codev-quickship` 与 `codev-checkpoint` 的主流程一致；quickship 额外做 `VERSION` 同步、附注 tag 与 GitHub Release。收尾提交标题必须采用 `type: 具体工作摘要 (v<VERSION>)`，版本号放在最后的括号里；提交正文复用同一份 changelog 版本段。checkpoint 不带版本后缀，也不写这段版本说明。
 - `codev-quickship` 若目标仓库根没有 `VERSION`，必须创建；changelog 没有已发布版本段时，首发版本为 `0.0.1`，本轮不再递增。若没有 `CHANGELOG.md`、`CHANGELOG` 或 `changelog.md`，必须创建 `CHANGELOG.md` 并写入本轮改动摘要，禁止只建空文件。已有任一 changelog 则沿用，不并行再造一份。

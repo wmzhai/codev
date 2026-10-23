@@ -39,7 +39,7 @@ git pull --ff-only
 1. 先读 [docs/workflows.md](docs/workflows.md)。
 2. 新仓库或记忆体系过期时，用 `$codev-memorize`。它会写齐公共 `memory/` 以及 Codex / Grok 入口，换工具也能接手；不生成、不维护 `CLAUDE.md`。
 3. 需求进入任务流时，用 `$codev-issue2task` 生成 `tasks/` 下的 task plan；在工作区根目录也可以用 `$codev-issue2task <subdir>#70` 指向当前目录下某个子仓库的 GitHub issue。
-4. 人工审核 task plan 后，用 `$codev-taskdev` 在 task 分支推进实现；它会在收尾自动做一次语义不变精简和默认 build / 最小编译校验，这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。
+4. 人工审核 task plan 后，用 `$codev-taskdev` 在 task 分支推进实现；它会在收尾自动做一次语义不变精简和默认 build / 最小编译校验，并把有验证证据的验收项勾成 `[x]`。这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。
 5. 跟踪开源上游但需要保留本地运行补丁时，用 `$codev-syncpatch`；它默认不提交、不 push、不默认创建分支，会先评估本地补丁能否安全重放。
 6. 只想做一次轻量 `commit / push` 时，用 `$codev-checkpoint`；其主流程与 `$codev-quickship` 一致，差异是 checkpoint 不升级 `VERSION`、不打 tag，且 checkpoint 默认同步已有 `CHANGELOG` 的未发布记录。
 7. 人工验证通过后，用 `$codev-quickship` 做与 checkpoint 一致的流程，并在其上执行 `VERSION` 同步与 tag 推送；其余动作不额外区分。用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。如果仓库没有 task，也可以按无 task 模式收尾，但同样依赖用户触发前已完成外部确认。
