@@ -64,6 +64,7 @@ version_surface_files=(
   "README.md"
   "AGENTS.md"
   ".grok/rules/memory.md"
+  ".claude/rules/memory.md"
   "memory/core/invariants.md"
   "CHANGELOG"
   "${quickship_files[@]}"

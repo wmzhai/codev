@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.12 - 2026-10-31
+
+- Claude Code 新增项目入口 `.claude/rules/memory.md`，与 `AGENTS.md`、`.grok/rules/memory.md` 对称；`codev-memorize` 无论当前宿主是谁都写齐三份入口，同一份 `memory/` 在 Codex / Grok / Claude Code 间切换都能自动接上。`CLAUDE.md` 仍只读不写。
+
 ## 0.1.11 - 2026-10-23
 
 - `codev-taskdev` 在验证后的同一次任务文件写入里，把本轮有验证证据的验收项勾成 `[x]`。证据不足、被阻塞或留给人工的项保持未勾，不再把勾选留给后续会话或 `codev-quickship`。
