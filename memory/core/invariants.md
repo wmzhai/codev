@@ -1,13 +1,14 @@
 # Invariants
 
 ## 安装与发现
-- `setup` 无参执行，按 PATH 中是否存在 `codex`、`grok`、`claude` 决定刷新哪些全局 skills。
-- 探测只认 `command -v`，不把 `~/.codex`、`~/.grok`、`~/.claude` 目录存在当成已安装，也不把 macOS 自带的 `gpt` 当成 Codex。
+- `setup` 无参执行，按 PATH 中是否存在 `codex`、`grok`、`claude`、`cursor` 决定刷新哪些全局 skills。
+- 探测只认 `command -v`，不把 `~/.codex`、`~/.grok`、`~/.claude`、`~/.cursor` 目录存在当成已安装，也不把 macOS 自带的 `gpt` 当成 Codex。
 - 有对应客户端则幂等安装或更新；没有则打印跳过，且不创建该宿主的 skills 目录。
-- 三个客户端都没有则失败，提示需要先装 `codex`、`grok` 或 `claude`。
+- 四个客户端都没有则失败，提示需要先装 `codex`、`grok`、`claude` 或 `cursor`。
 - Codex 必须把 `codev` 本身链接到 `~/.codex/skills/codev`，再把受管 skill 链成 `codev/skills/<name>`。
 - Grok 只链接受管 skill 目录到 `~/.grok/skills/<name>`，不把整个仓库挂到 `~/.grok/skills/codev`。
 - Claude Code 与 Grok 相同，目标为 `~/.claude/skills/<name>`；若存在指向本仓库的遗留 `~/.claude/skills/codev` 链接则删除。
+- Cursor 与 Grok 相同，目标为 `~/.cursor/skills/<name>`；若存在指向本仓库的遗留 `~/.cursor/skills/codev` 链接则删除。探测名是 `cursor`。
 - 受管 skills 必须通过 `setup` 一次性链接，不手工散装维护。
 - `test/setup-smoke.sh` 必须覆盖客户端探测、跳过、混装、冲突处理和受管 skills 链接列表。
 - 不恢复 `--host`，不支持项目内 vendored 安装，不写 `~/.agents/skills`。
@@ -20,31 +21,32 @@
 - `docs/workflows.md` 必须保留唯一工作流导航。
 - `docs/skills/<skill>.md` 必须覆盖对应 skill 的详细手册。
 - 公共事实只写在 `memory/`。
-- Codex 入口是 `AGENTS.md`，Grok 入口是 `.grok/rules/memory.md`，Claude Code 入口是 `.claude/rules/memory.md`。三份入口只放宿主守卫、一两句硬规则和专用前缀/路径，不复制公共长文。不生成、不更新、不维护 `CLAUDE.md`。
+- Codex 入口是 `AGENTS.md`，Grok 入口是 `.grok/rules/memory.md`，Claude Code 入口是 `.claude/rules/memory.md`，Cursor 入口是 `.cursor/rules/memory.mdc`。四份入口只放宿主守卫、一两句硬规则和专用前缀/路径，不复制公共长文。不生成、不更新、不维护 `CLAUDE.md`。
 
 ## 内容约束
 - `SKILL.md` 的 `description` 必须同时说明“做什么”和“什么时候用”。
 - 新增 skill 时，README、setup、smoke test 必须同步。
 - 本仓库是 codev skills 的集合，不是应用业务仓库。
-- `codev-memorize` 的职责是建立或刷新 `memory/` 以及 Codex / Grok / Claude Code 三份宿主入口，不负责业务逻辑，不生成、不更新、不维护 `CLAUDE.md`。
-- 无论当前会话是 Codex、Grok 还是 Claude Code，`codev-memorize` 都必须一次写齐 `memory/`、`AGENTS.md`、`.grok/rules/memory.md` 和 `.claude/rules/memory.md`，保证换工具也能接手。不要创建或改写 `CLAUDE.md`。
+- `codev-memorize` 的职责是建立或刷新 `memory/` 以及 Codex / Grok / Claude Code / Cursor 四份宿主入口，不负责业务逻辑，不生成、不更新、不维护 `CLAUDE.md`。
+- 无论当前会话是 Codex、Grok、Claude Code 还是 Cursor，`codev-memorize` 都必须一次写齐 `memory/`、`AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md` 和 `.cursor/rules/memory.mdc`，保证换工具也能接手。不要创建或改写 `CLAUDE.md`。
 - 已有入口中的宿主专用段落必须保留；只把与仓库事实重复的正文迁到 `memory/`，不要整文件覆盖成另一份记忆百科。已有 `CLAUDE.md` 时只读不写。
 - `codev-issue2task` 只处理 GitHub issue 或用户直接需求。
 - `codev-issue2task` 必须直接产出包含实现计划的 task 文件，不再依赖独立 `plantask` 步骤。
 - `codev-taskdev` 默认按 `tasks/` 中最小整数任务号选择待办任务。
-- `codev-taskdev` 负责从 `tasks/` 中选择目标 plan，按已审核 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点，但不做自动化功能验证、不归档到 `tasks/done/`。
-- `codev-taskdev` 收尾同步任务文件时，把本轮有验证证据的验收项勾成 `[x]`；证据不足、被阻塞或留给人工的项保持未勾。不把勾选留给后续会话或 `codev-quickship`。
-- 面向用户写出 skill 调用时：对话里按当前宿主写，Codex 用 `$name`，Grok 用 `/name`，Claude Code 用 `/name`；落盘的 `memory/`、`docs/`、`README.md` 必须同时列出三家，不能把 Codex 的 `$` 写成唯一模板。
-- `codev-quickship` 与 `codev-checkpoint` 的主流程一致；quickship 额外做 `VERSION` 同步、附注 tag 与 GitHub Release。收尾提交标题必须采用 `type: 具体工作摘要 (v<VERSION>)`，版本号放在最后的括号里；提交正文复用同一份 changelog 版本段。checkpoint 不带版本后缀，也不写这段版本说明。
-- `codev-quickship` 若目标仓库根没有 `VERSION`，必须创建；changelog 没有已发布版本段时，首发版本为 `0.0.1`，本轮不再递增。若没有 `CHANGELOG.md`、`CHANGELOG` 或 `changelog.md`，必须创建 `CHANGELOG.md` 并写入本轮改动摘要，禁止只建空文件。已有任一 changelog 则沿用，不并行再造一份。
+- `codev-taskdev` 负责从 `tasks/` 中选择目标 plan，按已审核 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 ship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点，但不做自动化功能验证、不归档到 `tasks/done/`。
+- `codev-taskdev` 收尾同步任务文件时，把本轮有验证证据的验收项勾成 `[x]`；证据不足、被阻塞或留给人工的项保持未勾。不把勾选留给后续会话或 `codev-ship`。
+- 面向用户写出 skill 调用时：对话里按当前宿主写，Codex 用 `$name`，Grok、Claude Code、Cursor 用 `/name`；落盘的 `memory/`、`docs/`、`README.md` 必须同时列出四家，不能把 Codex 的 `$` 写成唯一模板。
+- `codev-ship` 与 `codev-checkpoint` 的主流程一致；ship 额外做 `VERSION` 同步、附注 tag 与 GitHub Release。收尾提交标题必须采用 `type: 具体工作摘要 (v<VERSION>)`，版本号放在最后的括号里；提交正文复用同一份 changelog 版本段。checkpoint 不带版本后缀，也不写这段版本说明。
+- `codev-ship` 若目标仓库根没有 `VERSION`，必须创建；changelog 没有已发布版本段时，首发版本为 `0.0.1`，本轮不再递增。若没有 `CHANGELOG.md`、`CHANGELOG` 或 `changelog.md`，必须创建 `CHANGELOG.md` 并写入本轮改动摘要，禁止只建空文件。已有任一 changelog 则沿用，不并行再造一份。
 - `codev-checkpoint` 是轻量 `commit/push` fallback；若当前可定位任务，会补齐任务记录并归档到 `tasks/done/`。默认同步已有 `CHANGELOG` 的未发布记录，不修改根目录 `VERSION`、不创建或推送 tag。
-- `codev-quickship` 每次都推送整个收口范围。有改动的可见子仓先提交并 push，再在包含这些子仓的根仓把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。这一步不看本地规则是否要求记指针。根仓提交遵守根仓自己的版本规则，不因子仓发版而给根仓加版本后缀或 tag。可见子仓已推送但根仓 gitlink 提交或 push 失败时，收口未完成。
-- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink；未要求时不为刷新指针额外提交根仓。被 quickship 内嵌调用时，gitlink 与整仓 push 交给 quickship 第二阶段。
-- 若仓库里没有可定位 task，则 quickship 按无 task 模式收尾，但同样依赖用户触发前已完成外部确认。
-- 用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成；无 task 模式也依赖用户触发前已完成外部确认，收口 skill 不运行 build/test/lint/typecheck 或脚本验证。
+- `codev-commit` 只把当前 git 仓库里已经存在的改动提交并推送当前分支。不改 `VERSION`、changelog、任务、文档或宿主入口，不跑 build/test/lint/typecheck，不询问确认，不打 tag，不发 Release。用户在指令里给了提交说明就直接使用。子模块里有未提交内容时，先对那个子模块做同样的直接提交和推送，再提交父仓 gitlink。
+- `codev-ship` 每次都推送整个收口范围。有改动的可见子仓先提交并 push，再在包含这些子仓的根仓把每个可见 submodule 目录里已 push 的当前 HEAD 用 `git add` 记成 gitlink（本轮没改的子仓也记入；HEAD 必须已在该子仓 origin 上）。根仓只有 gitlink 变化时也要提交并 push。这一步不看本地规则是否要求记指针。根仓提交遵守根仓自己的版本规则，不因子仓发版而给根仓加版本后缀或 tag。可见子仓已推送但根仓 gitlink 提交或 push 失败时，收口未完成。
+- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink；未要求时不为刷新指针额外提交根仓。被 ship 内嵌调用时，gitlink 与整仓 push 交给 ship 第二阶段。
+- 若仓库里没有可定位 task，则 ship 按无 task 模式收尾，但同样依赖用户触发前已完成外部确认。
+- 用户触发 ship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成；无 task 模式也依赖用户触发前已完成外部确认，收口 skill 不运行 build/test/lint/typecheck 或脚本验证。
 - `codev-syncpatch` 默认不提交、不 push、不默认创建分支；在同步 upstream 前必须先备份本地 diff 并判断是否能高置信度按原意重放本地补丁，不能确认时必须先问用户。
-- `codev-quickship` 关闭 GitHub issue 前必须先评论收尾摘要，避免只有关闭动作没有上下文。
-- `VERSION` 优先按仓库本地规则解析；没有本地规则时默认接受三段或四段数字版本，并递增版本号最后一段。tag 默认使用 `v<VERSION>`，且必须是附注 tag。附注和 GitHub Release 说明都复用同一份 changelog 版本段；远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。quickship 遇到缺失的 `VERSION` 时，若 changelog 也没有已发布版本，则初始化为 `0.0.1` 且本轮不再递增。
+- `codev-ship` 关闭 GitHub issue 前必须先评论收尾摘要，避免只有关闭动作没有上下文。
+- `VERSION` 优先按仓库本地规则解析；没有本地规则时默认接受三段或四段数字版本，并递增版本号最后一段。tag 默认使用 `v<VERSION>`，且必须是附注 tag。附注和 GitHub Release 说明都复用同一份 changelog 版本段；远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。ship 遇到缺失的 `VERSION` 时，若 changelog 也没有已发布版本，则初始化为 `0.0.1` 且本轮不再递增。
 
 ## 验证基线
 - 修改安装链路后，优先跑 `./test/setup-smoke.sh`。

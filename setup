@@ -3,8 +3,8 @@ set -euo pipefail
 
 PROJECT_NAME="codev"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-MANAGED_SKILLS=(codev-memorize codev-issue2task codev-taskdev codev-quickship codev-simplify codev-checkpoint codev-syncpatch)
-REMOVED_MANAGED_SKILLS=(codev-gstack2task codev-checktask codev-autodev codev-automerge)
+MANAGED_SKILLS=(codev-memorize codev-issue2task codev-taskdev codev-ship codev-commit codev-simplify codev-checkpoint codev-syncpatch)
+REMOVED_MANAGED_SKILLS=(codev-gstack2task codev-checktask codev-autodev codev-automerge codev-quickship codev-fastship)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
 
 die() {
@@ -13,7 +13,7 @@ die() {
 }
 
 if [ $# -ne 0 ]; then
-  die "no arguments supported; run setup without args to install skills for clients found in PATH (codex, grok, claude)"
+  die "no arguments supported; run setup without args to install skills for clients found in PATH (codex, grok, claude, cursor)"
 fi
 
 host_client_installed() {
@@ -30,6 +30,10 @@ grok_skills_dir() {
 
 claude_skills_dir() {
   printf '%s\n' "${HOME}/.claude/skills"
+}
+
+cursor_skills_dir() {
+  printf '%s\n' "${HOME}/.cursor/skills"
 }
 
 ensure_symlink_or_absent() {
@@ -138,6 +142,10 @@ install_for_claude() {
   install_direct_skill_links "$(claude_skills_dir)" "Claude Code"
 }
 
+install_for_cursor() {
+  install_direct_skill_links "$(cursor_skills_dir)" "Cursor"
+}
+
 skip_host() {
   echo "skipping $1: '$2' not found in PATH"
 }
@@ -165,6 +173,13 @@ else
   skip_host "Claude Code" claude
 fi
 
+if host_client_installed cursor; then
+  install_for_cursor
+  installed_any=1
+else
+  skip_host Cursor cursor
+fi
+
 if [ "$installed_any" -eq 0 ]; then
-  die "no supported client found in PATH (need one of: codex, grok, claude)"
+  die "no supported client found in PATH (need one of: codex, grok, claude, cursor)"
 fi

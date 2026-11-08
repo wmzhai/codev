@@ -2,7 +2,7 @@
 
 `docs/workflows.md` 是 codev 的唯一工作流导航。默认先读这里，再按需要进入对应的 skill 手册。
 
-文档里的 `$codev-*` 是 Codex 写法；Grok 与 Claude Code 把 `$` 换成 `/`，例如 `/codev-taskdev`。
+文档里的 `$codev-*` 是 Codex 写法；Grok、Claude Code 与 Cursor 把 `$` 换成 `/`，例如 `/codev-taskdev`。
 
 ## 默认主线
 
@@ -16,10 +16,11 @@ README.md
 -> 人工审核 task plan
 -> $codev-taskdev
 -> 人工验证
--> $codev-quickship
+-> $codev-ship
 
 同步开源上游且保留本地补丁：$codev-syncpatch
 轻量提交 fallback：$codev-checkpoint
+小改动直接提交：$codev-commit
 ```
 
 ## 主流程说明
@@ -27,8 +28,8 @@ README.md
 ### 1. 仓库准备
 
 - 默认先读 `README.md`、当前宿主入口、本文和 `docs/skills/README.md`。
-- 需要刷新仓库记忆入口时，用 `$codev-memorize`；它会写齐公共 `memory/` 以及 `AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md`。不生成、不维护 `CLAUDE.md`。
-- `setup` 只安装本仓库当前受管的 codev skills，并按 PATH 中的 `codex` / `grok` / `claude` 刷新对应全局目录。
+- 需要刷新仓库记忆入口时，用 `$codev-memorize`；它会写齐公共 `memory/` 以及 `AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md`、`.cursor/rules/memory.mdc`。不生成、不维护 `CLAUDE.md`。
+- `setup` 只安装本仓库当前受管的 codev skills，并按 PATH 中的 `codex` / `grok` / `claude` / `cursor` 刷新对应全局目录。
 
 ### 2. 任务入口
 
@@ -40,17 +41,18 @@ README.md
 - 先人工审核 task 文件里的 `Implementation Plan` / `Validation Plan`。
 - 审核通过后，用 `$codev-taskdev` 在 task 分支推进实现。
 - `codev-taskdev` 负责代码实现、任务文档同步，以及一次实现收尾精简和默认 build / 最小编译校验。
-- `codev-taskdev` 收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-quickship`。
+- `codev-taskdev` 收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-ship`。
 
 ### 4. 验证与收尾
 
 - 功能验证默认由人工完成。
-- 人工确认通过后，用 `$codev-quickship` 做 task 归档、相关文档同步和主干收尾；用户触发 quickship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
-- 如果仓库没有 task，也可按无 task 模式收尾，但要在 `CHANGELOG` 记录本轮改动摘要；若没有 changelog 文件，`$codev-quickship` 会创建 `CHANGELOG.md`。
-- 若仓库没有 `VERSION`，`$codev-quickship` 会创建它；没有已发布 changelog 段时首发版本为 `0.0.1`，本轮不再递增。
+- 人工确认通过后，用 `$codev-ship` 做 task 归档、相关文档同步和主干收尾；用户触发 ship/checkpoint 即表示 `codev-taskdev` 收尾校验和人工验证已经完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
+- 如果仓库没有 task，也可按无 task 模式收尾，但要在 `CHANGELOG` 记录本轮改动摘要；若没有 changelog 文件，`$codev-ship` 会创建 `CHANGELOG.md`。
+- 若仓库没有 `VERSION`，`$codev-ship` 会创建它；没有已发布 changelog 段时首发版本为 `0.0.1`，本轮不再递增。
 - 版本 tag 必须是附注 tag。提交正文、tag 附注和 GitHub Release 说明复用同一份 changelog 版本段。
-- 无 task 模式同样依赖用户触发前已完成外部确认，不由 `$codev-quickship` 或 `$codev-checkpoint` 承担自动验证。
+- 无 task 模式同样依赖用户触发前已完成外部确认，不由 `$codev-ship` 或 `$codev-checkpoint` 承担自动验证。
 - 只想做一次轻量 `commit / push` 时，用 `$codev-checkpoint`；checkpoint 默认同步已有 `CHANGELOG` 的未发布记录，不升级 `VERSION`、不创建或推送 tag。
+- 只改了小文档、不想做收口检查时，用 `$codev-commit`：直接提交当前仓库已有改动并推送当前分支，不改版本、不写 `CHANGELOG`、不归档任务、不跑检查。
 
 ### 5. 开源上游同步与本地补丁
 
@@ -65,3 +67,4 @@ README.md
 - Codex 入口：`AGENTS.md`
 - Grok 入口：`.grok/rules/memory.md`
 - Claude Code 入口：`.claude/rules/memory.md`
+- Cursor 入口：`.cursor/rules/memory.mdc`

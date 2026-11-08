@@ -1,6 +1,6 @@
 ---
 name: codev-taskdev
-description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编号待办任务，在当前分支上按 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾自动做一次语义不变精简，再完成仓库约定的迁移、编译和当前环境能做的端到端验证；适用于 `codev-issue2task` 产出 plan 后，需要先把功能跑到尽可能可用、再把本地做不到的验收交给人工，随后由 `codev-quickship` / `codev-checkpoint` 做收尾的场景。
+description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编号待办任务，在当前分支上按 `Implementation Plan` 实施代码、持续同步任务文档，并在实现收尾自动做一次语义不变精简，再完成仓库约定的迁移、编译和当前环境能做的端到端验证；适用于 `codev-issue2task` 产出 plan 后，需要先把功能跑到尽可能可用、再把本地做不到的验收交给人工，随后由 `codev-ship` / `codev-checkpoint` 做收尾的场景。
 ---
 
 # TaskDev
@@ -19,13 +19,14 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 
 面向用户写出下一步 skill 入口时，必须使用当前宿主的调用前缀，不要把另一套宿主的前缀写进用户提示：
 
-- Codex：`$<skill-name>`，例如 `$codev-quickship`
-- Grok / Grok Build TUI：`/<skill-name>`，例如 `/codev-quickship`
-- Claude Code：`/<skill-name>`，例如 `/codev-quickship`
+- Codex：`$<skill-name>`，例如 `$codev-ship`
+- Grok / Grok Build TUI：`/<skill-name>`，例如 `/codev-ship`
+- Claude Code：`/<skill-name>`，例如 `/codev-ship`
+- Cursor：`/<skill-name>`，例如 `/codev-ship`
 
 判断依据：
 
-- 当前会话身份是 Grok 或 Claude Code，或用户是用 `/skill` 触发的，用 `/`
+- 当前会话身份是 Grok、Claude Code 或 Cursor，或用户是用 `/skill` 触发的，用 `/`
 - 当前会话身份是 Codex，或用户是用 `$skill` 触发的，用 `$`
 
 ## Inputs
@@ -44,7 +45,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 - 已在收尾阶段自动执行过一次 `codev-simplify` 式语义不变精简；如果没有安全可做的精简，也已明确记录。
 - 已按当前仓库约定完成必要的数据库迁移、默认 build / 最小编译校验，以及当前环境能做的基本端到端验证。
 - 本地能迁的库已经迁过，本地能编译的已经编过，本地能登录、能点通、能打已配置外部接口的路径已经自己跑过；跑不通且无法修好的能力不得继续留在页面或后台。
-- 只有当前环境确实做不到的验收才留给用户。用户确认那些项之后，再进入当前宿主对应的 `codev-quickship` 入口。
+- 只有当前环境确实做不到的验收才留给用户。用户确认那些项之后，再进入当前宿主对应的 `codev-ship` 入口。
 
 `codev-taskdev` 默认不负责以下动作：
 
@@ -98,7 +99,7 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
    - 不默认触发 `design-review`、完整 QA 巡检、部署或发布。
    - 如果 migrate、build 或可做的端到端验证失败，要修到通过，或明确停在阻塞态；不得假装 task 已可验收。
    - 如果目标仓库约定用户会通过启动脚本做人工验收，不能只把仓库级 build 当作启动预热完成；必须按脚本真实 `cwd + command` 预编译会触发耗时编译的服务或 binary，并把命令与结果写入 task 文件和最终回复。
-10. 验证后再次同步任务文件，并在同一次写入里勾选进度。不要把勾选留给后续会话、`codev-quickship` 或下一位接手的人。
+10. 验证后再次同步任务文件，并在同一次写入里勾选进度。不要把勾选留给后续会话、`codev-ship` 或下一位接手的人。
    - 实际实现与原计划的差异
    - 已改动的重要文件与模块
    - 精简结果或未精简原因
@@ -116,19 +117,19 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
    - 本次自动精简的结果
    - 迁移、编译和已执行端到端验证的命令与结果
    - 尚未执行、且本地做不到的人工验证
-   - 下一步：用户只验收本地做不到的项；通过后再用当前宿主对应的 `codev-quickship` 入口。Grok 或 Claude Code 写 `/codev-quickship`，Codex 写 `$codev-quickship`
+   - 下一步：用户只验收本地做不到的项；通过后再用当前宿主对应的 `codev-ship` 入口。Grok、Claude Code 或 Cursor 写 `/codev-ship`，Codex 写 `$codev-ship`
 
 ## Rules
 
 - 默认一次只处理一个 task。
 - 默认按最小整数任务号选择待办任务，不扫描 `tasks/done/`。
-- 任务文件不是只读输入；实际实现路径变化时，必须按事实同步 task。收尾时按第 10 步把已验证验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-quickship`。
+- 任务文件不是只读输入；实际实现路径变化时，必须按事实同步 task。收尾时按第 10 步把已验证验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-ship`。
 - 自动精简是 `codev-taskdev` 的内置收尾步骤，不需要在同一轮实现结束后再额外显式调用一次 `codev-simplify`。
-- 面向用户提示下一步 `codev-quickship` / `codev-checkpoint` 入口时，必须按当前宿主写调用前缀，不要照抄文档里的 `$` 示例。
-- 迁移、默认 build / 最小编译校验和当前环境能做的基本端到端验证，是 `codev-taskdev` 的内置收尾门禁；后续 `codev-quickship` / `codev-checkpoint` 不再补做这些步骤。
+- 面向用户提示下一步 `codev-ship` / `codev-checkpoint` 入口时，必须按当前宿主写调用前缀，不要照抄文档里的 `$` 示例。
+- 迁移、默认 build / 最小编译校验和当前环境能做的基本端到端验证，是 `codev-taskdev` 的内置收尾门禁；后续 `codev-ship` / `codev-checkpoint` 不再补做这些步骤。
 - 不要为了“顺手收口”而替用户执行部署、归档或发布。
 - 不要把“等用户验证”当成跳过 migrate、build、启动服务或可做 E2E 的理由。
-- 不要把 task 收尾同步扩大成 repo 级文档巡检；`docs/`、`memory/`、`AGENTS.md` 的更新留给后续 `codev-quickship`，除非本次 task 的目标就是改这些文件。
+- 不要把 task 收尾同步扩大成 repo 级文档巡检；`docs/`、`memory/`、`AGENTS.md` 的更新留给后续 `codev-ship`，除非本次 task 的目标就是改这些文件。
 - 不要假设必须 commit 才算完成；`codev-taskdev` 默认停在代码、任务文档和可做验证都已完成的阶段。
 
 ## Hard Blockers
@@ -162,4 +163,4 @@ description: 读取 `tasks/` 下已审核的任务计划，默认选择最小编
 - 迁移、默认 build / 最小编译校验、以及已执行的基本端到端验证的命令与结果
 - 尚未执行、且本地做不到的人工验证
 - 剩余风险或待验证项
-- 下一步推荐的手动动作：用户只验收本地做不到的项，再运行 `codev-quickship`
+- 下一步推荐的手动动作：用户只验收本地做不到的项，再运行 `codev-ship`

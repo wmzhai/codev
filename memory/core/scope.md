@@ -3,7 +3,7 @@
 只在仓库边界不清时读本文。
 
 ## 职责范围
-- codev：负责 `tasks/`、任务内实现计划、`codev-taskdev`、`codev-quickship`、`codev-memorize`、`codev-simplify`、`codev-checkpoint` 与 `codev-syncpatch`。
+- codev：负责 `tasks/`、任务内实现计划、`codev-taskdev`、`codev-ship`、`codev-commit`、`codev-memorize`、`codev-simplify`、`codev-checkpoint` 与 `codev-syncpatch`。
 - 本仓库文档只描述 codev 自身受管流程，不维护外部工具或外部 skill 的说明。
 
 ## 任务入口
@@ -13,17 +13,18 @@
 ## Source Of Truth
 - repo 内执行单元：`tasks/`
 - 公共记忆正文：`memory/`
-- 宿主入口：`AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md`
+- 宿主入口：`AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md`、`.cursor/rules/memory.mdc`
 - 对外流程导航：`docs/workflows.md`
 - 对外 skill 手册：`docs/skills/README.md`
 - repo 级人类文档：`README.md`、`CHANGELOG`
 
 ## 不冲突规则
-- `codev-memorize` 把仓库事实收敛到 `memory/`，并为 Codex / Grok / Claude Code 各留一份短入口；不按当前宿主裁剪这三份入口；不生成、不更新、不维护 `CLAUDE.md`。
-- `codev-taskdev` 只负责按已审核 plan 实施代码、同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-quickship`。
+- `codev-memorize` 把仓库事实收敛到 `memory/`，并为 Codex / Grok / Claude Code / Cursor 各留一份短入口；不按当前宿主裁剪这四份入口；不生成、不更新、不维护 `CLAUDE.md`。
+- `codev-taskdev` 只负责按已审核 plan 实施代码、同步任务文档，并在实现收尾做一次语义不变精简和一次默认 build / 最小编译校验；这是 ship/checkpoint 之前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-ship`。
 - 只有明确需要轻量 `commit/push` 时，才用 `codev-checkpoint`。
-- `codev-quickship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs` / `memory` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；同步根目录 `VERSION`、`CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），再提交、合并并推送主干、附注 tag 和 GitHub Release。提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。有改动的可见子仓要先推送，再把已 push 的 HEAD 记成根仓 gitlink 并推送根仓。
-- `codev-checkpoint` 与 `codev-quickship` 的收口阶段不运行 build/test/lint/typecheck 或脚本验证。
+- `codev-commit` 只提交并推送当前仓库已经存在的改动，不做版本、changelog、任务归档或检查。
+- `codev-ship` 负责人工验证后的收尾：归档 task、同步任务相关 `docs` / `memory` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；同步根目录 `VERSION`、`CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），再提交、合并并推送主干、附注 tag 和 GitHub Release。提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。有改动的可见子仓要先推送，再把已 push 的 HEAD 记成根仓 gitlink 并推送根仓。
+- `codev-checkpoint` 与 `codev-ship` 的收口阶段不运行 build/test/lint/typecheck 或脚本验证。
 - `codev-syncpatch` 只负责同步开源 upstream 并保留本地运行补丁；默认不提交、不 push、不默认创建分支，且必须先判断补丁能否按原意安全重放。
 
 ## 推荐组合方式
@@ -31,4 +32,4 @@
 2. 用户先审核 task 文件中的实现计划
 3. 用当前宿主对应的 `codev-taskdev` 入口落成代码，并持续维护任务文档
 4. 人工验证功能
-5. 人工确认通过后用 `codev-quickship` 或 `codev-checkpoint` 做收尾
+5. 人工确认通过后用 `codev-ship` 或 `codev-checkpoint` 做收尾；只想直接提交已有小改动时用 `codev-commit`

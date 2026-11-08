@@ -3,8 +3,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SETUP_SCRIPT="${REPO_ROOT}/setup"
-MANAGED_SKILLS=(codev-memorize codev-issue2task codev-taskdev codev-quickship codev-simplify codev-checkpoint codev-syncpatch)
-REMOVED_MANAGED_SKILLS=(codev-gstack2task codev-checktask codev-autodev codev-automerge)
+MANAGED_SKILLS=(codev-memorize codev-issue2task codev-taskdev codev-ship codev-commit codev-simplify codev-checkpoint codev-syncpatch)
+REMOVED_MANAGED_SKILLS=(codev-gstack2task codev-checktask codev-autodev codev-automerge codev-quickship codev-fastship)
 LEGACY_CODEV_SKILLS=(plantask memorize issue2task gstack2task taskdev autodev automerge checktask simplify checkpoint ships)
 SAFE_PATH="/usr/bin:/bin:/usr/sbin:/sbin"
 
@@ -46,6 +46,11 @@ grok_skills_dir() {
 claude_skills_dir() {
   local home_dir="$1"
   printf '%s\n' "${home_dir}/.claude/skills"
+}
+
+cursor_skills_dir() {
+  local home_dir="$1"
+  printf '%s\n' "${home_dir}/.cursor/skills"
 }
 
 make_clients() {
@@ -122,6 +127,12 @@ assert_claude_installed() {
   assert_direct_host_installed "$(claude_skills_dir "$home_dir")"
 }
 
+assert_cursor_installed() {
+  local home_dir="$1"
+
+  assert_direct_host_installed "$(cursor_skills_dir "$home_dir")"
+}
+
 assert_codex_skipped() {
   local home_dir="$1"
 
@@ -141,6 +152,13 @@ assert_claude_skipped() {
 
   assert_missing "$(claude_skills_dir "$home_dir")"
   assert_missing "${home_dir}/.claude"
+}
+
+assert_cursor_skipped() {
+  local home_dir="$1"
+
+  assert_missing "$(cursor_skills_dir "$home_dir")"
+  assert_missing "${home_dir}/.cursor"
 }
 
 seed_legacy_links() {
@@ -173,51 +191,70 @@ exercise_detection_and_hosts() {
   local leftover_home="${TMP_ROOT}/leftover-claude-home"
   local output
 
-  make_clients "$all_bin" codex grok claude
+  local cursor_bin="${TMP_ROOT}/bin-cursor"
+  local cursor_home="${TMP_ROOT}/cursor-home"
+  local conflict_cursor_home="${TMP_ROOT}/conflict-cursor-home"
+
+  make_clients "$all_bin" codex grok claude cursor
   make_clients "$none_bin"
   make_clients "$grok_bin" grok
   make_clients "$mixed_bin" grok claude
+  make_clients "$cursor_bin" cursor
 
-  mkdir -p "$all_home" "$none_home" "$grok_home" "$mixed_home" "$idem_home"
-  mkdir -p "$conflict_codex_home" "$conflict_grok_home" "$conflict_claude_home" "$leftover_home"
+  mkdir -p "$all_home" "$none_home" "$grok_home" "$mixed_home" "$idem_home" "$cursor_home"
+  mkdir -p "$conflict_codex_home" "$conflict_grok_home" "$conflict_claude_home" "$conflict_cursor_home" "$leftover_home"
 
   output="$(run_setup_capture "$none_home" "$none_bin")" && fail "setup should fail when no supported client is in PATH"
-  printf '%s\n' "$output" | grep -Fq "need one of: codex, grok, claude" \
+  printf '%s\n' "$output" | grep -Fq "need one of: codex, grok, claude, cursor" \
     || fail "missing-client failure should mention supported binaries"
   assert_codex_skipped "$none_home"
   assert_grok_skipped "$none_home"
   assert_claude_skipped "$none_home"
+  assert_cursor_skipped "$none_home"
 
   run_setup "$all_home" "$all_bin"
   assert_codex_installed "$all_home"
   assert_grok_installed "$all_home"
   assert_claude_installed "$all_home"
+  assert_cursor_installed "$all_home"
 
   run_setup "$idem_home" "$all_bin"
   run_setup "$idem_home" "$all_bin"
   assert_codex_installed "$idem_home"
   assert_grok_installed "$idem_home"
   assert_claude_installed "$idem_home"
+  assert_cursor_installed "$idem_home"
 
   seed_legacy_links "$(codex_skills_dir "$idem_home")"
   seed_legacy_links "$(grok_skills_dir "$idem_home")"
   seed_legacy_links "$(claude_skills_dir "$idem_home")"
+  seed_legacy_links "$(cursor_skills_dir "$idem_home")"
   ln -snf "$REPO_ROOT" "$(grok_skills_dir "$idem_home")/codev"
   ln -snf "$REPO_ROOT" "$(claude_skills_dir "$idem_home")/codev"
+  ln -snf "$REPO_ROOT" "$(cursor_skills_dir "$idem_home")/codev"
   run_setup "$idem_home" "$all_bin"
   assert_codex_installed "$idem_home"
   assert_grok_installed "$idem_home"
   assert_claude_installed "$idem_home"
+  assert_cursor_installed "$idem_home"
 
   run_setup "$grok_home" "$grok_bin"
   assert_codex_skipped "$grok_home"
   assert_grok_installed "$grok_home"
   assert_claude_skipped "$grok_home"
+  assert_cursor_skipped "$grok_home"
+
+  run_setup "$cursor_home" "$cursor_bin"
+  assert_codex_skipped "$cursor_home"
+  assert_grok_skipped "$cursor_home"
+  assert_claude_skipped "$cursor_home"
+  assert_cursor_installed "$cursor_home"
 
   run_setup "$mixed_home" "$mixed_bin"
   assert_codex_skipped "$mixed_home"
   assert_grok_installed "$mixed_home"
   assert_claude_installed "$mixed_home"
+  assert_cursor_skipped "$mixed_home"
 
   mkdir -p "$(codex_skills_dir "$conflict_codex_home")/codev-issue2task"
   HOME="$conflict_codex_home" PATH="${all_bin}:${SAFE_PATH}" "$SETUP_SCRIPT" >/dev/null 2>&1 \
@@ -226,6 +263,7 @@ exercise_detection_and_hosts() {
   assert_missing "$(codex_skills_dir "$conflict_codex_home")/codev"
   assert_missing "$(grok_skills_dir "$conflict_codex_home")/codev-issue2task"
   assert_missing "$(claude_skills_dir "$conflict_codex_home")/codev-issue2task"
+  assert_cursor_skipped "$conflict_codex_home"
 
   mkdir -p "$(grok_skills_dir "$conflict_grok_home")/codev-issue2task"
   HOME="$conflict_grok_home" PATH="${grok_bin}:${SAFE_PATH}" "$SETUP_SCRIPT" >/dev/null 2>&1 \
@@ -233,6 +271,7 @@ exercise_detection_and_hosts() {
   assert_exists "$(grok_skills_dir "$conflict_grok_home")/codev-issue2task"
   assert_codex_skipped "$conflict_grok_home"
   assert_claude_skipped "$conflict_grok_home"
+  assert_cursor_skipped "$conflict_grok_home"
 
   mkdir -p "$(claude_skills_dir "$conflict_claude_home")/codev-issue2task"
   HOME="$conflict_claude_home" PATH="${all_bin}:${SAFE_PATH}" "$SETUP_SCRIPT" >/dev/null 2>&1 \
@@ -241,11 +280,22 @@ exercise_detection_and_hosts() {
   assert_grok_installed "$conflict_claude_home"
   assert_exists "$(claude_skills_dir "$conflict_claude_home")/codev-issue2task"
   assert_missing "$(claude_skills_dir "$conflict_claude_home")/codev-memorize"
+  assert_cursor_skipped "$conflict_claude_home"
+
+  mkdir -p "$(cursor_skills_dir "$conflict_cursor_home")/codev-issue2task"
+  HOME="$conflict_cursor_home" PATH="${all_bin}:${SAFE_PATH}" "$SETUP_SCRIPT" >/dev/null 2>&1 \
+    && fail "setup should fail when a Cursor managed skill path is a real directory"
+  assert_codex_installed "$conflict_cursor_home"
+  assert_grok_installed "$conflict_cursor_home"
+  assert_claude_installed "$conflict_cursor_home"
+  assert_exists "$(cursor_skills_dir "$conflict_cursor_home")/codev-issue2task"
+  assert_missing "$(cursor_skills_dir "$conflict_cursor_home")/codev-memorize"
 
   mkdir -p "$(claude_skills_dir "$leftover_home")"
   ln -snf "$REPO_ROOT" "$(claude_skills_dir "$leftover_home")/codev"
   run_setup "$leftover_home" "$all_bin"
   assert_claude_installed "$leftover_home"
+  assert_cursor_installed "$leftover_home"
 }
 
 TMP_ROOT="$(mktemp -d)"

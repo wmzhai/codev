@@ -1,19 +1,19 @@
 ---
 name: codev-memorize
-description: 为新项目构建或为已有项目刷新以 `memory/` 为公共正文、并为 Codex / Grok / Claude Code 各留一份短入口的记忆体系，基于项目根目录的真实事实建立高信号导航、领域落点、系统约束与更新流程。适用于初始化项目记忆、重建新会话上手路径、同步最新代码状态、清理过期记忆文档，以及让不同宿主都能接手同一仓库。不生成、不更新、不维护 `CLAUDE.md`。
+description: 为新项目构建或为已有项目刷新以 `memory/` 为公共正文、并为 Codex / Grok / Claude Code / Cursor 各留一份短入口的记忆体系，基于项目根目录的真实事实建立高信号导航、领域落点、系统约束与更新流程。适用于初始化项目记忆、重建新会话上手路径、同步最新代码状态、清理过期记忆文档，以及让不同宿主都能接手同一仓库。不生成、不更新、不维护 `CLAUDE.md`。
 ---
 
 # Memorize
 
 把项目整理成一套任意宿主都能快速上手、快速定位、快速更新的记忆体系。
 
-这个 skill 只做一件事：围绕当前仓库的真实状态，建立或刷新公共 `memory/`，以及 Codex、Grok、Claude Code 三份宿主入口。目标不是写百科，而是让新来的 session 在最短路径内知道先读什么、问题去哪里找、约束从哪里继承、更新该落到哪些文档。无论当前会话是 Codex、Grok 还是 Claude Code，都必须一次写齐 `memory/`、`AGENTS.md`、`.grok/rules/memory.md` 和 `.claude/rules/memory.md`，不能按本机装了哪个客户端裁剪这三份入口。不生成、不更新、不维护 `CLAUDE.md`；Claude Code 的入口是 `.claude/rules/memory.md`。
+这个 skill 只做一件事：围绕当前仓库的真实状态，建立或刷新公共 `memory/`，以及 Codex、Grok、Claude Code 与 Cursor 四份宿主入口。目标不是写百科，而是让新来的 session 在最短路径内知道先读什么、问题去哪里找、约束从哪里继承、更新该落到哪些文档。无论当前会话是 Codex、Grok、Claude Code 还是 Cursor，都必须一次写齐 `memory/`、`AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md` 和 `.cursor/rules/memory.mdc`，不能按本机装了哪个客户端裁剪这四份入口。不生成、不更新、不维护 `CLAUDE.md`；Claude Code 的入口是 `.claude/rules/memory.md`。
 
 ## 第一规则：先用中文交流
 
 - skill 一触发，第一句就用中文和用户交流。
 - 整个执行过程中的进度更新、阻塞说明和结果汇报默认都用中文。
-- 新增或更新的 `memory/` 文档与三份入口默认都用简体中文。
+- 新增或更新的 `memory/` 文档与四份入口默认都用简体中文。
 - 只有用户明确要求英文或双语时，才切换交流语言；除非用户明确要求，否则 repo 内文档仍保持简体中文。
 
 ## 调用前缀
@@ -23,34 +23,36 @@ description: 为新项目构建或为已有项目刷新以 `memory/` 为公共�
 - Codex：`$<skill-name>`，例如 `$codev-issue2task`
 - Grok / Grok Build TUI：`/<skill-name>`，例如 `/codev-issue2task`
 - Claude Code：`/<skill-name>`，例如 `/codev-issue2task`
+- Cursor：`/<skill-name>`，例如 `/codev-issue2task`
 
 判断依据：
 
-- 当前会话身份是 Grok 或 Claude Code，或用户是用 `/skill` 触发的，用 `/`
+- 当前会话身份是 Grok、Claude Code 或 Cursor，或用户是用 `/skill` 触发的，用 `/`
 - 当前会话身份是 Codex，或用户是用 `$skill` 触发的，用 `$`
 
-落盘到 `memory/`、`docs/`、`README.md` 的调用说明必须同时列出三家，不能只写当前宿主。
+落盘到 `memory/`、`docs/`、`README.md` 的调用说明必须同时列出四家，不能只写当前宿主。
 
 ## 核心原则
 
 - 让 `memory/` 只写一份公共事实、约束和落点。
-- 让三份入口只回答“我是谁、用什么前缀、去哪里读公共内容”。
+- 让四份入口只回答“我是谁、用什么前缀、去哪里读公共内容”。
 - 让每个 memory 文档回答一个明确问题：先去哪里、看哪层、改哪里、验证什么。
 - 只写已验证的事实，不写推测。
 - 如果是全新项目、代码和目录结构还没长出来，可以把 `README.md` 和用户明确给出的输入信息当作初始事实来源，先搭记忆骨架。
 - 所有新增或更新的项目文档默认使用简体中文撰写。
 - 旧信息失效时直接删或改，不保留过期路线。
-- 谁初始化，Codex、Grok 与 Claude Code 都要能接手：禁止因为当前是 GPT 就只写 `AGENTS.md`，也禁止因为当前是 Grok 或 Claude Code 就只写 `.grok/rules/memory.md` 或 `.claude/rules/memory.md`。
+- 谁初始化，Codex、Grok、Claude Code 与 Cursor 都要能接手：禁止因为当前是 GPT 就只写 `AGENTS.md`，也禁止因为当前是 Grok、Claude Code 或 Cursor 就只写 `.grok/rules/memory.md`、`.claude/rules/memory.md` 或 `.cursor/rules/memory.mdc`。
 - 不生成、不更新、不维护 `CLAUDE.md`。已有该文件时可以读作事实来源，但不要改写、覆盖、新建或删除，除非用户明确要求删除。
 
 ## 目标结构
 
-优先把项目整理成下面这类骨架；具体目录可按项目规模增减，但三份入口必须都在：
+优先把项目整理成下面这类骨架；具体目录可按项目规模增减，但四份入口必须都在：
 
 ```text
 AGENTS.md
 .grok/rules/memory.md
 .claude/rules/memory.md
+.cursor/rules/memory.mdc
 memory/
 ├── README.md
 ├── core/
@@ -75,37 +77,37 @@ memory/
 当仓库还没有这套体系时，按以下顺序建立：
 
 1. 识别仓库根目录。
-2. 扫描现有入口文档与结构信号：`README.md`、`AGENTS.md`、`.grok/rules/`、`.claude/rules/`、`package.json`、`Cargo.toml`、`pyproject.toml`、`docs/`、`src/`、`app/`、`backend/`、`frontend/`、`packages/`、`tools/`。已有 `CLAUDE.md` 时只读不写。
+2. 扫描现有入口文档与结构信号：`README.md`、`AGENTS.md`、`.grok/rules/`、`.claude/rules/`、`.cursor/rules/`、`package.json`、`Cargo.toml`、`pyproject.toml`、`docs/`、`src/`、`app/`、`backend/`、`frontend/`、`packages/`、`tools/`。已有 `CLAUDE.md` 时只读不写。
 3. 如果这是全新项目、代码和目录结构仍然稀薄，则把 `README.md` 与用户明确给出的项目信息一起当作初始事实来源，先建立最小记忆骨架。
 4. 识别项目的真实分层、主要业务域、调试入口、部署入口、数据入口；如果这些内容尚未落地，就明确写成“当前约定”或“待实现方向”，不要伪装成已存在代码事实。
 5. 创建 `memory/README.md` 与 `memory/core/`，把系统图、路由图、默认动作、稳定约束写进去。
 6. 按业务域补充 `memory/<domain>/` 文档，每个文档只覆盖一个问题域。
-7. 写齐 Codex、Grok 与 Claude Code 入口，每份都含宿主守卫、默认中文、指向 `memory/`、以及该宿主的调用前缀。不要按当前宿主或本机客户端省略任何一份。不要创建 `CLAUDE.md`。
+7. 写齐 Codex、Grok、Claude Code 与 Cursor 入口，每份都含宿主守卫、默认中文、指向 `memory/`、以及该宿主的调用前缀。不要按当前宿主或本机客户端省略任何一份。不要创建 `CLAUDE.md`。
 
 ### 2. 既有项目刷新
 
 当项目已有记忆体系时，按最新代码状态增量更新：
 
-1. 先读现有三份入口和 `memory/README.md`，再看 `memory/core/` 和相关领域文档。已有 `CLAUDE.md` 时只读不写。
+1. 先读现有四份入口和 `memory/README.md`，再看 `memory/core/` 和相关领域文档。已有 `CLAUDE.md` 时只读不写。
 2. 对照当前代码、目录结构和入口文件，找出新增、移动、废弃或失效的路径。
 3. 更新 `memory/` 中的高优先级规则和最短项目事实。
 4. 更新 `memory/README.md` 作为导航总表。
 5. 更新 `memory/core/` 中的系统图、症状路由、约束和默认工作流。
 6. 更新受影响的领域文档，删掉过期分支，补上新落点和新验证路径。
-7. 刷新 Codex、Grok 与 Claude Code 入口：补齐缺失的入口；保留已有入口里的宿主专用段落；把与 `memory/` 重复的仓库事实迁走。不要补写或刷新 `CLAUDE.md`。
+7. 刷新 Codex、Grok、Claude Code 与 Cursor 入口：补齐缺失的入口；保留已有入口里的宿主专用段落；把与 `memory/` 重复的仓库事实迁走。不要补写或刷新 `CLAUDE.md`。
 8. 如果某个概念已经不再存在，直接移除对应条目，不要留“可能需要”的废话。
 
 ### 3. 处理已有入口文件
 
 - 公共事实只保留在 `memory/`。
-- `AGENTS.md` 只服务 Codex / GPT；`.grok/rules/memory.md` 只服务 Grok；`.claude/rules/memory.md` 只服务 Claude Code。每份都要写宿主守卫：当前宿主不是自己时，忽略专用前缀规则，只走 `memory/`。
+- `AGENTS.md` 只服务 Codex / GPT；`.grok/rules/memory.md` 只服务 Grok；`.claude/rules/memory.md` 只服务 Claude Code；`.cursor/rules/memory.mdc` 只服务 Cursor。每份都要写宿主守卫：当前宿主不是自己时，忽略专用前缀规则，只走 `memory/`。Cursor 入口使用 `alwaysApply: true`，正文仍保持短。
 - 不要创建、改写、覆盖或 symlink `CLAUDE.md`。
 - 不要在入口里继续保留与 `memory/` 重复的长篇仓库事实。
-- 落盘文档里的 skill 调用必须同时写 Codex `$name`、Grok `/name`、Claude Code `/name`。
+- 落盘文档里的 skill 调用必须同时写 Codex `$name`、Grok `/name`、Claude Code `/name`、Cursor `/name`。
 
 ## 记忆文档写法
 
-### 三份宿主入口
+### 四份宿主入口
 
 每份入口只保留：
 
@@ -144,7 +146,7 @@ memory/
 
 - 记录新会话默认动作和修改后的验证基线。
 - 只写高频、可复用、对上手速度有帮助的流程。
-- 落盘的下一步 skill 入口同时列出三家前缀。
+- 落盘的下一步 skill 入口同时列出四家前缀。
 
 ### 领域文档
 
@@ -165,16 +167,16 @@ memory/
 - 部署、恢复、外部联调入口在哪里。
 - 哪些规则必须被新会话反复记住。
 - 哪些文档已经过期，应该删除或重写。
-- Codex、Grok 与 Claude Code 入口是否都在，守卫和跳转是否完整。
+- Codex、Grok、Claude Code 与 Cursor 入口是否都在，守卫和跳转是否完整。
 - 没有新建或改写 `CLAUDE.md`。
 
-如果项目后来发生了结构变化，优先让 `memory/` 追上真实状态，再刷新 Codex、Grok 与 Claude Code 入口。
+如果项目后来发生了结构变化，优先让 `memory/` 追上真实状态，再刷新 Codex、Grok、Claude Code 与 Cursor 入口。
 
 ## 输出要求
 
 完成这个 skill 对应的任务时，最终结果应当让下一个 session、换任何一家宿主都能直接做到：
 
-1. Codex / Grok / Claude Code 各自先读对入口文件。
+1. Codex / Grok / Claude Code / Cursor 各自先读对入口文件。
 2. 从入口跳进同一份 `memory/`。
 3. 快速找到相关代码。
 4. 知道该遵守的约束。

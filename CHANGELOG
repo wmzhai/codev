@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.13 - 2026-11-07
+
+- 收口指令从 `codev-quickship` 改为 `codev-ship`。Codex 用 `$codev-ship`，Grok、Claude Code、Cursor 用 `/codev-ship`。行为不变：先做 checkpoint 收口，再同步版本、附注 tag 和 GitHub Release。
+- 新增 `codev-commit`，用于小改动直接提交。它只提交并推送当前仓库已有改动，不改 `VERSION`、不写 changelog、不归档任务、不跑检查。Codex 用 `$codev-commit`，Grok、Claude Code、Cursor 用 `/codev-commit`。
+- Cursor 成为第四个宿主。`setup` 在 PATH 中有 `cursor` 时把 skills 链到 `~/.cursor/skills/`，入口是 `.cursor/rules/memory.mdc`。`codev-memorize` 无论当前宿主是谁都写齐 Codex、Grok、Claude Code、Cursor 四份入口。
+
 ## 0.1.12 - 2026-10-31
 
 - Claude Code 新增项目入口 `.claude/rules/memory.md`，与 `AGENTS.md`、`.grok/rules/memory.md` 对称；`codev-memorize` 无论当前宿主是谁都写齐三份入口，同一份 `memory/` 在 Codex / Grok / Claude Code 间切换都能自动接上。`CLAUDE.md` 仍只读不写。

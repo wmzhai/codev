@@ -1,9 +1,9 @@
 # Memory
 
-`memory/` 是本仓库的公共记忆正文，回答“先看哪里、该改哪里、怎么验证”。Codex、Grok 和 Claude Code 都读这里；三家的入口文件只负责专用前缀和跳转。
+`memory/` 是本仓库的公共记忆正文，回答“先看哪里、该改哪里、怎么验证”。Codex、Grok、Claude Code 和 Cursor 都读这里；四家的入口文件只负责专用前缀和跳转。
 
 ## 热路径
-1. 当前宿主入口：`AGENTS.md`（Codex）、`.grok/rules/memory.md`（Grok）或 `.claude/rules/memory.md`（Claude Code）
+1. 当前宿主入口：`AGENTS.md`（Codex）、`.grok/rules/memory.md`（Grok）、`.claude/rules/memory.md`（Claude Code）或 `.cursor/rules/memory.mdc`（Cursor）
 2. `memory/core/invariants.md`
 3. `docs/workflows.md`
 4. `memory/core/symptom-routing.md`
@@ -19,4 +19,4 @@
 - `docs/workflows.md`：唯一工作流导航
 - `docs/skills/`：每个 skill 的用户级详细手册
 - `skills/`：各 skill 自身的 `SKILL.md` 仍然是运行规则来源
-- 当仓库结构或安装链路变化时，优先先更新这里，再回头修三家入口、`README.md` 和测试脚本
+- 当仓库结构或安装链路变化时，优先先更新这里，再回头修四家入口、`README.md` 和测试脚本

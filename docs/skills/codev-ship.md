@@ -1,13 +1,13 @@
-# `$codev-quickship`
+# `$codev-ship`
 
 Source: `codev`
 
 ## Purpose
 
-人工验证通过后统一收口：`codev-checkpoint` 是第一阶段（不含版本 bump 与 tag），`codev-quickship` 承接第二阶段（版本和 tag）。
-用户触发即表示 `codev-taskdev` 收尾编译责任与人工功能验证已经完成；无 task 模式也表示用户已在外部完成确认。quickship 不负责补做 build/test/lint/typecheck 或脚本验证。
+人工验证通过后统一收口：`codev-checkpoint` 是第一阶段（不含版本 bump 与 tag），`codev-ship` 承接第二阶段（版本和 tag）。
+用户触发即表示 `codev-taskdev` 收尾编译责任与人工功能验证已经完成；无 task 模式也表示用户已在外部完成确认。ship 不负责补做 build/test/lint/typecheck 或脚本验证。
 
-目标仓库缺少 `VERSION` 或 changelog 时，quickship 必须主动创建并写入本轮内容，不得因文件缺失而停止。首发版本是 `0.0.1`。
+目标仓库缺少 `VERSION` 或 changelog 时，ship 必须主动创建并写入本轮内容，不得因文件缺失而停止。首发版本是 `0.0.1`。
 
 ## Execution（2 阶段模型）
 

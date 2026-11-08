@@ -5,7 +5,7 @@ Source: `codev`
 ## Purpose
 
 按已审核的 task plan 在 task 分支上落代码，持续同步实现记录与待人工验证项，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验。
-这是进入 `codev-quickship` / `codev-checkpoint` 之前唯一由 codev 自动承担的编译校验责任点；后续收口 skill 不再补做 build/test/lint/typecheck 或脚本验证。
+这是进入 `codev-ship` / `codev-checkpoint` 之前唯一由 codev 自动承担的编译校验责任点；后续收口 skill 不再补做 build/test/lint/typecheck 或脚本验证。
 
 ## Preconditions
 
@@ -39,7 +39,7 @@ Source: `codev`
 6. 持续把实际采用路径、待执行人工验证和剩余缺口同步回 task 文档，不主动启动服务或运行验证。
 7. 在实现收尾自动做一次语义不变精简。
 8. 精简后主动跑一次仓库默认 build / 最小编译校验，并把结果同步回 task 文档。
-9. 在同一次任务文件写入里勾选进度：有验证证据的验收项改为 `[x]`；证据不足、被阻塞或留给人工的保持 `[ ]`。不把勾选留给后续会话或 `codev-quickship`。
+9. 在同一次任务文件写入里勾选进度：有验证证据的验收项改为 `[x]`；证据不足、被阻塞或留给人工的保持 `[ ]`。不把勾选留给后续会话或 `codev-ship`。
 
 ## Stops / Failure Modes
 
@@ -52,4 +52,4 @@ Source: `codev`
 ## Next Recommended Steps
 
 - 人工验证功能
-- 验证通过后进入 `codev-quickship` 或 `codev-checkpoint` 收口（Codex：`$codev-quickship` / `$codev-checkpoint`，Grok：`/codev-quickship` / `/codev-checkpoint`，Claude Code：`/codev-quickship` / `/codev-checkpoint`）；触发收口即表示人工验证已经完成
+- 验证通过后进入 `codev-ship` 或 `codev-checkpoint` 收口（Codex：`$codev-ship` / `$codev-checkpoint`，Grok：`/codev-ship` / `/codev-checkpoint`，Claude Code：`/codev-ship` / `/codev-checkpoint`，Cursor：`/codev-ship` / `/codev-checkpoint`）；触发收口即表示人工验证已经完成

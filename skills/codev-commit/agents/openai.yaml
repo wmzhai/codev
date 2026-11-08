@@ -1,0 +1,7 @@
+interface:
+  display_name: "codev-commit"
+  short_description: "对当前仓库已有改动直接提交并推送当前分支，不做版本、CHANGELOG、任务归档或任何检查。"
+  default_prompt: "使用 $codev-commit。触发后立即用中文交流，不要询问确认。只处理当前工作目录所在 git 仓库：没有改动就停止；有改动就把已有改动一次提交并推送当前分支。子模块里有未提交内容时，先对那个子模块做同样的直接提交和推送，再提交父仓 gitlink。提交说明用一行概括 diff，用户已经给了说明就直接用。不改文件内容，不改 VERSION 或 CHANGELOG，不归档任务，不关 issue，不打 tag，不跑 build/test/lint/typecheck。不要 --no-verify，除非用户这次明确要求跳过 hook。不要 force push，不要切分支，不要合并主干。"
+
+policy:
+  allow_implicit_invocation: false

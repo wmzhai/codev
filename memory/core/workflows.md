@@ -1,7 +1,7 @@
 # Workflows
 
 ## 新会话默认动作
-1. 读当前宿主入口：`AGENTS.md`、`.grok/rules/memory.md` 或 `.claude/rules/memory.md`
+1. 读当前宿主入口：`AGENTS.md`、`.grok/rules/memory.md`、`.claude/rules/memory.md` 或 `.cursor/rules/memory.mdc`
 2. 读 `memory/core/invariants.md`
 3. 读 `docs/workflows.md`
 4. 读 `memory/core/symptom-routing.md`
@@ -12,11 +12,13 @@
 ## 默认主线
 1. GitHub issue 或直接需求走 `codev-issue2task`
 2. 任务入口要结合代码直接写出带实现计划的 `tasks/Txx-*.md`
-3. 用户先审核 task 文件中的 plan，再进入当前宿主对应的 `codev-taskdev` 入口（Codex：`$codev-taskdev`，Grok：`/codev-taskdev`，Claude Code：`/codev-taskdev`）
-4. `codev-taskdev` 负责按已审核 plan 选择任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-quickship`
-5. 功能默认由人工验证；人工验证通过后，再用 `codev-quickship` 完成 task 归档、任务相关文档同步、版本工件同步，以及 commit / merge / push / 附注 tag / GitHub Release；提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。缺少 `VERSION` 或 changelog 时主动创建（首发 `0.0.1`）；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认
-6. `codev-checkpoint` 用于轻量 `commit/push` 场景，并默认不同步版本工件；checkpoint 与 quickship 收口阶段都不运行 build/test/lint/typecheck 或脚本验证
-7. `codev-syncpatch` 用于同步开源 upstream 并保留本地运行补丁；它独立于 task 主线，默认不提交、不 push、不默认创建分支
+3. 用户先审核 task 文件中的 plan，再进入当前宿主对应的 `codev-taskdev` 入口（Codex：`$codev-taskdev`，Grok：`/codev-taskdev`，Claude Code：`/codev-taskdev`，Cursor：`/codev-taskdev`）
+4. `codev-taskdev` 负责按已审核 plan 选择任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 ship/checkpoint 前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`，不把勾选留给后续会话或 `codev-ship`
+5. 功能默认由人工验证；人工验证通过后，再用 `codev-ship` 完成 task 归档、任务相关文档同步、版本工件同步，以及 commit / merge / push / 附注 tag / GitHub Release；提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。缺少 `VERSION` 或 changelog 时主动创建（首发 `0.0.1`）；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认
+6. `codev-checkpoint` 用于轻量 `commit/push` 场景，并默认不同步版本工件；checkpoint 与 ship 收口阶段都不运行 build/test/lint/typecheck 或脚本验证
+7. `codev-commit` 用于小改动直接提交：只提交并推送当前仓库已有改动，不改版本、不写 changelog、不归档、不跑检查
+8. `codev-syncpatch` 用于同步开源 upstream 并保留本地运行补丁；它独立于 task 主线，默认不提交、不 push、不默认创建分支
+
 
 ## 新增 skill
 1. 创建 skill 目录和 `SKILL.md`
@@ -31,7 +33,7 @@
 1. 改 `setup`
 2. 同步 `test/setup-smoke.sh`
 3. 更新 `README.md`
-4. 必要时更新 `docs/workflows.md` 与 Codex / Grok / Claude Code 入口
+4. 必要时更新 `docs/workflows.md` 与 Codex / Grok / Claude Code / Cursor 入口
 5. 验证探测、跳过、干净 HOME、幂等性和冲突处理
 
 ## 修改既有 skill
@@ -44,4 +46,4 @@
 ## 维护原则
 - 先让记忆系统追上真实代码，再考虑增加解释。
 - 发现过期内容直接删，不保留“以后也许有用”的历史负担。
-- 谁初始化项目，Codex、Grok 与 Claude Code 都要能从同一份 `memory/` 接手；不维护 `CLAUDE.md`。
+- 谁初始化项目，Codex、Grok、Claude Code 与 Cursor 都要能从同一份 `memory/` 接手；不维护 `CLAUDE.md`。

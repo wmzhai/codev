@@ -6,20 +6,22 @@
 - `README.md`：面向用户的总说明、安装方式、调用示例、skills 列表
 - `docs/workflows.md`：从开始到结束的唯一工作流导航
 - `docs/skills/*.md`：当前受管 codev skills 的详细手册
-- `setup`：探测 PATH 中的 `codex` / `grok` / `claude`，只为已安装客户端刷新全局 skills
+- `setup`：探测 PATH 中的 `codex` / `grok` / `claude` / `cursor`，只为已安装客户端刷新全局 skills
 - `test/setup-smoke.sh`：验证客户端探测、跳过、混装、冲突和链接
 - `AGENTS.md`：Codex 短入口
 - `.grok/rules/memory.md`：Grok 短入口
 - `.claude/rules/memory.md`：Claude Code 短入口
+- `.cursor/rules/memory.mdc`：Cursor 短入口
 - `memory/`：各宿主共用的仓库事实、流程和约束
-- `skills/codev-memorize/`：为项目建立或刷新 `memory/` 与 Codex / Grok / Claude Code 入口；不生成、不维护 `CLAUDE.md`
+- `skills/codev-memorize/`：为项目建立或刷新 `memory/` 与 Codex / Grok / Claude Code / Cursor 入口；不生成、不维护 `CLAUDE.md`
 - `skills/codev-issue2task/`：把 issue 或直接需求收敛成带实现计划的任务文件
-- `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 quickship/checkpoint 前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`
-- `skills/codev-quickship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；再同步根目录 `VERSION` 与 `CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），然后提交、合并、推送主干、附注 tag 和 GitHub Release。提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。有可见子仓时连根仓 gitlink 一起推送
+- `skills/codev-taskdev/`：按已审核 task plan 选择目标任务、实施代码、同步任务文档，并在实现收尾自动做一次语义不变精简和一次默认 build / 最小编译校验；这是 ship/checkpoint 前唯一由 codev 自动承担的编译校验责任点。收尾时把本轮有验证证据的验收项勾成 `[x]`
+- `skills/codev-ship/`：在用户完成人工验证后归档 task、同步任务相关 `docs/` / `memory/` / 必要时宿主入口；用户触发即表示 taskdev 收尾校验和人工验证已完成，无 task 模式也依赖用户外部确认；再同步根目录 `VERSION` 与 `CHANGELOG`（缺失则创建，`VERSION` 首发 `0.0.1`），然后提交、合并、推送主干、附注 tag 和 GitHub Release。提交正文、tag 附注和 Release 说明复用同一份 changelog 版本段。有可见子仓时连根仓 gitlink 一起推送
+- `skills/codev-commit/`：把当前仓库已有改动直接提交并推送当前分支；不改版本、不写 changelog、不归档任务、不跑检查
 - `skills/codev-simplify/`：语义不变精简 diff
 - `skills/codev-checkpoint/`：轻量提交、推送 fallback；只在本地规则要求记录 submodule 快照时刷新根仓 gitlink
 - `skills/codev-syncpatch/`：同步开源 upstream 并按原意重放本地运行补丁；默认不提交、不推送、不默认创建分支
-- `VERSION` / `CHANGELOG`：仓库的版本工件，供 `codev-checkpoint` 与 `codev-quickship` 读取和最小同步
+- `VERSION` / `CHANGELOG`：仓库的版本工件，供 `codev-checkpoint` 与 `codev-ship` 读取和最小同步
 
 ## 维护边界
 - `SKILL.md` 是每个 skill 的主说明和工作流。
@@ -29,7 +31,7 @@
 - `docs/skills/<skill>.md` 是对外的 skill 详细手册。
 - `setup` 和 `test/setup-smoke.sh` 共同定义“哪些 skill 算受管”。
 - `codev-issue2task` 是唯一任务入口：处理 GitHub issue 或直接需求，并直接产出可执行 task plan。
-- `codev-taskdev` 是 task 分支实现层；`codev-quickship` / `codev-checkpoint` 负责人工验证后的收尾，不运行 build/test/lint/typecheck 或脚本验证。
+- `codev-taskdev` 是 task 分支实现层；`codev-ship` / `codev-checkpoint` 负责人工验证后的收尾，不运行 build/test/lint/typecheck 或脚本验证。
 
 ## 常见改动落点
 - 新增 skill：新增 `skills/<name>/` 目录，同时同步 `setup`、`test/setup-smoke.sh`、`README.md`
@@ -37,4 +39,4 @@
 - 修改 skill 触发或行为：改对应 `SKILL.md` 和 `agents/openai.yaml`
 - 修改安装链路：改 `setup` 和 `test/setup-smoke.sh`
 - 修改外部说明：改 `README.md`、`docs/workflows.md`、`docs/skills/*.md`
-- 修改公共约束：改 `memory/core/invariants.md`，不要把长文写进 Codex / Grok / Claude Code 入口
+- 修改公共约束：改 `memory/core/invariants.md`，不要把长文写进 Codex / Grok / Claude Code / Cursor 入口

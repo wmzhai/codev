@@ -16,12 +16,12 @@ description: 人工验证通过后的统一收口第一阶段：任务归档、�
 `codev-checkpoint` 仅执行收口第一阶段。
 本阶段必须包含除版本号与 tag 外的全部核心收口动作，且必须产出收口 `commit` 并推送主干（或分支后合并到主干）。
 版本 bump、`VERSION` 工件变更、版本日志归并与 tag 推送，不在本阶段执行。
-当被 `codev-quickship` 内嵌调用时，本阶段只做收口一致性检查并把结果交给 quickship 第二阶段统一提交；不得在内嵌阶段提交或 push。
+当被 `codev-ship` 内嵌调用时，本阶段只做收口一致性检查并把结果交给 ship 第二阶段统一提交；不得在内嵌阶段提交或 push。
 用户触发即表示 `codev-taskdev` 收尾编译责任与人工功能验证已经完成；无 task 模式也表示用户已在外部完成确认。本阶段不负责补做 build/test/lint/typecheck 或脚本验证。
 
 ## Preconditions
 
-- 用户显式调用 `checkpoint` / `codev-checkpoint`（Codex 为 `$...`，Grok 与 Claude Code 为 `/...`），且本轮已完成人工验证；用户触发即表示相关实现收尾检查已在外部完成。
+- 用户显式调用 `checkpoint` / `codev-checkpoint`（Codex 为 `$...`，Grok、Claude Code 与 Cursor 为 `/...`），且本轮已完成人工验证；用户触发即表示相关实现收尾检查已在外部完成。
 - 当前仓库允许直接推送主干；若主干受保护、权限不足或必须走 PR，立即阻塞。
 - 收口范围从当前工作目录解析：先定位当前 git 仓库根；若该仓库本地规则（如 `memory/core/invariants.md` 或宿主入口）明确列出可见子仓，则一并纳入，不按来源推断过滤。
 - 禁止使用 skill 文本、历史会话或其他项目中的绝对路径作为默认工作区。
@@ -65,7 +65,7 @@ description: 人工验证通过后的统一收口第一阶段：任务归档、�
    - 当前在主干：直接形成主干收口提交；
    - commit message 为普通描述，不带版本后缀。
    - 独立 checkpoint：仅当本地规则要求记录 submodule 快照时，才先提交并 push 可见子仓，再把每个 submodule 目录的当前 HEAD 用 `git add` 记成根仓 gitlink。该 HEAD 必须已经在该子仓 origin 上。本轮未改动的子仓也记入。根仓只因此出现 gitlink 变化时也要提交并 push。本地规则未要求时，不要为了刷新指针额外提交根仓。
-   - quickship 内嵌调用不受上一条限制。根仓 gitlink 与整仓 push 由 quickship 第二阶段强制执行。
+   - ship 内嵌调用不受上一条限制。根仓 gitlink 与整仓 push 由 ship 第二阶段强制执行。
 9. issue 处理（仅当映射存在且主干推送成功）：
    - 先逐个 `gh issue comment`；
    - 再逐个 `gh issue close`；
@@ -87,4 +87,4 @@ description: 人工验证通过后的统一收口第一阶段：任务归档、�
 - 不重写历史（包括 amend）。
 - 不执行本阶段版本推导、`VERSION` 编辑、tag 创建与推送。
 - 只在 stage1 成功后方可进入版本阶段。
-- 独立 checkpoint 与 quickship 内嵌 checkpoint 都只做收口动作；自动编译责任固定在 `codev-taskdev`，功能正确性由用户人工确认。
+- 独立 checkpoint 与 ship 内嵌 checkpoint 都只做收口动作；自动编译责任固定在 `codev-taskdev`，功能正确性由用户人工确认。
