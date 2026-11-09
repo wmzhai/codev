@@ -56,7 +56,7 @@ Source: User prompt
 - `test/version-rules.sh` - 把若干仓库规则断言写在 `AGENTS.md` 上；入口变薄后这些字符串应落到 `memory/core/invariants.md`。
 - `skills/codev-memorize/SKILL.md` - 只维护 `AGENTS.md + memory/`，明确不再维护额外入口。
 - `skills/codev-issue2task/SKILL.md`、`skills/codev-taskdev/SKILL.md` - 已有「调用前缀」，缺 Claude Code。
-- `skills/codev-checkpoint/SKILL.md`、`skills/codev-quickship/SKILL.md` 及各 `docs/skills/*.md` - 宿主对照目前只有 Codex / Grok。
+- `skills/codev-checkpoint/SKILL.md`、`skills/codev-ship/SKILL.md` 及各 `docs/skills/*.md` - 宿主对照目前只有 Codex / Grok。
 - `AGENTS.md`、`README.md`、`docs/workflows.md`、`memory/core/*` - 仍按「Codex + Grok、单一 AGENTS 入口」叙述。
 - 历史：`55e607b` 去掉 `CLAUDE.md` 记忆入口；`4b66939` 去掉 Claude 安装。这次是有公共层的三入口，不是恢复旧的双份正文。
 
@@ -83,7 +83,7 @@ Source: User prompt
 - `memory/core/system-map.md`、`memory/core/workflows.md`、`memory/core/scope.md`、`memory/core/symptom-routing.md`、`memory/README.md` - 改为三入口 + 公共 `memory/`，去掉「不再维护额外入口文件」和「只服务 Codex」。
 - `skills/codev-memorize/SKILL.md`、`skills/codev-memorize/agents/openai.yaml`、`docs/skills/codev-memorize.md` - 目标结构、扫描信号、产出物、跨宿主写齐规则、已有入口的保留策略。
 - `skills/codev-issue2task/SKILL.md`、`skills/codev-taskdev/SKILL.md` - 调用前缀补 Claude Code；判断依据含 Claude Code 会话。
-- `skills/codev-checkpoint/SKILL.md`、`skills/codev-quickship/SKILL.md` - Codex / Grok / Claude 三套触发写法。
+- `skills/codev-checkpoint/SKILL.md`、`skills/codev-ship/SKILL.md` - Codex / Grok / Claude 三套触发写法。
 - `docs/skills/*.md`、`docs/skills/README.md`、`docs/workflows.md`、`README.md` - 安装说明、三入口导航、落盘前缀写三家。
 - `test/skill-invocation-prefix.sh` - 断言三宿主前缀和三份入口文件；README / workflows 不再只写「Grok 把 `$` 换成 `/`」这一种句式。
 - `test/version-rules.sh` - 原贴在 `AGENTS.md` 上的仓库规则断言改到 `memory/core/invariants.md`（或实际仍保留这些句子的公共文件）。
@@ -97,7 +97,7 @@ Source: User prompt
 4. 把 `AGENTS.md` 收成 Codex 短入口；新增 `CLAUDE.md` 与 `.grok/rules/memory.md`。三份都含宿主守卫和指向 `memory/` 的读法。
 5. 更新其余 `memory/` 导航，使热路径变成「读自己的入口 → `memory/README.md` → `memory/core/`」。
 6. 改 `codev-memorize`：目标结构含三入口；初始化/刷新都写齐；扫描 `CLAUDE.md` 与 `.grok/rules/`；已有宿主专用段落保留；落盘文档写三家前缀。
-7. 给 `issue2task` / `taskdev` / `checkpoint` / `quickship` 以及相关 `docs/skills` 补 Claude Code；对话判断加上 Claude Code。
+7. 给 `issue2task` / `taskdev` / `checkpoint` / `codev-ship` 以及相关 `docs/skills` 补 Claude Code；对话判断加上 Claude Code。
 8. 更新 `README.md`、`docs/workflows.md`、`docs/skills/README.md`：安装探测、三入口、调用前缀。
 9. 更新 `skill-invocation-prefix.sh` 与 `version-rules.sh`，跑全部现有测试脚本。
 10. 在 `CHANGELOG` Unreleased 写一条准确摘要。
@@ -131,7 +131,7 @@ Source: User prompt
 - `test/setup-smoke.sh` 用隔离 PATH 覆盖全装、单宿主、混装、全无、冲突、幂等和 Claude 遗留 `codev` 链接清理。
 - `AGENTS.md` 收成 Codex 短入口；新增 `CLAUDE.md` 与 `.grok/rules/memory.md`；公共规则并入 `memory/core/invariants.md`。
 - `codev-memorize` 改为无论当前宿主都写齐三入口；各 skill / docs 补 Claude Code 前缀。
-- 收尾精简：去掉 `invariants.md` 里重复的 taskdev/quickship 条目；修正前缀测试里反引号被 shell 执行的问题。
+- 收尾精简：去掉 `invariants.md` 里重复的 taskdev/codev-ship 条目；修正前缀测试里反引号被 shell 执行的问题。
 - 本机 `./setup` 已把受管 skills 链到 `~/.claude/skills/`。
 
 ## Implementation Notes
@@ -142,7 +142,7 @@ Source: User prompt
 
 ## Pending Validation
 
-- [x] 用户触发 `/codev-quickship`，表示 Claude Code 斜杠入口与跨宿主接手的人工验收已完成。
+- [x] 用户触发 `/codev-ship`，表示 Claude Code 斜杠入口与跨宿主接手的人工验收已完成。
 
 ## Remaining Gaps
 

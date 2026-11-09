@@ -14,16 +14,16 @@
 
 ## 0.1.11 - 2026-10-23
 
-- `codev-taskdev` 在验证后的同一次任务文件写入里，把本轮有验证证据的验收项勾成 `[x]`。证据不足、被阻塞或留给人工的项保持未勾，不再把勾选留给后续会话或 `codev-quickship`。
+- `codev-taskdev` 在验证后的同一次任务文件写入里，把本轮有验证证据的验收项勾成 `[x]`。证据不足、被阻塞或留给人工的项保持未勾，不再把勾选留给后续会话或 `codev-ship`。
 
 ## 0.1.10 - 2026-10-07
 
-- `codev-quickship` 的提交正文、附注 tag 和 GitHub Release 说明复用同一份 changelog 版本段。远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。
+- `codev-ship` 的提交正文、附注 tag 和 GitHub Release 说明复用同一份 changelog 版本段。远端是 GitHub 时用 `gh release create` 发布，不用 `--generate-notes`。
 
 ## 0.1.9 - 2026-09-28
 
-- `codev-quickship` 推送整个收口范围：有改动的可见子仓先提交并 push，再把每个可见 submodule 已 push 的 HEAD 记成根仓 gitlink；根仓只有指针变化时也提交并 push。根仓提交遵守根仓自己的版本规则。
-- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink。被 quickship 内嵌时，gitlink 与整仓 push 由 quickship 第二阶段执行。
+- `codev-ship` 推送整个收口范围：有改动的可见子仓先提交并 push，再把每个可见 submodule 已 push 的 HEAD 记成根仓 gitlink；根仓只有指针变化时也提交并 push。根仓提交遵守根仓自己的版本规则。
+- 独立 `codev-checkpoint` 只在本地规则要求记录 submodule 快照时刷新根仓 gitlink。被 codev-ship 内嵌时，gitlink 与整仓 push 由 codev-ship 第二阶段执行。
 
 ## 0.1.8 - 2026-09-19
 
@@ -31,7 +31,7 @@
 
 ## 0.1.7 - 2026-09-16
 
-- `codev-quickship` 在目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入本轮内容：没有已发布版本时 `VERSION` 首发为 `0.0.1`，缺 changelog 则创建 `CHANGELOG.md`。
+- `codev-ship` 在目标仓库缺少 `VERSION` 或 changelog 时主动创建并写入本轮内容：没有已发布版本时 `VERSION` 首发为 `0.0.1`，缺 changelog 则创建 `CHANGELOG.md`。
 
 ## 0.1.6 - 2026-08-30
 
@@ -44,33 +44,33 @@
 - 受管 skill 的工作区改为从当前目录、当前 git 根和仓库本地规则解析，不再写死 `optdev` 或其他项目路径。
 - 将 `codev-issue2task` 的 `optworks#70` 示例改为通用 `<subdir>#70`。
 - 调整 `setup` 默认同时刷新 Codex 与 Grok 全局 skills，并同步安装说明与 smoke test。
-- 精简 `codev-quickship` / `codev-checkpoint` 的收口职责：用户触发即表示 taskdev 收尾校验和人工验证已完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
+- 精简 `codev-ship` / `codev-checkpoint` 的收口职责：用户触发即表示 taskdev 收尾校验和人工验证已完成，收口阶段不再运行 build/test/lint/typecheck 或脚本验证。
 - 明确 `codev-checkpoint` 仍需在本阶段形成并推送收口提交（与版本/Tag 无关）。
-- 细化 `codev-quickship` 执行顺序：quickship 的第一阶段不提交，改为版本 bump 后统一最终提交（供用户确认）。
+- 细化 `codev-ship` 执行顺序：codev-ship 的第一阶段不提交，改为版本 bump 后统一最终提交（供用户确认）。
 
 ## 0.1.4 - 2026-06-10
 
-- 收紧多仓 `codev-quickship` 的版本归属规则，禁止把一个仓库的版本号、提交后缀或 tag 套用到未实际 bump 的仓库。
-- 调整 `codev-quickship` 通用收尾规则：版本同步后按仓库本地规则物化并校验版本工件，提交前必须重新检查工作区，且不在通用 skill 中写死生态专属命令。
-- 收紧无 task quickship 的最小校验语义，避免默认重复完整 build。
+- 收紧多仓 `codev-ship` 的版本归属规则，禁止把一个仓库的版本号、提交后缀或 tag 套用到未实际 bump 的仓库。
+- 调整 `codev-ship` 通用收尾规则：版本同步后按仓库本地规则物化并校验版本工件，提交前必须重新检查工作区，且不在通用 skill 中写死生态专属命令。
+- 收紧无 task codev-ship 的最小校验语义，避免默认重复完整 build。
 - 调整 `codev-checkpoint`：若存在对应任务文件，默认补齐任务记录并归档到 `tasks/done/`，同时保留未发布 `CHANGELOG` 聚合摘要。
-- 细化 `codev-quickship` 执行模型：第一阶段完成后自动进入版本/Tag 阶段，去除每次执行的额外确认交互。
+- 细化 `codev-ship` 执行模型：第一阶段完成后自动进入版本/Tag 阶段，去除每次执行的额外确认交互。
 
 ## 0.1.3 - 2026-05-30
 
-- 调整 `codev-quickship` 版本规则，优先读取仓库本地规则；没有本地规则时兼容三段和四段数字版本，并递增最后一段。
-- 调整 `codev-quickship` 收尾流程，要求同步 `CHANGELOG`、创建并推送 `v<VERSION>` tag。
+- 调整 `codev-ship` 版本规则，优先读取仓库本地规则；没有本地规则时兼容三段和四段数字版本，并递增最后一段。
+- 调整 `codev-ship` 收尾流程，要求同步 `CHANGELOG`、创建并推送 `v<VERSION>` tag。
 - 调整 `codev-checkpoint` 默认行为，记录已有 `CHANGELOG` 的未发布内容，但不升级 `VERSION`、不创建或推送 tag。
 - 同步 skill 文档、agent 默认提示、记忆规则和版本规则测试。
 
 ## 0.1.2 - 2026-04-06
 
-- 统一 quickship / checkpoint 及相关仓库文档中的版本规则表述，收敛为当前 `X.Y.Z` 约定。
+- 统一 codev-ship / checkpoint 及相关仓库文档中的版本规则表述，收敛为当前 `X.Y.Z` 约定。
 - 精简版本工件与收尾说明，移除过时迁移细节，并同步规则测试与记忆文档。
 
 ## 0.1.1 - 2026-04-05
 
-- 调整 `codev-quickship` 支持无 task 收尾模式，并要求在 `CHANGELOG` 记录本轮改动摘要。
+- 调整 `codev-ship` 支持无 task 收尾模式，并要求在 `CHANGELOG` 记录本轮改动摘要。
 - 调整 `codev-checkpoint` 默认不再自动同步 `VERSION` / `CHANGELOG`，并同步相关说明与规则测试。
 
 ## 2026-03-31
@@ -81,7 +81,7 @@
 
 ## 2026-03-27
 
-- 同步 `codev-quickship` 说明文档，使其明确默认以当前 git 分支为起点并推送到默认主干。
-- 统一 quickship 收尾提交信息格式为 `type: 具体工作摘要 (vX.Y.Z)`，并强调版本号放在末尾括号中。
-- 完成 quickship 版本化收尾，递增 `VERSION` 并同步相关规则与说明。
+- 同步 `codev-ship` 说明文档，使其明确默认以当前 git 分支为起点并推送到默认主干。
+- 统一 codev-ship 收尾提交信息格式为 `type: 具体工作摘要 (vX.Y.Z)`，并强调版本号放在末尾括号中。
+- 完成 codev-ship 版本化收尾，递增 `VERSION` 并同步相关规则与说明。
 - 初始化 `VERSION` 和 `CHANGELOG`，为后续收口提交提供可递增的版本工件。
